@@ -1,0 +1,12 @@
+# This repo is METHODOLOGY ONLY. Never commit real working files here.
+# Keep actual inputs, outputs, memory, and review notes in a separate PRIVATE repo.
+
+# Common accidental additions to block:
+inputs/
+outputs/
+working-notes/
+deliverables/
+memory/
+*.local.md
+.DS_Store
+node_modules/

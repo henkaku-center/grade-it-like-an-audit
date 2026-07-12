@@ -1,0 +1,492 @@
+<title>The markdown is the program — how we instruct our grading agents</title>
+<style>
+  :root {
+    --bg:#e6e4db; --surface:#f3f1ea; --surface-2:#edeae1; --ink:#22252c; --ink-soft:#575b52;
+    --ink-faint:#7f8278; --rule:#cdcabd; --rule-soft:#dedbcf; --oxblood:#97302b; --oxblood-tint:#f0dfd9;
+    --verified:#3c6a4c; --verified-tint:#dde8dd; --amber:#8f6317; --amber-tint:#efe4cd;
+    --shadow:0 1px 0 rgba(34,37,44,.04), 0 8px 28px -18px rgba(34,37,44,.35);
+    --serif:"Iowan Old Style","Palatino Linotype","Palatino","Book Antiqua",Georgia,"Times New Roman",serif;
+    --sans:"Seravek","Gill Sans Nova","Gill Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:ui-monospace,"SF Mono","SFMono-Regular","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#16181d; --surface:#1e2026; --surface-2:#23262d; --ink:#e7e4da; --ink-soft:#a3a599;
+      --ink-faint:#7c7e73; --rule:#34373f; --rule-soft:#2a2d34; --oxblood:#d5726a; --oxblood-tint:#3a2422;
+      --verified:#83b493; --verified-tint:#20302a; --amber:#d0a052; --amber-tint:#332a1a;
+      --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#e6e4db; --surface:#f3f1ea; --surface-2:#edeae1; --ink:#22252c; --ink-soft:#575b52;
+    --ink-faint:#7f8278; --rule:#cdcabd; --rule-soft:#dedbcf; --oxblood:#97302b; --oxblood-tint:#f0dfd9;
+    --verified:#3c6a4c; --verified-tint:#dde8dd; --amber:#8f6317; --amber-tint:#efe4cd;
+    --shadow:0 1px 0 rgba(34,37,44,.04), 0 8px 28px -18px rgba(34,37,44,.35);
+  }
+  :root[data-theme="dark"] {
+    --bg:#16181d; --surface:#1e2026; --surface-2:#23262d; --ink:#e7e4da; --ink-soft:#a3a599;
+    --ink-faint:#7c7e73; --rule:#34373f; --rule-soft:#2a2d34; --oxblood:#d5726a; --oxblood-tint:#3a2422;
+    --verified:#83b493; --verified-tint:#20302a; --amber:#d0a052; --amber-tint:#332a1a;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -18px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  .wrap { max-width:50rem; margin:0 auto; padding:0 1.5rem; }
+
+  h1,h2,h3 { font-family:var(--serif); font-weight:600; text-wrap:balance; letter-spacing:-0.01em; }
+  h1 { font-size:clamp(2.1rem,5.4vw,3.15rem); line-height:1.06; margin:0 0 1rem; }
+  h2 { font-size:clamp(1.5rem,3.6vw,2rem); line-height:1.12; margin:0 0 .6rem; }
+  h3 { font-size:1.16rem; line-height:1.25; margin:0 0 .35rem; }
+  p { margin:0 0 1rem; }
+  a { color:var(--oxblood); text-underline-offset:2px; }
+  strong { font-weight:600; color:var(--ink); }
+  em { font-style:italic; }
+
+  .eyebrow { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--oxblood); display:flex; align-items:center; gap:.55rem; margin:0 0 1.1rem; }
+  .eyebrow::before { content:""; width:1.6rem; border-top:2px solid var(--oxblood); display:inline-block; }
+  .lead { font-family:var(--serif); font-size:1.28rem; line-height:1.45; color:var(--ink); }
+  .subtle { color:var(--ink-soft); }
+
+  header.hero { padding:clamp(3.5rem,9vw,6rem) 0 2.5rem; }
+  .kicker { font-family:var(--mono); font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-faint); margin:0 0 1.4rem; }
+  .hero-meta { margin-top:2rem; padding-top:1.3rem; border-top:1px solid var(--rule);
+    display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem; font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); }
+  .hero-meta b { color:var(--ink); font-weight:600; }
+
+  section { padding:2.6rem 0; border-top:1px solid var(--rule-soft); }
+  section.pillar { padding-top:3rem; }
+  .pillar-index { font-family:var(--mono); font-size:.74rem; letter-spacing:.12em; color:var(--ink-faint);
+    text-transform:uppercase; margin:0 0 .3rem; }
+
+  /* contents */
+  .contents { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.2rem 1.4rem; margin:1.6rem 0; box-shadow:var(--shadow); }
+  .contents ol { list-style:none; counter-reset:c; margin:0; padding:0; display:grid; gap:.15rem; }
+  .contents li { counter-increment:c; display:grid; grid-template-columns:2rem 1fr; align-items:baseline; padding:.35rem 0; border-top:1px solid var(--rule-soft); }
+  .contents li:first-child { border-top:0; }
+  .contents li::before { content:counter(c,decimal-leading-zero); font-family:var(--mono); font-size:.76rem; color:var(--oxblood); }
+  .contents a { color:var(--ink); text-decoration:none; }
+  .contents a:hover { color:var(--oxblood); text-decoration:underline; }
+  .contents .ci-note { color:var(--ink-faint); font-size:.86rem; }
+
+  .card { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.3rem 1.4rem; box-shadow:var(--shadow); margin:1.4rem 0; }
+  .card > :last-child { margin-bottom:0; }
+  .card.accent { border-left:3px solid var(--oxblood); }
+  .card.good { border-left:3px solid var(--verified); }
+
+  /* mono code-ish blocks */
+  .code { font-family:var(--mono); font-size:.82rem; line-height:1.7; background:var(--surface-2);
+    border:1px solid var(--rule); border-radius:3px; padding:1rem 1.15rem; overflow-x:auto; color:var(--ink); margin:1.2rem 0; }
+  .code .del { color:var(--oxblood); }
+  .code .hint { color:var(--verified); }
+  .code .muted { color:var(--ink-faint); }
+  .code .key { color:var(--oxblood); }
+
+  /* file tree */
+  .filetree { font-family:var(--mono); font-size:.8rem; line-height:1.85; background:var(--surface-2);
+    border:1px solid var(--rule); border-radius:3px; padding:1.1rem 1.2rem; overflow-x:auto; margin:1.4rem 0; }
+  .filetree pre { margin:0; white-space:pre; }
+  .filetree .path { color:var(--ink); }
+  .filetree .ann { color:var(--ink-faint); }
+  .filetree .load { color:var(--verified); }
+  .filetree .auth { color:var(--oxblood); }
+  .filetree .tree { color:var(--ink-faint); }
+
+  /* three contexts grid */
+  .ctx-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.8rem; margin:1.5rem 0; }
+  .ctx { border:1px solid var(--rule); border-top:3px solid var(--oxblood); border-radius:3px; background:var(--surface); padding:1rem 1.1rem; }
+  .ctx .scope { font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--oxblood); margin:0 0 .4rem; }
+  .ctx h3 { font-family:var(--sans); font-size:.98rem; font-weight:600; letter-spacing:0; margin:0 0 .3rem; }
+  .ctx p { font-size:.9rem; color:var(--ink-soft); margin:0; }
+  .ctx code { font-family:var(--mono); font-size:.82em; color:var(--ink); }
+
+  .tag { display:inline-block; font-family:var(--mono); font-size:.66rem; letter-spacing:.04em; text-transform:uppercase;
+    padding:.1rem .45rem; border-radius:2px; border:1px solid currentColor; vertical-align:middle; }
+  .tag.load { color:var(--verified); background:var(--verified-tint); }
+  .tag.auth { color:var(--oxblood); background:var(--oxblood-tint); }
+
+  /* fan-out */
+  .fanout { margin:1.6rem 0 .4rem; }
+  .node { font-family:var(--mono); font-size:.78rem; text-align:center; border:1px solid var(--rule);
+    border-radius:3px; background:var(--surface); padding:.55rem .5rem; color:var(--ink); }
+  .node .role { display:block; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-top:.2rem; }
+  .node.lead { border-color:var(--oxblood); background:var(--oxblood-tint); max-width:22rem; margin:0 auto; }
+  .fan-stem { width:1px; height:1.4rem; background:var(--rule); margin:0 auto; }
+  .fan-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr)); gap:.7rem; margin-top:.2rem; }
+  .fan-caption { font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); text-align:center; margin-top:.9rem; }
+
+  /* loop */
+  .loop { display:flex; flex-wrap:wrap; gap:.5rem; margin:1.5rem 0 .6rem; }
+  .loop-step { flex:1 1 7rem; min-width:6.5rem; border:1px solid var(--rule); border-radius:3px;
+    background:var(--surface); padding:.6rem .65rem; font-size:.8rem; line-height:1.3; }
+  .loop-step .n { font-family:var(--mono); font-size:.68rem; color:var(--oxblood); display:block; margin-bottom:.15rem; }
+  .loop-step.converge { border-color:var(--verified); background:var(--verified-tint); }
+  .loop-step.converge .n { color:var(--verified); }
+  .loop-back { font-family:var(--mono); font-size:.74rem; color:var(--oxblood); display:flex; align-items:center; gap:.5rem; margin-top:.9rem; }
+  .loop-back::before { content:"\21bb"; font-size:1.15rem; }
+
+  /* write-back cycle */
+  .cycle { display:grid; grid-template-columns:1fr; gap:.5rem; margin:1.5rem 0; }
+  .cycle .cstep { display:grid; grid-template-columns:2.4rem 1fr; gap:.8rem; align-items:baseline;
+    border:1px solid var(--rule); border-radius:3px; background:var(--surface); padding:.75rem .9rem; }
+  .cycle .cstep .cn { font-family:var(--mono); font-size:.72rem; color:var(--oxblood); }
+  .cycle .cstep.emph { border-left:3px solid var(--verified); }
+  .cycle .cstep b { font-weight:600; }
+  .cycle .cstep span.d { color:var(--ink-soft); font-size:.92rem; }
+
+  ol.lessons { list-style:none; counter-reset:L; padding:0; margin:1.5rem 0 0; display:grid; gap:1rem; }
+  ol.lessons > li { counter-increment:L; position:relative; padding-left:3rem; }
+  ol.lessons > li::before { content:counter(L,decimal-leading-zero); position:absolute; left:0; top:.05rem;
+    font-family:var(--mono); font-size:.82rem; color:var(--oxblood); border:1px solid var(--oxblood); border-radius:3px; padding:.1rem .35rem; line-height:1; }
+  ol.lessons h3 { font-family:var(--sans); font-weight:600; font-size:1.02rem; letter-spacing:0; margin-bottom:.15rem; }
+  ol.lessons p { margin:0; color:var(--ink-soft); font-size:.96rem; }
+
+  ol.recipe { list-style:none; counter-reset:R; padding:0; margin:1.4rem 0 0; display:grid; gap:.1rem; }
+  ol.recipe > li { counter-increment:R; display:grid; grid-template-columns:2.2rem 1fr; align-items:baseline;
+    padding:.8rem 0; border-top:1px solid var(--rule-soft); }
+  ol.recipe > li:first-child { border-top:0; }
+  ol.recipe > li::before { content:counter(R); font-family:var(--mono); font-size:.82rem; color:var(--oxblood); font-weight:600; }
+  ol.recipe b { font-weight:600; }
+  ol.recipe .why { color:var(--ink-soft); font-size:.94rem; }
+  ol.recipe li.key b { color:var(--oxblood); }
+
+  .trail { margin:1.5rem 0 0; display:grid; gap:0; }
+  .round { display:grid; grid-template-columns:3.4rem 1fr; gap:1rem; padding:1rem 0; border-top:1px solid var(--rule-soft); }
+  .round:first-child { border-top:0; }
+  .round .rn { font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); padding-top:.15rem; }
+  .round .rn b { display:block; color:var(--ink); font-size:1.35rem; font-family:var(--serif); line-height:1; }
+  .round h3 { font-family:var(--sans); font-size:1rem; font-weight:600; letter-spacing:0; margin-bottom:.25rem; }
+  .round p { margin:0; font-size:.95rem; color:var(--ink-soft); }
+  .chip { display:inline-block; font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; text-transform:uppercase;
+    padding:.12rem .5rem; border-radius:2px; margin:.5rem .35rem 0 0; border:1px solid currentColor; }
+  .chip.block { color:var(--oxblood); background:var(--oxblood-tint); }
+  .chip.minor { color:var(--amber); background:var(--amber-tint); }
+  .chip.clean { color:var(--verified); background:var(--verified-tint); }
+
+  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(7rem,1fr)); gap:1px; background:var(--rule);
+    border:1px solid var(--rule); border-radius:3px; overflow:hidden; margin:1.5rem 0; }
+  .stat { background:var(--surface); padding:1rem 1.1rem; }
+  .stat .v { font-family:var(--serif); font-size:1.7rem; line-height:1; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .stat .k { font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin-top:.4rem; }
+
+  blockquote { margin:1.3rem 0; padding:.2rem 0 .2rem 1.3rem; border-left:3px solid var(--oxblood);
+    font-family:var(--serif); font-size:1.16rem; line-height:1.4; color:var(--ink); }
+
+  ul.tight { margin:.3rem 0 1rem; padding-left:1.1rem; }
+  ul.tight li { margin-bottom:.4rem; }
+  ul.tight li::marker { color:var(--oxblood); }
+
+  footer { padding:2.5rem 0 4rem; border-top:1px solid var(--rule); color:var(--ink-faint); font-family:var(--mono); font-size:.76rem; }
+  .divider-label { font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+
+  @media (max-width:33rem) {
+    body { font-size:16px; }
+    .round { grid-template-columns:2.8rem 1fr; }
+    ol.lessons > li { padding-left:2.6rem; }
+  }
+  @media (prefers-reduced-motion:no-preference) { a { transition:color .15s ease; } }
+  :focus-visible { outline:2px solid var(--oxblood); outline-offset:2px; border-radius:2px; }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">A field-tested method for instructing AI agents</p>
+    <div class="eyebrow">Documentation-driven agents</div>
+    <h1>The markdown is the program.</h1>
+    <p class="lead">We don’t configure our grading agents in code. We <em>instruct</em> them — in a layered, version-controlled, self-correcting set of markdown files that load into the agent’s context automatically and override its default behavior. The rubric, the fairness rules, the audit protocol, and every hard-won lesson live in those files. The agents just read them.</p>
+    <p class="subtle">This guide explains that system so you can build one for a new assignment — or for any recurring task you hand to an AI agent. It comes in two passes: a one-screen <strong>summary</strong>, then the <strong>detail</strong> — the file layers, the persistent memory, the write-back loop that makes the instructions compound, and the three things the docs encode (a deduction discipline, a verification harness, and an audit loop). The whole point: your instructions become a durable asset that gets <em>smarter every time it’s used.</em></p>
+    <div class="hero-meta">
+      <span><b>Layer 1</b> · Instruction files</span>
+      <span><b>Layer 2</b> · Persistent memory</span>
+      <span><b>Layer 3</b> · The write-back loop</span>
+    </div>
+  </header>
+
+  <!-- ============ SUMMARY ============ -->
+  <section id="summary">
+    <div class="eyebrow">The one-screen version</div>
+    <h2>Summary</h2>
+    <p>An AI agent is only as reliable as the instructions in front of it, and a chat prompt evaporates when the session ends. So we treat instructions as <strong>infrastructure</strong>: files in the repo, loaded every session, refined every run. Three moving parts.</p>
+
+    <div class="card">
+      <p style="margin:0 0 .6rem"><strong>1 · Layered instruction files (<code style="font-family:var(--mono);font-size:.85em">CLAUDE.md</code>).</strong> <span class="subtle">Markdown that auto-loads into context and overrides defaults. Layered by scope — general conventions at the repo root, assignment specifics one level down, the student-facing tutor prompt beside the assignment itself. Most-specific wins; general fills the gaps.</span></p>
+      <p style="margin:0 0 .6rem"><strong>2 · Persistent memory.</strong> <span class="subtle">A per-user store that survives across sessions — an indexed set of single-fact files, so a fresh session already knows what happened last time and what you prefer.</span></p>
+      <p style="margin:0"><strong>3 · The write-back loop.</strong> <span class="subtle">The part that matters most. When the audit catches a failure, the fix isn’t just applied — a <em>rule</em> goes back into the docs, so that failure can’t recur next assignment. The instruction set compounds.</span></p>
+    </div>
+
+    <p>What those files <em>encode</em> is the actual grading method: a <strong>discrete-deduction discipline</strong> (every point removed is a named, evidenced claim), an <strong>independent audit harness</strong> (one reviewer per unit, blind to the rest), and a <strong>loop</strong> that ends only when a single pass is clean for the entire set at once. In one real run, that loop took five rounds — and three of its catches were errors <em>inside a previous round’s fix.</em></p>
+
+    <nav class="contents" aria-label="Contents">
+      <ol>
+        <li><a href="#files">The layered instruction files</a> <span class="ci-note">— what auto-loads, and the “three contexts” trap</span></li>
+        <li><a href="#memory">Persistent memory</a> <span class="ci-note">— continuity across sessions</span></li>
+        <li><a href="#writeback">The write-back loop</a> <span class="ci-note">— why the docs get smarter</span></li>
+        <li><a href="#deduction">Encoded: the deduction discipline</a></li>
+        <li><a href="#harness">Encoded: the audit harness</a></li>
+        <li><a href="#loop">Encoded: the loop to convergence</a></li>
+        <li><a href="#proof">In practice: five rounds</a></li>
+        <li><a href="#adapt">Set it up for your own work</a></li>
+      </ol>
+    </nav>
+  </section>
+
+  <!-- ============ 1 · FILES ============ -->
+  <section class="pillar" id="files">
+    <p class="pillar-index">Layer 1 — detail</p>
+    <h2>The layered instruction files</h2>
+    <p>Every session, the agent reads the <code style="font-family:var(--mono)">CLAUDE.md</code> files in scope before it does anything, and treats them as overriding its defaults. They’re plain markdown, checked into the repo, and organized so that the instructions get <em>more specific as you get closer to the work.</em></p>
+
+    <div class="filetree" aria-label="Repository file tree showing where instruction, output, and working files live.">
+<pre><span class="tree">your-project/</span>
+<span class="tree">├─ </span><span class="path">CLAUDE.md</span>                 <span class="auth">◆ root reviewer conventions</span> <span class="ann">— shared by every task</span>
+<span class="tree">├─ </span><span class="path">task-01/</span>
+<span class="tree">│  ├─ </span><span class="path">CLAUDE.md</span>              <span class="auth">◆ this task’s specifics</span> <span class="ann">— criteria, sources, gotchas</span>
+<span class="tree">│  ├─ </span><span class="path">shipped/CLAUDE.md</span>      <span class="ann">— (optional) instructions for a different audience</span>
+<span class="tree">│  ├─ </span><span class="path">inputs/</span>                <span class="ann">— the material under review (read-only)</span>
+<span class="tree">│  ├─ </span><span class="path">working-notes/&lt;unit&gt;/</span>  <span class="ann">— ledger · draft · audit-round{1..N}</span>
+<span class="tree">│  ├─ </span><span class="path">output.md</span>              <span class="auth">◆ authoritative output</span> <span class="ann">— fixed two-part format</span>
+<span class="tree">│  └─ </span><span class="path">deliverables/</span>          <span class="ann">— final artifacts, produced only after the audit passes</span>
+<span class="tree">└─ </span><span class="path">task-02/ …</span>             <span class="ann">— same shape; precedents carry forward</span></pre>
+    </div>
+
+    <p>The load rule is simple and worth stating out loud: <strong>the most specific file in scope wins; more general files fill whatever it doesn’t say.</strong> The root file carries what’s true for all grading — the deduction rule, the report format, the audit protocol. The per-assignment file carries what’s true for <em>this</em> task — the point split, which files are the source of truth for verifying a claim, the per-task gotchas.</p>
+
+    <h3 style="margin-top:1.7rem">The trap: three files named <code style="font-family:var(--mono);font-size:.8em">CLAUDE.md</code>, three different jobs</h3>
+    <p>The most-copied warning in our root file exists because these look identical and mean opposite things. An agent that confuses them will apply the wrong rules to the wrong reader.</p>
+
+    <div class="ctx-grid">
+      <div class="ctx">
+        <p class="scope">Repo root</p>
+        <h3>Grader meta-conventions</h3>
+        <p>Shared across all assignments. The deduction rule, the output format, the audit loop, accumulated precedent.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">task-01/</p>
+        <h3>Task specifics</h3>
+        <p>Criteria, source-of-truth files to verify against, waiver rules, input naming. Everything the root file can’t know in advance.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">shipped/</p>
+        <h3>Student-facing tutor prompt</h3>
+        <p>A different audience entirely — this one <em>ships to students</em> and tells the agent to be a Socratic tutor who never hands over answers.</p>
+      </div>
+    </div>
+    <p class="subtle">When you’re grading, you are not the student’s tutor — so “never give answers” does not apply to the instructor’s questions. Naming the contexts explicitly, in the docs, is what keeps an agent from importing a rule from the wrong layer.</p>
+
+    <div class="card accent">
+      <h3>Output and working files are specified too</h3>
+      <p class="subtle" style="margin:0">The docs don’t just set policy — they fix the <strong>shape of the work</strong>. The authoritative output has a mandated two-part format (an internal audit section, then the reader-facing deliverable), so every run is comparable. The <code style="font-family:var(--mono);font-size:.85em">working-notes/&lt;unit&gt;/</code> folders hold the agent’s artifacts — an evidence ledger, a draft, and one audit report per round — all versioned in git, so the reasoning behind a result is recoverable months later.</p>
+    </div>
+  </section>
+
+  <!-- ============ 2 · MEMORY ============ -->
+  <section class="pillar" id="memory">
+    <p class="pillar-index">Layer 2 — detail</p>
+    <h2>Persistent memory across sessions</h2>
+    <p>The <code style="font-family:var(--mono)">CLAUDE.md</code> files are shared and per-repo. Memory is the complement: a <strong>per-user store that persists across sessions and projects</strong>, so a brand-new session doesn’t start from zero. It’s how the agent begins already knowing “the last run took four audit rounds,” “this one is finished,” or “the lead prefers to make the borderline calls personally.”</p>
+
+    <p>The mechanics are deliberately boring, which is what makes them reliable:</p>
+    <ul class="tight">
+      <li>An <strong>index file</strong> (<code style="font-family:var(--mono);font-size:.85em">MEMORY.md</code>) is loaded into context every session — one line per memory, so the agent knows what it knows.</li>
+      <li>Each memory is <strong>one file holding one fact</strong>, with frontmatter that says what it is and how to recall it.</li>
+      <li>A <code style="font-family:var(--mono);font-size:.85em">type</code> field sorts memories into <em>who the user is</em>, <em>how they want you to work</em>, <em>ongoing project state</em>, and <em>pointers to outside resources.</em></li>
+    </ul>
+
+    <div class="code" aria-label="Example memory file with frontmatter.">
+<span class="muted">--- one file, one fact ---</span>
+<span class="key">name:</span> task-2026-q3-complete
+<span class="key">description:</span> Q3 run finished — outcome, where things live, lessons
+<span class="key">metadata:</span>
+&nbsp;&nbsp;<span class="key">type:</span> project     <span class="muted">// user | feedback | project | reference</span>
+
+Q3 run completed 2026-07-11. Five review rounds to converge; outcomes never moved.
+Lesson banked: a fix is a new claim — re-verify replacements from scratch.
+Related: <span class="hint">[[task-2026-q2-complete]]</span>   <span class="muted">// memories link to each other</span>
+    </div>
+
+    <p class="subtle">The discipline that keeps it useful: one fact per file, update instead of duplicating, delete what turns out wrong, and don’t store what the repo already records. Memory is for what you couldn’t reconstruct from the code and the git history — not a second copy of it.</p>
+  </section>
+
+  <!-- ============ 3 · WRITE-BACK ============ -->
+  <section class="pillar" id="writeback">
+    <p class="pillar-index">Layer 3 — detail · the heart of the system</p>
+    <h2>The write-back loop</h2>
+    <p>Here is the property that makes the whole thing worth the effort. When a review catches a mistake, we don’t just fix the mistake. <strong>We add a rule to the docs so that class of mistake can’t recur</strong> — on this assignment or the next one. The instruction set is not written once; it is <em>edited by its own failures.</em></p>
+
+    <blockquote>Every rule in our root file exists because something went wrong once. The docs are a scar tissue of past mistakes — which is exactly why the next run doesn’t repeat them.</blockquote>
+
+    <div class="cycle" aria-label="The write-back cycle: a run surfaces a failure, which becomes a durable rule that pre-warns the next run.">
+      <div class="cstep"><span class="cn">01</span><span><b>A run hits a failure mode.</b> <span class="d">An auditor credits the student with an idea the assistant actually suggested — a real, subtle attribution error.</span></span></div>
+      <div class="cstep"><span class="cn">02</span><span><b>The immediate fix is applied and re-audited.</b> <span class="d">That letter is corrected and the whole thing re-checked.</span></span></div>
+      <div class="cstep emph"><span class="cn">03</span><span><b>A durable rule is written back into the docs.</b> <span class="d">“Verify who typed an idea first against the raw record — and scan the log’s actual structure, not just the obvious field.” Now it’s standing policy.</span></span></div>
+      <div class="cstep"><span class="cn">04</span><span><b>The next run’s agents are pre-warned.</b> <span class="d">They read that rule before they start. The mistake that cost a round last time costs nothing this time.</span></span></div>
+    </div>
+
+    <p>You can watch the institutional knowledge accumulate in the file itself. Real lines now standing in our root conventions, each traceable to the run that earned it:</p>
+    <div class="code">
+<span class="muted"># excerpts — each is a scar from a prior run</span>
+<span class="del">•</span> Write cohort claims without factual universals — one counterexample fails the audit.
+<span class="del">•</span> Revisions introduce errors at a high rate; re-audit whole units, not the flagged spot.
+<span class="del">•</span> Props (praise) are ledgered as strictly as deductions.
+<span class="del">•</span> Verify UI / behavior claims against the shipped code, not the session narrative.
+<span class="del">•</span> A fix is a new claim, and inherits the counterexample. <span class="muted">// re-verify from scratch</span>
+    </div>
+    <p class="subtle">A prompt you retype each session can’t do this. A file can. That’s the case for treating instructions as version-controlled infrastructure rather than conversation.</p>
+  </section>
+
+  <!-- ============ 4 · DEDUCTION ============ -->
+  <section class="pillar" id="deduction">
+    <p class="pillar-index">What the docs encode · 1 of 3</p>
+    <h2>The Discrete-Deduction Discipline</h2>
+    <p>One rule the files impose on every score: <strong>every point you remove is tied to a discrete, named issue, with a one-line “how to avoid.”</strong> If you can’t name the specific thing the person did or failed to do, the points are awarded. A deduction is a claim, and a claim needs evidence.</p>
+
+    <div class="code">
+Item&nbsp;3: 18/20 <span class="del">— (−2) required section left blank;</span>
+&nbsp;&nbsp;the checklist marks it “skipped.”
+&nbsp;&nbsp;<span class="hint">How to avoid: the template offered four testable options — completing one earns it back.</span>
+<span class="muted">// no nameable issue on the other 18 points → earned, not “given”</span>
+    </div>
+
+    <ul class="tight">
+      <li><strong>Praise is audited as strictly as criticism.</strong> The counterintuitive lesson from checking our own work: most errors were <em>overclaimed praise</em>, not wrong deductions. So every quote and superlative in the “what you did well” paragraph is logged with its source, exactly like a deduction.</li>
+      <li><strong>Ground truth beats memory, always.</strong> Every number or behavioral claim is verified against the source — the actual code, file, or record — never against recollection.</li>
+      <li><strong>“What we owe you.”</strong> If your own instructions told the person X, you don’t penalize them for X, even when the system does Y. Decide up front which sources are authoritative <em>for the subject</em> and which are merely true.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 5 · HARNESS ============ -->
+  <section class="pillar" id="harness">
+    <p class="pillar-index">What the docs encode · 2 of 3</p>
+    <h2>The audit harness: independent fan-out</h2>
+    <p>The person who writes an evaluation is the worst person to check it. So drafting and auditing are separate jobs, and the auditors are independent <em>by construction</em>: each is handed one unit of work and reads <strong>only that unit’s files</strong> — blind to the other evaluations and to each other. A claim can’t be “confirmed” by another unit’s data, and a detail borrowed from the wrong place has nowhere to hide.</p>
+
+    <div class="fanout" role="img" aria-label="A lead grader fans out to independent auditors, each reading only one unit's files.">
+      <div class="node lead">Lead grader<span class="role">drafts + normalizes</span></div>
+      <div class="fan-stem"></div>
+      <div class="fan-row">
+        <div class="node">Auditor A<span class="role">reads only A</span></div>
+        <div class="node">Auditor B<span class="role">reads only B</span></div>
+        <div class="node">Auditor C<span class="role">reads only C</span></div>
+        <div class="node">Auditor D<span class="role">reads only D</span></div>
+        <div class="node">Auditor E<span class="role">reads only E</span></div>
+      </div>
+      <p class="fan-caption">independent · fresh eyes each round · no shared context</p>
+    </div>
+
+    <p>Two supports make the fan-out work. The <strong>evidence ledger</strong>, written as the draft is written, logs every claim beside its source line — so auditing means checking each claim against what it cites, not re-deriving the evaluation. And a <strong>lead pass</strong> catches what isolation can’t: cross-unit consistency. In one run, an identical praise line was flagged in one letter and passed in another <em>in the same round</em>, because each auditor saw only their own. The lead grader greps the whole set for shared phrasings and applies the strictest verdict anywhere to every instance. Fan out for depth; one pass for coherence.</p>
+  </section>
+
+  <!-- ============ 6 · LOOP ============ -->
+  <section class="pillar" id="loop">
+    <p class="pillar-index">What the docs encode · 3 of 3</p>
+    <h2>The loop, and the one condition that ends it</h2>
+    <p>Audits find things; fixes get made; and then the fixes get audited <em>again.</em> The loop doesn’t stop when each unit has been clean at some point. It stops on one strict condition:</p>
+
+    <blockquote>One pass comes back clean for the entire set at the same time.</blockquote>
+
+    <div class="loop" role="img" aria-label="The audit loop: draft, normalize, audit, revise, re-audit — looping until one clean pass over the whole set, then ship.">
+      <div class="loop-step"><span class="n">1</span>Draft + ledger</div>
+      <div class="loop-step"><span class="n">2</span>Normalize (lead)</div>
+      <div class="loop-step"><span class="n">3</span>Audit (fan-out)</div>
+      <div class="loop-step"><span class="n">4</span>Revise</div>
+      <div class="loop-step"><span class="n">5</span>Re-audit <em>whole</em> unit</div>
+      <div class="loop-step converge"><span class="n">✓</span>Clean for all at once → ship</div>
+    </div>
+    <p class="loop-back">if any unit fails, the set is not clean — revise and re-audit every touched unit again</p>
+
+    <ul class="tight">
+      <li><strong>Re-audit the whole unit, not the flagged spot.</strong> A revision changes the surrounding text and how it reads; checking only the edited line misses what the edit broke.</li>
+      <li><strong>The human stays in the loop.</strong> Every round surfaces its findings and what changed; the judgment calls — borderline deductions, tone, whether a fix is acceptable — are the human’s, not the harness’s.</li>
+    </ul>
+  </section>
+
+  <!-- ============ PROOF ============ -->
+  <section id="proof">
+    <div class="eyebrow">In practice</div>
+    <h2>One assignment, five rounds to convergence</h2>
+    <p class="subtle">A real run over five students. Scores were settled early and <strong>never moved</strong> — every finding was a grounding or phrasing defect, not a scoring error. Three defects were found <em>inside a previous round’s fix.</em> That’s the loop, and the write-back rules, earning their keep.</p>
+
+    <div class="trail">
+      <div class="round">
+        <div class="rn"><b>1</b>round</div>
+        <div>
+          <h3>Cleared too early.</h3>
+          <p>Declared clean after four of five auditors reported; the fifth landed late and caught a real misquote. Lesson banked into the docs: convergence means <em>all</em> units in the same pass.</p>
+          <span class="chip minor">premature clear</span><span class="chip block">1 late catch</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>2</b>round</div>
+        <div>
+          <h3>Four blockers the first pass had approved.</h3>
+          <p>A paraphrase inside quotation marks, credit for something the assistant actually prompted, and two praise universals — each falsifiable from the student’s own files.</p>
+          <span class="chip block">4 blockers</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>3</b>round</div>
+        <div>
+          <h3>A blocker inside a round-2 fix — plus a reversal.</h3>
+          <p>One reworded sentence still carried its counterexample. Separately, a round-1 “correction” turned out to be the error, and was reversed against the raw record.</p>
+          <span class="chip block">1 blocker</span><span class="chip minor">1 reversal</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>4</b>round</div>
+        <div>
+          <h3>Same clause, third rewrite, still wrong.</h3>
+          <p>The sentence kept implying a claim the shipped code couldn’t back. Only when reduced to a plain, countable fact did it hold.</p>
+          <span class="chip block">1 blocker</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>5</b>round</div>
+        <div>
+          <h3>Clean for all five, in the same pass.</h3>
+          <p>Zero blockers, zero must-fix items across the whole cohort at once. Convergence — cleared for review.</p>
+          <span class="chip clean">converged</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="v">5</div><div class="k">rounds to converge</div></div>
+      <div class="stat"><div class="v">3</div><div class="k">defects hidden in prior fixes</div></div>
+      <div class="stat"><div class="v">0</div><div class="k">score changes from audits</div></div>
+      <div class="stat"><div class="v">1&times;</div><div class="k">clean pass = done</div></div>
+    </div>
+  </section>
+
+  <!-- ============ ADAPT ============ -->
+  <section class="pillar" id="adapt">
+    <p class="pillar-index">Take it with you</p>
+    <h2>Set this up for your own work</h2>
+    <p>None of this is specific to grading. It fits any recurring, high-stakes task you hand to an AI agent — code review, a compliance or security audit, report QA, contract review, release notes — anywhere a plausible-but-wrong result is expensive and the task will come around again. The setup:</p>
+
+    <ol class="recipe">
+      <li><span><b>Stand up the file tree.</b> <span class="why">One repo, a root instruction file, a folder per instance of the task, working-file and output conventions. Version everything in git.</span></span></li>
+      <li><span><b>Seed the root conventions.</b> <span class="why">Write down what’s true for every run: the standard for a finding, the output format, the review protocol. Keep it general; the specifics go one layer down.</span></span></li>
+      <li><span><b>Write the per-task file — and name your ground-truth sources.</b> <span class="why">The criteria for this task, and exactly which files or systems are authoritative for verifying a claim. Separate what’s authoritative from what your subject was entitled to rely on.</span></span></li>
+      <li><span><b>Fix the working-file shape.</b> <span class="why">An evidence ledger (claim + source, written as you draft), a defined output format, one review file per round. Make the reasoning recoverable.</span></span></li>
+      <li><span><b>Turn on memory for continuity.</b> <span class="why">Let a fresh session start knowing the last run’s state and your standing preferences, without re-explaining.</span></span></li>
+      <li><span><b>Run the harness and the loop.</b> <span class="why">Independent reviewer per unit, blind to the rest; a lead pass for cross-unit consistency; re-audit whole units; stop only on one clean pass over everything.</span></span></li>
+      <li class="key"><span><b>Write every lesson back into the docs.</b> <span class="why">This is the step that makes it worth doing. Each failure becomes a rule; the instruction set gets stronger every run instead of resetting to zero.</span></span></li>
+      <li><span><b>Keep a human on the judgment calls, and keep the trail.</b> <span class="why">What changed, and what it changed from, is the audit record — it’s how a later reader trusts the result.</span></span></li>
+    </ol>
+
+    <div class="card good" style="margin-top:1.8rem">
+      <h3>Working solo, or without a multi-agent setup?</h3>
+      <p class="subtle" style="margin:0">The instruction files and memory work with a single agent — the layering and the write-back loop are the valuable parts, and neither needs a fleet. You can even be your own auditor: draft, let it rest, and return as a stranger who must verify every claim against its source with no memory of writing it. The ledger is what makes that honest — “re-checking” means checking sources, not re-reading your own reasoning.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="divider-label">A method for high-stakes AI-agent work · share freely</div>
+    <p style="margin:.7rem 0 0; font-family:var(--mono); font-size:.76rem; color:var(--ink-faint)">By Joseph Austerweil (@josephausterweil) &amp; Ira Winder (@irawinder) · CC BY 4.0</p>
+  </footer>
+
+</div>
