@@ -72,12 +72,13 @@
   /* contents */
   .contents { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.2rem 1.4rem; margin:1.6rem 0; box-shadow:var(--shadow); }
   .contents ol { list-style:none; counter-reset:c; margin:0; padding:0; display:grid; gap:.15rem; }
-  .contents li { counter-increment:c; display:grid; grid-template-columns:2rem 1fr; align-items:baseline; padding:.35rem 0; border-top:1px solid var(--rule-soft); }
+  .contents li { counter-increment:c; display:grid; grid-template-columns:2rem 1fr; align-items:baseline; gap:0 .3rem; padding:.55rem 0; border-top:1px solid var(--rule-soft); }
   .contents li:first-child { border-top:0; }
   .contents li::before { content:counter(c,decimal-leading-zero); font-family:var(--mono); font-size:.76rem; color:var(--oxblood); }
+  .contents .ci-body { display:flex; flex-direction:column; gap:.15rem; min-width:0; }
   .contents a { color:var(--ink); text-decoration:none; }
   .contents a:hover { color:var(--oxblood); text-decoration:underline; }
-  .contents .ci-note { color:var(--ink-faint); font-size:.86rem; }
+  .contents .ci-note { color:var(--ink-faint); font-size:.86rem; line-height:1.4; }
 
   .card { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.3rem 1.4rem; box-shadow:var(--shadow); margin:1.4rem 0; }
   .card > :last-child { margin-bottom:0; }
@@ -230,14 +231,14 @@
 
     <nav class="contents" aria-label="Contents">
       <ol>
-        <li><a href="#files">The layered instruction files</a> <span class="ci-note">— what auto-loads, and the “three contexts” trap</span></li>
-        <li><a href="#memory">Persistent memory</a> <span class="ci-note">— continuity across sessions</span></li>
-        <li><a href="#writeback">The write-back loop</a> <span class="ci-note">— why the docs get smarter</span></li>
-        <li><a href="#deduction">Encoded: the deduction discipline</a></li>
-        <li><a href="#harness">Encoded: the audit harness</a></li>
-        <li><a href="#loop">Encoded: the loop to convergence</a></li>
-        <li><a href="#proof">In practice: five rounds</a></li>
-        <li><a href="#adapt">Set it up for your own work</a></li>
+        <li><div class="ci-body"><a href="#files">The layered instruction files</a><span class="ci-note">what auto-loads, and the “three contexts” trap</span></div></li>
+        <li><div class="ci-body"><a href="#memory">Persistent memory</a><span class="ci-note">continuity across sessions</span></div></li>
+        <li><div class="ci-body"><a href="#writeback">The write-back loop</a><span class="ci-note">why the docs get smarter</span></div></li>
+        <li><div class="ci-body"><a href="#deduction">Encoded: the deduction discipline</a></div></li>
+        <li><div class="ci-body"><a href="#harness">Encoded: the audit harness</a></div></li>
+        <li><div class="ci-body"><a href="#loop">Encoded: the loop to convergence</a></div></li>
+        <li><div class="ci-body"><a href="#proof">In practice: five rounds</a></div></li>
+        <li><div class="ci-body"><a href="#adapt">Set it up for your own work</a></div></li>
       </ol>
     </nav>
   </section>
