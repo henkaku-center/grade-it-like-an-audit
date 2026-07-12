@@ -21,7 +21,7 @@ any task where a *plausible-but-wrong* result is expensive and the task comes ar
 
 ## Read it
 
-- **[The illustrated guide](https://josephausterweil.github.io/grade-it-like-an-audit/)** —
+- **[The illustrated guide](https://henkaku-center.github.io/grade-it-like-an-audit/)** —
   a single-page walkthrough (summary + full detail). *(Live once GitHub Pages is enabled; the
   source is [`docs/index.html`](docs/index.html) and renders offline too.)*
 - **[`METHODOLOGY.md`](METHODOLOGY.md)** — the same content as an editable markdown document.
