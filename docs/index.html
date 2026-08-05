@@ -236,8 +236,8 @@
         <li><div class="ci-body"><a href="#writeback">The write-back loop</a><span class="ci-note">why the docs get smarter</span></div></li>
         <li><div class="ci-body"><a href="#deduction">Encoded: the deduction discipline</a></div></li>
         <li><div class="ci-body"><a href="#harness">Encoded: the audit harness</a></div></li>
-        <li><div class="ci-body"><a href="#loop">Encoded: the loop to convergence</a></div></li>
-        <li><div class="ci-body"><a href="#proof">In practice: five rounds</a></div></li>
+        <li><div class="ci-body"><a href="#loop">Encoded: the loop to convergence — and its bound</a></div></li>
+        <li><div class="ci-body"><a href="#proof">In practice: two runs</a></div></li>
         <li><div class="ci-body"><a href="#adapt">Set it up for your own work</a></div></li>
       </ol>
     </nav>
@@ -392,10 +392,20 @@ Item&nbsp;3: 18/20 <span class="del">— (−2) required section left blank;</sp
   <!-- ============ 6 · LOOP ============ -->
   <section class="pillar" id="loop">
     <p class="pillar-index">What the docs encode · 3 of 3</p>
-    <h2>The loop, and the one condition that ends it</h2>
+    <h2>The loop, the condition that ends it — and the bound you also need</h2>
     <p>Audits find things; fixes get made; and then the fixes get audited <em>again.</em> The loop doesn’t stop when each unit has been clean at some point. It stops on one strict condition:</p>
 
     <blockquote>One pass comes back clean for the entire set at the same time.</blockquote>
+
+    <p>That rule tells you when you <em>may</em> stop. It does not tell you what to do when the loop stops getting closer — and on a later run, it didn’t. Nine rounds. Blockers hit zero at round seven and stayed there; minor findings flattened and stopped falling. The diagnostic is one question:</p>
+
+    <blockquote>What fraction of this round’s findings are in text that did not exist before the last round?</blockquote>
+
+    <p>Seven of ten, on round nine. The loop had stopped measuring the work’s error rate and started measuring <strong>its own edit rate</strong>: every round made fixes, every fix was new text, and new text is where findings come from. A process that manufactures its own work does not converge, and running it again is not a plan.</p>
+
+    <p>The fix wasn’t a tenth round — it was to <strong>scope the exposure</strong>. Diff what actually <em>ships</em>. Most findings sat in internal notes nobody outside would ever read; of the material that reaches a reader, exactly two sentences had changed. One was a deletion, which can’t introduce a new claim. The other added one noun, checked against the source in a single search. Nine rounds of process, replaced by one diff and one check.</p>
+
+    <p class="subtle">Two cautions: this applies only <em>after</em> blockers have sat at zero for several rounds — a loop still finding substantive errors is converging, however slowly. And scoping is a verification step, not a skip: the two changed sentences were still checked. What got dropped was the ceremony of a full pass, not the checking.</p>
 
     <div class="loop" role="img" aria-label="The audit loop: draft, normalize, audit, revise, re-audit — looping until one clean pass over the whole set, then ship.">
       <div class="loop-step"><span class="n">1</span>Draft + ledger</div>
@@ -416,8 +426,8 @@ Item&nbsp;3: 18/20 <span class="del">— (−2) required section left blank;</sp
   <!-- ============ PROOF ============ -->
   <section id="proof">
     <div class="eyebrow">In practice</div>
-    <h2>One assignment, five rounds to convergence</h2>
-    <p class="subtle">A real run over five students. Scores were settled early and <strong>never moved</strong> — every finding was a grounding or phrasing defect, not a scoring error. Three defects were found <em>inside a previous round’s fix.</em> That’s the loop, and the write-back rules, earning their keep.</p>
+    <h2>Two runs: one converged, one didn’t</h2>
+    <p class="subtle">Run A — a real run over five units. Outcomes were settled early and <strong>never moved</strong> — every finding was a grounding or phrasing defect, not a scoring error. Three defects were found <em>inside a previous round’s fix.</em> That’s the loop, and the write-back rules, earning their keep.</p>
 
     <div class="trail">
       <div class="round">
@@ -468,6 +478,57 @@ Item&nbsp;3: 18/20 <span class="del">— (−2) required section left blank;</sp
       <div class="stat"><div class="v">0</div><div class="k">score changes from audits</div></div>
       <div class="stat"><div class="v">1&times;</div><div class="k">clean pass = done</div></div>
     </div>
+
+    <h3 style="margin-top:2.2rem">And a second run, which never converged</h3>
+    <p class="subtle">Same harness, harder material. This is the run that produced the bound in the section above — and it is the more useful of the two, because it shows the failure mode rather than the success.</p>
+
+    <div class="trail">
+      <div class="round">
+        <div class="rn"><b>1–5</b>rounds</div>
+        <div>
+          <h3>Real convergence, and the inverse failure.</h3>
+          <p>Substantive findings throughout, including the mirror of run A’s problem: text <em>softer</em> and more flattering than the reasoning behind it. Blockers falling round on round.</p>
+          <span class="chip block">3 blockers</span><span class="chip minor">18 minors</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>6–8</b>rounds</div>
+        <div>
+          <h3>The defect becomes the repair.</h3>
+          <p>Round 6’s one blocker was round 5’s blocker, surviving inside round 5’s replacement for it. Round 7 found that round 6’s <em>countermeasure</em> had itself failed three times. Round 8’s findings sat one level further inside the process again.</p>
+          <span class="chip minor">0 blockers by round 7</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>9</b>round</div>
+        <div>
+          <h3>Seven of ten findings were defects in round 8’s own repairs.</h3>
+          <p>The count rose rather than fell. Not a loop closing in — a loop idling, generating exactly as much work as it resolved.</p>
+          <span class="chip minor">10 minors</span><span class="chip block">0 blockers</span>
+        </div>
+      </div>
+      <div class="round">
+        <div class="rn"><b>✕</b>stop</div>
+        <div>
+          <h3>Ended by a diff, not by a tenth round.</h3>
+          <p>Two sentences of shipped text had changed since round 8. One a deletion, one a single new noun — both verified directly, in minutes.</p>
+          <span class="chip clean">scoped, then shipped</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="v">9</div><div class="k">rounds, never converged</div></div>
+      <div class="stat"><div class="v">45</div><div class="k">independent reviews</div></div>
+      <div class="stat"><div class="v">0</div><div class="k">score changes from audits</div></div>
+      <div class="stat"><div class="v">2</div><div class="k">sentences actually at risk</div></div>
+    </div>
+
+    <p style="margin-top:1.6rem"><strong>Then the part that matters most.</strong> A second person read the finished material once, cold, with no knowledge of the process — and found a defect that all nine rounds had passed, and that one round had examined and explicitly approved. The sentence predicted the work’s future influence in the world. Every reviewer had checked whether it was sourced, correctly attributed and consistent with the record; it passed all three, <em>because a claim about what will happen later has no source to contradict it.</em></p>
+
+    <p>So: add the check the harness was missing — <em>is this claim about the artifact, or about the world?</em> — and keep one reader outside the loop. Not a better auditor. A different one, arriving once, without the process in their head. On both runs, that was the cheapest defect-per-hour in the whole method.</p>
+
+    <p class="subtle">Across both runs — fourteen rounds and seventy independent reviews — <strong>not one finding changed an outcome.</strong> Every one was a grounding or phrasing defect. If your loop is meant to protect the result, measure whether it ever has; if it only protects the prose, size it accordingly.</p>
   </section>
 
   <!-- ============ ADAPT ============ -->

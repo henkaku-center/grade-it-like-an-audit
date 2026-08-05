@@ -69,11 +69,27 @@ What those files *encode* is the working method:
   raised) is a discrete, named, evidenced claim. If you can't name it, you don't claim it.
 - **An independent audit harness** — one reviewer per unit of work, each reading *only* that
   unit, blind to the rest, so a claim can't be "confirmed" by another unit's data.
-- **A loop to convergence** — audits find things, fixes get made, fixes get re-audited whole.
-  It ends only when a single pass is clean for the *entire set at once.*
+- **A loop to convergence — with a bound on it.** Audits find things, fixes get made, fixes get
+  re-audited whole. It ends when a single pass is clean for the *entire set at once* — or, when
+  that pass never comes, when a diff of the shipped material shows the loop has started auditing
+  its own repairs rather than the work.
 
-In one real run this loop took **five rounds** — and three of its catches were errors found
+In one real run the loop took **five rounds**, and three of its catches were errors found
 *inside a previous round's fix.* That is the loop earning its keep.
+
+A second run took **nine rounds and never converged.** Blockers hit zero at round seven and
+stayed there, while minor findings flattened and stopped falling — because seven of round nine's
+ten findings were defects in round eight's *repairs*. The loop had stopped measuring the work's
+error rate and started measuring its own edit rate. It was ended not by a tenth round but by a
+diff: of the material that actually reaches a reader, two sentences had changed, and both were
+verified in minutes.
+
+Across both runs — **fourteen rounds, seventy independent reviews — not one finding changed an
+outcome.** Every one was a grounding or phrasing defect. Then a single person outside the loop
+read the finished material once and found a defect all fourteen rounds had passed.
+
+Those three facts are the honest summary of what this method does, what it costs, and where its
+blind spot is.
 
 See [`METHODOLOGY.md`](METHODOLOGY.md) for the detail behind each of these.
 

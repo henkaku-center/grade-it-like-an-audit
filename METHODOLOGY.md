@@ -24,9 +24,10 @@ illustration is generic and invented; none reproduces any real person's work.
 3. [The write-back loop](#3-the-write-back-loop)
 4. [Encoded: the discrete-deduction discipline](#4-encoded-the-discrete-deduction-discipline)
 5. [Encoded: the audit harness](#5-encoded-the-audit-harness)
-6. [Encoded: the loop to convergence](#6-encoded-the-loop-to-convergence)
-7. [In practice: five rounds to clean](#7-in-practice-five-rounds-to-clean)
-8. [Set it up for your own work](#8-set-it-up-for-your-own-work)
+6. [Encoded: the loop to convergence — and when it stops converging](#6-encoded-the-loop-to-convergence--and-when-it-stops-converging)
+7. [What the harness cannot catch](#7-what-the-harness-cannot-catch)
+8. [In practice: two runs](#8-in-practice-two-runs)
+9. [Set it up for your own work](#9-set-it-up-for-your-own-work)
 
 ---
 
@@ -219,7 +220,7 @@ Two supports make the fan-out work:
 
 ---
 
-## 6. Encoded: the loop to convergence
+## 6. Encoded: the loop to convergence — and when it stops converging
 
 Audits find things; fixes get made; and then — this is the part everyone gets wrong — the fixes
 get audited *again*. The loop does not stop when each unit has been clean at some point. It stops
@@ -243,35 +244,182 @@ Two rules keep the loop from lying to you:
   judgment calls — borderline deductions, tone, whether a fix is acceptable — are the human's,
   not the harness's.
 
-### The six lessons that cost the most
+### The stopping rule tells you when you *may* stop. It does not tell you when to stop trying.
+
+This is the correction a later run forced, and it is the most important thing on this page.
+
+That run took **nine rounds** over five units and never satisfied the rule. Blockers — findings
+that would change what shipped — hit zero at round seven and stayed there. Minor findings did
+not fall. They flattened at eight to eleven per round and stayed flat. The loop was not
+converging. It was idling at a constant rate, and a tenth round was queued on the assumption
+that a clean pass was one more round away. It was not.
+
+**The diagnostic is a single question:**
+
+> What fraction of this round's findings are in text that did not exist before the last round?
+
+On round nine, seven of ten were. The loop had stopped measuring the artifact's error rate and
+started measuring **its own edit rate**. Every round produced fixes; every fix was new text; new
+text is where findings come from. A process that manufactures its own work does not converge,
+and running it again is not a plan.
+
+**The resolution was not another round. It was to scope the exposure.** Instead of asking "what
+is still wrong?", ask "what actually changed in the material that ships?" — and diff it.
+
+That diff took minutes and collapsed the problem. Most of the round's findings sat in text that
+never leaves the building: internal notes, working commentary, per-unit reasoning. Of the
+material that actually reaches the reader, **exactly two sentences had changed** since the
+previous round. One was a deletion, which cannot introduce a new claim. The other introduced a
+single new noun, which was checked against the source artifact in one search.
+
+Nine rounds of process, replaced by one diff and one check.
+
+```
+if (blockers == 0 for N rounds) and (findings mostly land in the previous round's own fixes):
+        stop looping · diff what ships · verify only what changed there
+else:
+        loop
+```
+
+**The rule:** before convening another round, diff the shipped artifact against the last
+audited version. If this round's findings concentrate in text the reader will never see, the
+loop is auditing itself. **Audit what ships.**
+
+Two cautions, so this is not read as permission to quit early:
+
+- **This applies only after blockers have gone to zero and stayed there.** A loop still finding
+  substantive errors is converging, however slowly, and the stopping rule stands.
+- **Scoping is a verification step, not a skip.** The two changed sentences were still checked
+  against sources. What was dropped was the *ceremony* of a full pass, not the checking.
+
+### The lessons that cost the most
 
 Each of these is why a rule exists. If you take nothing else, take these.
 
 1. **A fix is a new claim, and it inherits the counterexample.** Rewording a flawed sentence
    usually preserves what made it flawed. Re-verify every replacement from scratch, as if it had
    never been checked.
-2. **Revisions introduce errors at a high rate.** Every round's fixes seed the next round's
+2. **When a claim fails twice, delete it — do not narrow it.** This is the resolution to lesson
+   1, and it took four rounds on one claim to learn. The instinct on a failed claim is to add a
+   qualifier, restrict the scope, hedge the verb. Each narrowing is a new claim that usually
+   inherits the same counterexample. One claim produced a finding in four consecutive rounds;
+   each round narrowed it; the fourth found that the previous narrowing had landed on the wrong
+   side of a dash, leaving the original conclusion standing in adjective form. **Subtraction is
+   the only edit that cannot inherit a counterexample.** It held every time it was used;
+   narrowing did not hold once.
+3. **Revisions introduce errors at a high rate.** Every round's fixes seed the next round's
    findings. This is the default behavior of editing under pressure, not sloppiness — which is
-   why the re-audit step is non-negotiable.
-3. **Praise universals die to a single counterexample.** "You did X *every* time" — one exception
+   why the re-audit step is non-negotiable, and why lesson 2 matters so much.
+4. **A verification assertion is itself a claim, and it can be false.** "Every reference was
+   checked." "All sources verified." These read as process notes; they are claims, and nothing
+   checks them. One round's record asserted that every cross-reference in it had been opened and
+   verified. A later reviewer opened them: five did not resolve, and two pointed into a
+   different unit's material. **Record the count you actually checked** — "six of eight
+   verified, two not" is worth more than "all verified," and unlike "all verified" it can be
+   true.
+5. **A record can interfere with its own instrument.** One note recorded that a search over the
+   project history returned exactly one result — a reproducible verification, correctly
+   performed. Committing the note made it false, because the note *quoted the search string* and
+   so became a second result. **Record what you found and where, not the command that found
+   it**, whenever the command searches text the record will then quote.
+6. **Praise universals die to a single counterexample.** "You did X *every* time" — one exception
    falsifies the whole sentence, and there's almost always one. Write "nearly every," "most," or
    name the instances.
-4. **Attribution is a data-format trap.** Deciding who said something first, from a raw log, means
+7. **Attribution is a data-format trap.** Deciding who said something first, from a raw log, means
    reading the log's *actual* structure — a person's words can be recorded under a field you
    weren't searching. Verify against how the record is really shaped.
-5. **Verify behavior against the shipped artifact, not the narrative.** What a system *did* is
+8. **Verify behavior against the shipped artifact, not the narrative.** What a system *did* is
    settled by its code and output, not by the story of the session.
-6. **Independence needs a coherence pass on top.** Isolated reviewers are right for depth and for
+9. **Independence needs a coherence pass on top.** Isolated reviewers are right for depth and for
    catching cross-contamination, but they cannot enforce consistency *between* units. Pair the
    fan-out with one lead pass. Neither alone is sufficient.
+10. **Generate every format from one source.** If the same content ships as a document *and* a
+    message *and* a summary, generate them all from one file. On one run a late correction
+    reached two of six copies, and three different wordings of the same sentence went out to
+    different readers. It surfaced a month later, by accident, and by then the archive no longer
+    matched what people had actually received.
 
 ---
 
-## 7. In practice: five rounds to clean
+## 7. What the harness cannot catch
 
-A real run over five units. The outcomes were settled early and **never moved** — every finding
-was a grounding or phrasing defect, not an outcome error. Three defects were found *inside a
-previous round's fix.* That's the loop, and the write-back rules, earning their keep.
+Sections 4–6 are the machinery. This section is its blind spots — both found the hard way, and
+neither fixable by running the machinery harder.
+
+### Audit the standard, not just the output
+
+The discrete-deduction discipline makes every judgment defensible *against the criteria*. It
+never questions the criteria.
+
+One run surfaced three criteria that could not be scored at all — not because the work was weak,
+but because **the evidence each criterion graded had never been collected.** A criterion was
+published, weighted, and counted toward the outcome; nobody had gathered the material it judged.
+
+The signature is unmistakable once you know it. Independent reviewers, handed identical
+evidence, scored one such criterion across a **twelve-point spread on a twenty-point scale.**
+That is not disagreement about quality. It is disagreement about what is even being read — and
+it is what an unscoreable criterion looks like from the inside.
+
+The resolution generalizes to one test, applied to your own standard rather than to the work:
+
+> **Did the instructions explicitly ask for this, and did we collect what we asked for?**
+
+Where the answer is no, **the cost falls on the assessor, not the subject.** Criteria that
+failed the test were dropped and the remainder rescaled; a component nobody had collected was
+awarded in full to everyone. Subjects are held to what they were told to do — not to what you
+wish you had told them.
+
+Run this *before* the work starts:
+
+- For each criterion, name the artifact that will evidence it. Not "we'll see it" — the file.
+- If no artifact gets collected, the criterion is decoration. Collect it or delete it.
+- **Partial capture is worse than none.** If a criterion's evidence is captured for some
+  instances and not others, do not use it. Partial evidence *looks* scoreable, which is exactly
+  the danger: scoring from it makes the outcome depend on who happened to get recorded rather
+  than on what they did. A reviewer will reach for it precisely because it is there.
+
+### Independent reviewers share blind spots — and more of them will not help
+
+The fan-out in section 5 catches what one reviewer misses. It cannot catch what all of them are
+looking away from.
+
+On one run, a single sentence survived **nine rounds and forty-five independent reviews.** One
+round examined that exact sentence and passed it, with a note explaining why it was fine. A
+second person then read the finished material once, cold, with no knowledge of the process, and
+flagged it immediately.
+
+The sentence predicted the work's future influence in the world. Every reviewer had checked it
+the way they checked everything: is it sourced, is the attribution right, does it contradict the
+record? It passed all three — because **a claim about what will happen later has no source to
+contradict it.**
+
+The reviewers were calibrated for one failure mode and blind to another. Two fixes, and you want
+both:
+
+1. **Add the check explicitly**, because it is not implied by "verify every claim":
+   > Is this claim about the artifact, or about the world? A claim about the world cannot be
+   > verified against the artifact, and no amount of source-checking will surface it.
+2. **Keep one reader outside the loop.** Not a better auditor — a *different* one, arriving
+   once, at the end, without the process in their head. Forty-five reviewers inside the harness
+   were worth less on this specific defect than one person reading it fresh. Budget for that
+   person.
+
+The general form is worth stating plainly, because it applies to any review system you build:
+**a harness converges on the failure modes it was built to catch, and grows blind to the rest in
+proportion to how well it works.** The better your loop gets, the more you need someone outside
+it.
+
+---
+
+## 8. In practice: two runs
+
+Two runs of the same harness over five units each. In **both**, the outcomes were settled early
+and **never moved** — across fourteen rounds and seventy independent reviews, not one finding
+changed an outcome. Every one was a grounding or phrasing defect. That is the strongest single
+piece of evidence for the method and the strongest argument for bounding it: the loop is very
+good at prose defects and, on this evidence, unnecessary for outcomes.
+
+### Run A — converged in five rounds
 
 | Round | What happened |
 |---|---|
@@ -281,12 +429,44 @@ previous round's fix.* That's the loop, and the write-back rules, earning their 
 | **4** | Same clause, third rewrite, still wrong — it kept implying a claim the shipped artifact couldn't back. Only when reduced to a plain, countable fact did it hold. |
 | **5** | Clean for all five, in the same pass. Convergence. |
 
-**5** rounds to converge · **3** defects hidden in prior fixes · **0** outcome changes from the
-audits · **1** clean pass = done.
+**5** rounds · **3** defects hidden in prior fixes · **0** outcome changes · **1** clean pass = done.
+
+### Run B — nine rounds, and it never converged
+
+Same harness, harder material, and the run that produced section 6's correction and section 7
+entire.
+
+| Round | Blockers / minors | What happened |
+|---|---|---|
+| **1–5** | 3 / 18 at the low point | Substantive findings, including the inverse of run A's failure: text *softer* and more flattering than the reasoning behind it. Real convergence. |
+| **6** | 1 / 10 | The one blocker was round 5's own blocker, surviving inside round 5's replacement for it. Third consecutive round where the defect was the repair. |
+| **7** | 0 / 11 | First round with no blocker anywhere. What it found instead: the *countermeasure* from round 6 had failed three times — bad cross-reference counts, a tally short by two. |
+| **8** | 0 / 8 | Findings now one level inside the process: a clause correctly narrowed in round 7 whose following inference was left unnarrowed. |
+| **9** | 0 / 10 | **Seven of ten findings were defects in round 8's repairs, or in the record describing them.** Count rising, not falling. |
+| **—** | — | **Stopped by diff, not by another round.** Two sentences of shipped text had changed since round 8; both verified directly. See section 6. |
+
+**9** rounds · **45** independent reviews · **0** outcome changes · **0** clean passes ·
+**stopped by scoping.**
+
+Then the part that matters most: a second person read the finished material once, cold, and
+found a defect that all nine rounds had passed — and one round had explicitly approved. See
+section 7.
+
+### What the two runs together say
+
+- **The loop is worth running.** Run A's three-defects-inside-fixes and run B's rounds 1–5 are
+  real errors caught before they reached anyone.
+- **The loop must be bounded.** Run B shows it does not always terminate on its own, and that a
+  process generating its own findings can look identical to a process still finding things.
+- **Neither run's audits changed an outcome.** Fourteen rounds. If your loop is meant to protect
+  the *result*, measure whether it ever has; if it only ever protects the *prose*, size it
+  accordingly.
+- **Keep someone outside it.** The cheapest defect-per-hour on either run was one fresh reader
+  at the end.
 
 ---
 
-## 8. Set it up for your own work
+## 9. Set it up for your own work
 
 None of this is specific to grading. It fits any recurring, high-stakes task you hand to an AI
 agent — code review, a compliance or security audit, report QA, contract review, release notes —
@@ -299,15 +479,24 @@ anywhere a plausible-but-wrong result is expensive and the task comes around aga
 3. **Write the per-task file — and name your ground-truth sources.** The criteria for this task,
    and exactly which files or systems are authoritative for verifying a claim. Separate what's
    authoritative from what your subject was entitled to rely on.
+   **Then audit the criteria themselves, before any work starts** (section 7): for each one,
+   name the artifact that will evidence it, and delete or fix any criterion whose evidence you
+   will not actually collect — or will collect only for some instances.
 4. **Fix the working-file shape.** An evidence ledger (claim + source, written as you draft), a
    defined output format, one review file per round. Make the reasoning recoverable.
 5. **Turn on memory for continuity.** Let a fresh session start knowing the last run's state and
    your standing preferences, without re-explaining.
-6. **Run the harness and the loop.** Independent reviewer per unit, blind to the rest; a lead pass
-   for cross-unit consistency; re-review whole units; stop only on one clean pass over everything.
-7. **Write every lesson back into the docs.** *This is the step that makes it worth doing.* Each
+6. **Run the harness and the loop — and bound it.** Independent reviewer per unit, blind to the
+   rest; a lead pass for cross-unit consistency; re-review whole units; stop on one clean pass
+   over everything. **And decide in advance what you will do if that pass never comes** (section
+   6): once blockers sit at zero and the findings are mostly landing in the previous round's own
+   repairs, stop looping, diff what actually ships, and verify only what changed there.
+7. **Book one reader outside the loop.** A person who arrives once, at the end, who has not
+   watched the process and is not calibrated by it. This is the cheapest defect-per-hour in the
+   whole method (section 7).
+8. **Write every lesson back into the docs.** *This is the step that makes it worth doing.* Each
    failure becomes a rule; the instruction set gets stronger every run instead of resetting.
-8. **Keep a human on the judgment calls, and keep the trail.** What changed, and what it changed
+9. **Keep a human on the judgment calls, and keep the trail.** What changed, and what it changed
    *from*, is the audit record — it's how a later reader trusts the result.
 
 ### Working solo, or without a multi-agent setup?
