@@ -19,7 +19,7 @@ metadata:
   type: project        # user | feedback | project | reference
 ---
 
-[The fact, stated plainly. Convert relative dates to absolute ("last week" → 2026-07-01).]
+[The fact, stated plainly. Convert relative dates to absolute ("last week" → 2025-10-01).]
 
 <!-- For `feedback` and `project` types, follow with these two lines: -->
 

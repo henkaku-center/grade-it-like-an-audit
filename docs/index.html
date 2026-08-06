@@ -1,4 +1,4 @@
-<title>The markdown is the program — how we instruct our grading agents</title>
+<title>The markdown is the program — how to instruct a grading agent</title>
 <style>
   :root {
     --bg:#e6e4db; --surface:#f3f1ea; --surface-2:#edeae1; --ink:#22252c; --ink-soft:#575b52;
@@ -205,7 +205,7 @@
     <p class="kicker">A field-tested method for instructing AI agents</p>
     <div class="eyebrow">Documentation-driven agents</div>
     <h1>The markdown is the program.</h1>
-    <p class="lead">We don’t configure our grading agents in code. We <em>instruct</em> them — in a layered, version-controlled, self-correcting set of markdown files that load into the agent’s context automatically and override its default behavior. The rubric, the fairness rules, the audit protocol, and every hard-won lesson live in those files. The agents just read them.</p>
+    <p class="lead">You don’t configure a grading agent in code. You <em>instruct</em> it — in a layered, version-controlled, self-correcting set of markdown files that load into the agent’s context automatically and override its default behavior. The rubric, the fairness rules, the audit protocol, and every hard-won lesson live in those files. The agents just read them.</p>
     <p class="subtle">This guide explains that system so you can build one for a new assignment — or for any recurring task you hand to an AI agent. It comes in two passes: a one-screen <strong>summary</strong>, then the <strong>detail</strong> — the file layers, the persistent memory, the write-back loop that makes the instructions compound, and the three things the docs encode (a deduction discipline, a verification harness, and an audit loop). The whole point: your instructions become a durable asset that gets <em>smarter every time it’s used.</em></p>
     <div class="hero-meta">
       <span><b>Layer 1</b> · Instruction files</span>
@@ -281,7 +281,7 @@
       <div class="ctx">
         <p class="scope">shipped/</p>
         <h3>Student-facing tutor prompt</h3>
-        <p>A different audience entirely — this one <em>ships to students</em> and tells the agent to be a Socratic tutor who never hands over answers.</p>
+        <p>A different audience entirely — this one <em>ships to the people being assessed</em> and tells the agent to act as a Socratic tutor that never hands over answers.</p>
       </div>
     </div>
     <p class="subtle">When you’re grading, you are not the student’s tutor — so “never give answers” does not apply to the instructor’s questions. Naming the contexts explicitly, in the docs, is what keeps an agent from importing a rule from the wrong layer.</p>
@@ -312,7 +312,7 @@
 <span class="key">metadata:</span>
 &nbsp;&nbsp;<span class="key">type:</span> project     <span class="muted">// user | feedback | project | reference</span>
 
-Q3 run completed 2026-07-11. Five review rounds to converge; outcomes never moved.
+Q3 run completed 2025-10-14. Five review rounds to converge; outcomes never moved.
 Lesson banked: a fix is a new claim — re-verify replacements from scratch.
 Related: <span class="hint">[[task-2026-q2-complete]]</span>   <span class="muted">// memories link to each other</span>
     </div>
@@ -354,10 +354,10 @@ Related: <span class="hint">[[task-2026-q2-complete]]</span>   <span class="mute
     <p>One rule the files impose on every score: <strong>every point you remove is tied to a discrete, named issue, with a one-line “how to avoid.”</strong> If you can’t name the specific thing the person did or failed to do, the points are awarded. A deduction is a claim, and a claim needs evidence.</p>
 
     <div class="code">
-Item&nbsp;3: 18/20 <span class="del">— (−2) required section left blank;</span>
-&nbsp;&nbsp;the checklist marks it “skipped.”
-&nbsp;&nbsp;<span class="hint">How to avoid: the template offered four testable options — completing one earns it back.</span>
-<span class="muted">// no nameable issue on the other 18 points → earned, not “given”</span>
+Item&nbsp;3: 16/20 <span class="del">— (−4) two required fields left empty;</span>
+&nbsp;&nbsp;the summary sheet marks them “n/a.”
+&nbsp;&nbsp;<span class="hint">How to avoid: either field accepts one line — “not measured, because X” scores full.</span>
+<span class="muted">// no nameable issue on the other 16 points → earned, not “given”</span>
     </div>
 
     <ul class="tight">

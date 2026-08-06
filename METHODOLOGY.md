@@ -12,8 +12,11 @@ This document describes that structure in three layers of instruction infrastruc
 things those files encode: a **deduction discipline**, an **audit harness**, and a **loop to
 convergence**. It closes with a setup recipe you can follow for your own work.
 
-The running example is grading, because that is where the method was hardened. Every concrete
-illustration is generic and invented; none reproduces any real person's work.
+The running example is grading, because that is where the method was hardened. No illustration
+here reproduces anyone's actual work — each is described by shape, with the subject matter and
+identifying specifics removed. The **run statistics** (round counts, finding counts, defects
+found inside prior fixes, outcomes changed) are real, because a method page that invents its
+own evidence is worthless; every one is an aggregate about a process, attached to no person.
 
 ---
 
@@ -106,7 +109,7 @@ metadata:
   type: project        # user | feedback | project | reference
 ---
 
-Q3 run completed 2026-07-11. Five review rounds to converge; outcomes never moved.
+Q3 run completed 2025-10-14. Five review rounds to converge; outcomes never moved.
 Lesson banked: a fix is a new claim — re-verify replacements from scratch.
 Related: [[task-2026-q2-complete]]
 ```
@@ -163,8 +166,8 @@ the specific thing the subject did or failed to do, the points are awarded — t
 raised. A judgment is a claim, and a claim needs evidence.
 
 ```
-Item 3: 18/20 — (−2) required section left blank; the checklist marks it "skipped."
-  How to avoid: the template offered four testable options — completing one earns it back.
+Item 3: 16/20 — (−4) two required fields left empty; the summary sheet marks them "n/a."
+  How to avoid: either field accepts one line — "not measured, because X" scores full.
   // no nameable issue on the other 18 points → they are earned, not "given"
 ```
 

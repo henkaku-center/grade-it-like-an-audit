@@ -124,8 +124,18 @@ This repository is a **methodology and template kit only**. It deliberately cont
 
 - **No** names or identifying details of any person.
 - **No** submitted work, evaluations, scores, quotes, or transcripts.
-- **No** data from any real run — only generic, invented illustrations described by *shape*
-  (e.g. "a paraphrase inside quotation marks"), never by content.
+- **No** illustration that reproduces anyone's actual work. Every anecdote is described by
+  *shape* — "a paraphrase inside quotation marks," "a claim that predicted how the work would
+  be received" — with the subject matter, wording and identifying specifics removed.
+
+**Run statistics are real, and deliberately so.** Round counts, finding counts, how many
+defects were hidden inside a previous round's fix, and the fact that no audit finding ever
+changed an outcome — those are the actual numbers from real runs, because a methodology page
+that invents its own evidence is worthless. They are aggregates about a *process*: none is
+attached to a person, and no individual's score or work appears anywhere.
+
+*This bullet used to claim "no data from any real run." That was never accurate and the page
+now says what is true instead — an overclaiming privacy notice is worse than an honest one.*
 
 If you adopt this method, keep your actual working files — inputs, evaluations, memory,
 audit notes — in a **separate, private** repository. The whole point of the discipline is to
