@@ -37,7 +37,7 @@ then the answer key is unsealed, the seventh is revealed, and you learn why a hu
 stays in the loop. Ten minutes, zero real data.
 
 ```
-/plugin marketplace add josephausterweil/grade-it-like-an-audit
+/plugin marketplace add henkaku-center/grade-it-like-an-audit
 /plugin install grade-it-like-an-audit
 ```
 
@@ -277,14 +277,12 @@ students or other people, read the data-handling guidance
 ([`skills/grade-audit-setup/references/data-handling.md`](skills/grade-audit-setup/references/data-handling.md))
 — including the parts that are your institution's call, not a plugin's.
 
-## Repository homes
+## Repository home
 
 The canonical repository is
-[josephausterweil/grade-it-like-an-audit](https://github.com/josephausterweil/grade-it-like-an-audit)
-(where the install command points). The
-[henkaku-center copy](https://github.com/henkaku-center/grade-it-like-an-audit) is a push
-mirror kept so the illustrated guide's URL stays put — edits land on the canonical repo
-and are pushed to the mirror at release (see [RELEASING.md](RELEASING.md)).
+[henkaku-center/grade-it-like-an-audit](https://github.com/henkaku-center/grade-it-like-an-audit)
+— it is where the install command points and where the illustrated guide is served from.
+Edits land there; any other copy is a mirror (see [RELEASING.md](RELEASING.md)).
 
 ## Disclaimer
 

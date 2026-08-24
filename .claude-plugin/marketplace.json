@@ -1,8 +1,8 @@
 {
   "name": "grade-it-like-an-audit",
   "owner": {
-    "name": "Joseph Austerweil",
-    "url": "https://github.com/josephausterweil"
+    "name": "Joseph Austerweil and Ira Winder",
+    "url": "https://github.com/henkaku-center"
   },
   "metadata": {
     "description": "Grade it like an audit — a field-tested methodology for AI-assisted high-stakes evaluation, packaged as an installable plugin."
