@@ -1,0 +1,23 @@
+{
+  "name": "grade-it-like-an-audit",
+  "description": "Audit-style grading and evaluation for high-stakes recurring work: guided setup, a blind per-unit auditor fan-out with a lead consistency pass, a bounded loop to convergence, calibration against your own grading, and a write-back loop that makes your instructions stronger every run.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Joseph Austerweil and Ira Winder",
+    "url": "https://github.com/josephausterweil"
+  },
+  "homepage": "https://henkaku-center.github.io/grade-it-like-an-audit/",
+  "repository": "https://github.com/josephausterweil/grade-it-like-an-audit",
+  "license": "CC-BY-4.0",
+  "keywords": [
+    "grading",
+    "evaluation",
+    "audit",
+    "rubric",
+    "education",
+    "code-review",
+    "compliance",
+    "subagents",
+    "methodology"
+  ]
+}

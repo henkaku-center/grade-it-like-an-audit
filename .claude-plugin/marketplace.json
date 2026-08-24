@@ -1,0 +1,17 @@
+{
+  "name": "grade-it-like-an-audit",
+  "owner": {
+    "name": "Joseph Austerweil",
+    "url": "https://github.com/josephausterweil"
+  },
+  "metadata": {
+    "description": "Grade it like an audit — a field-tested methodology for AI-assisted high-stakes evaluation, packaged as an installable plugin."
+  },
+  "plugins": [
+    {
+      "name": "grade-it-like-an-audit",
+      "source": "./",
+      "description": "Audit-style grading and evaluation: blind per-unit auditor fan-out, bounded convergence loop, calibration mode, and a write-back loop that compounds your instruction files."
+    }
+  ]
+}
