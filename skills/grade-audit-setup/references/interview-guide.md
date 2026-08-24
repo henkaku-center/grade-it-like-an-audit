@@ -91,6 +91,24 @@ walk them through the plugin's `references/data-handling.md` guidance now, and d
 the strictest option they'll accept. Also set where working files live (private repo vs
 local-only).
 
+**Q6a — the institutional gate (MANDATORY when the material is student work).** Ask
+directly: "Has your institution approved this AI service for student educational
+records — and do you know that in writing?" Student submissions and grades are typically
+FERPA-covered education records (or the local equivalent — state law, GDPR), and whether
+they may enter an AI service is the institution's call, not the instructor's or this
+plugin's. If the answer is no or unsure:
+
+- Say plainly, without hedging: **check with your university before real student work
+  enters this workflow** — registrar, privacy office, or counsel; the data-handling
+  reference lists the two questions to ask them.
+- Proceed with setup anyway — the workspace, demo, `check-mine` on de-identified text,
+  and an anonymized pilot are all available now — but write the gate into the generated
+  task CLAUDE.md as a never-event: "No identifiable student data enters this workspace
+  until institutional approval is confirmed (recorded here, with date and scope, when it
+  is)."
+- Never present anonymization as a way around the question; de-identification standards
+  are also the institution's to set.
+
 ## Q7 — What the subject was owed
 
 "What were the people being evaluated told — handouts, specs, docs, playbooks? If your

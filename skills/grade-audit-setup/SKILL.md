@@ -54,3 +54,10 @@ call that is theirs.
   never-events question is where you surface `references/data-handling.md` — including
   the anonymize-before-grading option — and default everything sensitive to git-ignored,
   local-only paths.
+- **Student work triggers the institutional gate (interview Q6a), always.** Student
+  submissions and grades are typically FERPA-covered education records; whether they may
+  enter an AI service is the institution's decision. Unless the user confirms written
+  institutional approval, tell them plainly to check with their university first, keep
+  the workspace on synthetic/de-identified paths, and write the gate into the generated
+  task CLAUDE.md as a never-event. Be direct about this — it is the one place this skill
+  does not defer to user convenience.

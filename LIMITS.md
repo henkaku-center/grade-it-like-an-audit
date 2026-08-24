@@ -61,9 +61,15 @@ is the human's judgment plus the evidence discipline — not the loop count.
   tell you).
 - **As an outcome oracle.** The harness proposes; the human disposes. If you want a
   system to *decide* grades unsupervised, this is not it, on purpose.
-- **As a substitute for institutional approval.** Data-handling questions (FERPA and
-  kin) are answered by your institution's agreements, not by a plugin — see
-  `skills/grade-audit-setup/references/data-handling.md`.
+- **Before your institution has approved it — for real student work, full stop.**
+  Student submissions and grades are typically FERPA-covered education records (state
+  student-privacy law and GDPR raise the same question elsewhere), and no plugin can
+  confer compliance. Check with your university — registrar, privacy office, or counsel
+  — and get the approval in writing before identifiable student data enters this
+  workflow; the setup interview gates on exactly this. Until then: synthetic demo,
+  de-identified `check-mine`, anonymized pilot only. See
+  `skills/grade-audit-setup/references/data-handling.md`. Not legal advice; your
+  institution's rules govern.
 
 ## Dogfood and test record
 

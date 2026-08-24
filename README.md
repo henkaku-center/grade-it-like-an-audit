@@ -59,6 +59,17 @@ When you're ready: `/grade-audit setup` interviews you in plain language and gen
 your whole workspace. From then on, `/grade-audit` alone always tells you where you are
 and what's next.
 
+> ⚠️ **Educators: check with your university before real student work enters any AI
+> tool — this one included.** Student submissions and grades are typically education
+> records under FERPA (or your local equivalent: state student-privacy law, GDPR), and
+> whether they may be processed by an AI service is decided by your institution's
+> agreements, not by this plugin or any provider's marketing. Ask your registrar,
+> privacy office, or counsel, get it in writing, and until then stay on the rungs that
+> use no student data (the demo is fully synthetic). The setup interview asks about
+> this explicitly and holds the gate. Details:
+> [data-handling guidance](skills/grade-audit-setup/references/data-handling.md). This
+> is not legal advice — your institution's rules govern.
+
 ## Never used Claude Code?
 
 Claude Code is Anthropic's AI coding/agent tool; this plugin runs inside it. Two ways in:
