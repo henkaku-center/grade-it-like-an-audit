@@ -13,14 +13,15 @@ instructions live in your head, drift between runs, and reset to zero every sess
 
 This repository is a different approach, three ways at once: a **methodology** you can
 read, a **template kit** you can copy by hand, and a **plugin** that automates the whole
-workflow. It was built and hardened on a real grading workload, but nothing in it is
-specific to grading — it fits code review, security and compliance audits, report QA,
+workflow. It was built and hardened on a real grading workload, but nothing in the method
+is specific to grading — it fits code review, security and compliance audits, report QA,
 contract review: any task where a *plausible-but-wrong* result is expensive and the task
 comes around again.
 
-> **This repository contains no personal data of any kind.** No student names, no
-> submitted work, no evaluation outputs. Generic methodology, reusable templates, and
-> synthetic demo data only. See [Privacy & scope](#privacy--scope).
+> **This repository contains no personal data about any student, subject, or evaluated
+> person** — the only people named are the authors. No submitted work, no evaluation
+> outputs. Generic methodology, reusable templates, and synthetic demo data only. See
+> [Privacy & scope](#privacy--scope).
 
 ---
 
@@ -29,9 +30,10 @@ comes around again.
 The demo grades three **fictional** students whose draft evaluations contain **seven
 planted defects** — a misquote, a wrong number, an overclaimed compliment, a
 misattribution, broken arithmetic, an error hiding inside a previous "fix," and one defect
-the system **cannot catch by design**. You watch independent auditors find the six, then
-the answer key is unsealed, the seventh is revealed, and you learn why a human stays in
-the loop. Ten minutes, zero real data.
+the system **cannot catch by design**. You watch independent auditors hunt the six (our
+pre-ship test run caught all six — plus three defects we hadn't planted), then the answer
+key is unsealed, the seventh is revealed, and you learn why a human stays in the loop.
+Ten minutes, zero real data.
 
 ```
 /plugin marketplace add josephausterweil/grade-it-like-an-audit
@@ -50,8 +52,8 @@ drafts anything:
 - **`/grade-audit check-mine`** — the harness fact-checks evaluations *you* wrote (your
   quotes, numbers, arithmetic, attributions). The AI never grades; it audits you.
 - **`/grade-audit calibrate`** — you grade 3–5 units first; the harness grades them blind;
-  a deterministic script reports the agreement (κ, ρ, mean difference) so you see how it
-  compares to *your* judgment before it touches anything real.
+  a deterministic script reports the agreement (κ, ρ, mean absolute difference) so you see
+  how it compares to *your* judgment before it touches anything real.
 
 When you're ready: `/grade-audit setup` interviews you in plain language and generates
 your whole workspace. From then on, `/grade-audit` alone always tells you where you are
@@ -70,12 +72,14 @@ Claude Code is Anthropic's AI coding/agent tool; this plugin runs inside it. Two
 Four words you'll meet, once each: a **skill** is a packaged instruction set you invoke by
 typing `/its-name`; a **CLAUDE.md** is a plain markdown file of standing instructions the
 agent reads automatically — in this method, *your* rulebook, which you own and edit; a
-**subagent** is a helper with a fresh, isolated context (what makes the auditors genuinely
-blind); **persistent memory** is what lets a new session start knowing where the last one
-left off. That's all the jargon there is.
+**subagent** is a helper with a fresh, isolated context (how the auditors are kept blind
+— by construction; [LIMITS.md](LIMITS.md) spells out that boundary); **persistent memory**
+is what lets a new session start knowing where the last one left off. That's all the
+jargon there is.
 
 **What it costs to run:** one audit round over N units spawns N auditor subagents plus one
-consistency pass; real runs typically take 3–5 rounds. The demo is a fair small-scale
+consistency pass; budget 3–5 rounds (our two recorded runs took 5, and 9 with an early
+stop). The demo is a fair small-scale
 preview. Before your first real run, read **[LIMITS.md](LIMITS.md)** — this method
 publishes what it cannot do with the same care as what it can.
 
@@ -85,8 +89,8 @@ Across the method's two hardening runs: **14 audit rounds, 70 independent review
 not one finding ever changed an outcome.** Every catch was a grounding or phrasing defect:
 a misquote, a wrong number, an overclaim. The loop protects the *evidence and the prose*;
 the *outcomes* were protected by the human's judgment plus the evidence discipline. And
-after all fourteen rounds, one human reading the finished material cold found a defect
-every round had passed.
+one human reading the finished material cold found a defect that all nine rounds of the
+run that produced it — forty-five reviews — had passed.
 
 Those numbers are why the design works the way it does: every judgment must cite a source
 you can open; every fix needs your approval; all state is plain files on your machine
@@ -177,8 +181,8 @@ sentences had changed, and both were verified in minutes.
 
 Across both runs — **fourteen rounds, seventy independent reviews — not one finding
 changed an outcome.** Every one was a grounding or phrasing defect. Then a single person
-outside the loop read the finished material once and found a defect all fourteen rounds
-had passed.
+outside the loop read the finished material once and found a defect that all nine rounds
+— forty-five reviews — of the run that produced it had passed.
 
 Those three facts are the honest summary of what this method does, what it costs, and
 where its blind spot is. See [`METHODOLOGY.md`](METHODOLOGY.md) for the detail, and
@@ -190,8 +194,8 @@ where its blind spot is. See [`METHODOLOGY.md`](METHODOLOGY.md) for the detail, 
 
 No other Claude Code skill did audit-style grading when we surveyed (2026-08): blind
 per-unit fan-out + lead consistency pass + a bounded convergence loop + structural
-write-back — and, in any category we looked at, no competitor publishes its run
-statistics, failures included. Commercial tools are far ahead on UI and LMS integration;
+write-back — and none we found, in any category, publishes failure-inclusive run
+statistics. Commercial tools are far ahead on UI and LMS integration;
 PrairieLearn on classroom-scale infrastructure; one dormant skill's κ-calibration idea
 was ahead of ours, so we adopted it and credited it. Full table, links, the searches
 behind every absence claim, and where others beat us: **[COMPARISON.md](COMPARISON.md)**.
@@ -230,8 +234,9 @@ your-project/
 This repository is a **methodology, template kit, and plugin only**. It deliberately
 contains:
 
-- **No** names or identifying details of any person. The demo's "students" and their
-  work are synthetic, written for the demo.
+- **No** names or identifying details of any student, subject, or evaluated person (the
+  authors are credited by name below — they are the only real people here). The demo's
+  "students" and their work are synthetic, written for the demo.
 - **No** submitted work, evaluations, scores, quotes, or transcripts.
 - **No** illustration that reproduces anyone's actual work. Every anecdote is described
   by *shape* — "a paraphrase inside quotation marks," "a claim that predicted how the
@@ -264,5 +269,5 @@ Built by [Joseph Austerweil](https://github.com/josephausterweil)
 
 ## License
 
-Released under [CC BY 4.0](LICENSE) — use it, adapt it, share it; a credit link back is
-appreciated but not required.
+Released under [CC BY 4.0](LICENSE) — use it, adapt it, share it; the license's one
+condition is attribution, and a credit link back satisfies it.

@@ -12,8 +12,8 @@ First release of the plugin (the methodology and templates predate it).
   weak proxy for the human outside reader).
 - Calibration metrics script (`agreement.py`, stdlib-only: weighted κ, Spearman ρ, MAD,
   small-n caveat).
-- Eval suite: 3 plugin-level cases, per-skill trigger evals; runner early-access at
-  release — see `evals/README.md` for exact verification status.
+- Eval suite: 3 plugin-level cases, trigger evals for the front-door and demo skills;
+  runner early-access at release — see `evals/README.md` for exact verification status.
 - New documents: `LIMITS.md`, `DESIGN.md`, `COMPARISON.md`, data-handling reference,
   cross-domain quickstarts; README rewritten around the skeptic funnel; CI structural
   validation.

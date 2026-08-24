@@ -36,7 +36,9 @@ adjacent interest, unoccupied niche.
   proven at course scale.
 - **homework-grader**'s quantitative teacher-calibration was ahead of this project's
   original design; this plugin's calibration mode (`/grade-audit calibrate`) exists
-  because that was the right idea — credited here.
+  because that was the right idea — credited here. (The project appears dormant: at
+  survey time its GitHub repo was created and last pushed on the same day, 2026-02-22,
+  at 7★ — which is why the idea needed a maintained home.)
 
 ## Adjacent, not competing
 

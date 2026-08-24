@@ -74,6 +74,8 @@ a claim can't be confirmed by another unit's data and cross-contamination can't 
 - **Re-audit every revised unit, whole** — not just the flagged spot. A fix is a new claim.
 - **Loop until one pass is clean for ALL units in the same pass.** "Each was clean once" is not
   convergence.
+- **Pilot before cohort:** run the full loop on 2–3 units before the full set — the pilot
+  surfaces criteria and instruction defects while they are cheap.
 - A **lead pass** greps the full set for shared phrasings/consistency (which per-unit auditors
   can't see) and applies the strictest verdict anywhere to every instance.
 - Record the trail: what changed and what it changed *from*.

@@ -18,12 +18,17 @@ Should/shouldn't-trigger query sets for the front door (16 queries) and the demo
 
 ## Verification status — honest counts
 
-- Authored: 3 cases (5 grader rubrics), 2 trigger sets (24 queries). Structural layout
+- Authored: 3 cases (4 grader rubrics), 2 trigger sets (24 queries). Structural layout
   follows the `claude plugin eval` documented format (`evals/<case>/prompt.md +
   graders/*.md`).
 - Executed with `claude plugin eval`: **0 of 3** — the runner is in early access and not
-  enabled for this environment at authoring time. Run
-  `claude plugin eval . --threshold 0.8` once enabled.
-- Executed manually (the scenario run end-to-end in a session and checked against the
-  grader rubrics by hand): see `LIMITS.md` → "Dogfood and test record" for the current
-  counts; that file is updated as runs happen, this one states the method.
+  enabled for this environment (re-verified by executing the command on 2026-08-24: it
+  refuses with an early-access notice). Run `claude plugin eval . --threshold 0.8` once
+  enabled.
+- Executed manually: **1 of 3** — the demo-defect-recall scenario's machinery (blind
+  fan-out + lead pass over the fixture) ran on 2026-08-24 and satisfied the recall
+  grader 6/6 and the blindness and sealed-key clauses of the honesty grader; reports in
+  `docs/test-runs/2026-08-24-demo-fixture/`. The setup-interview and check-mine cases
+  have not been executed.
+- `LIMITS.md` → "Dogfood and test record" carries the running counts as further runs
+  happen; this file states the method and the status at release.

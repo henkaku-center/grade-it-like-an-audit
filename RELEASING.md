@@ -14,8 +14,10 @@ Per the method's lesson 10, the mirror is a step in this checklist, never a plac
 5. Demo recording, if the demo changed: record `/grade-audit demo` (asciinema or GIF) →
    `docs/demo.gif`, referenced from the README's placeholder comment.
 6. Commit; `claude plugin tag` to create the release tag.
-7. Push canonical; push the mirror (`git push henkaku-center main --tags`). Verify the
-   mirror README banner still points at the canonical repo.
+7. Push canonical; push the mirror — one-time setup: `git remote add henkaku-center
+   git@github.com:henkaku-center/grade-it-like-an-audit.git`; then each release:
+   `git push henkaku-center main --tags`. Verify the mirror README banner still points
+   at the canonical repo.
 8. Fresh-environment install test: `/plugin marketplace add
    josephausterweil/grade-it-like-an-audit`, install, `/grade-audit demo` in an empty
    directory. Time it; the funnel promises ~10 minutes.

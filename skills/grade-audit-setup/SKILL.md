@@ -31,8 +31,9 @@ call that is theirs.
    confirmation (or corrections) before generating anything.
 4. **Generate** per `references/generation-rules.md`: root `CLAUDE.md`, per-task
    `CLAUDE.md`, the output-format template, the directory tree, and a `.gitignore`
-   covering inputs and working notes. Everything is generated from the plugin's
-   `templates/` — one source — with the user's answers substituted for the brackets.
+   covering inputs and working notes (when the material involves people, per Q6).
+   Everything is generated from the plugin's `templates/` — one source — with the user's
+   answers substituted for the brackets.
 5. **Walk through what was written**, one file at a time, one paragraph each: what it is,
    why it exists, and that every rule in it is editable — these files are theirs, not the
    plugin's.
@@ -40,7 +41,7 @@ call that is theirs.
    haven't), then **pilot on 2–3 real units before the full set** — the pilot is the
    recommended default and is stated as such in the generated root file. Calibration
    (`/grade-audit calibrate`) is the right next step for anyone who wants the harness
-   measured against their own grading before it drafts anything.
+   measured against their own grading before it drafts anything that counts.
 
 ## Standing rules
 

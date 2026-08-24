@@ -13,8 +13,9 @@ worthless; this one publishes its blind spots and its bill, because they were pa
   round's fix. One run **ran 9 rounds and never converged** — it was ended by a diff of
   what ships, not by a clean pass, after the loop started finding defects mostly in its
   own repairs.
-- After all of it, **one human reading the finished material cold found a defect all 14
-  rounds had passed** — a claim about the world, which no source can contradict.
+- After all of it, **one human reading the finished material cold found a defect that
+  all nine rounds — forty-five reviews — of the run that produced it had passed** — a
+  claim about the world, which no source can contradict.
 
 Size your expectations accordingly: if you want the outcomes protected, that protection
 is the human's judgment plus the evidence discipline — not the loop count.
@@ -42,9 +43,10 @@ is the human's judgment plus the evidence discipline — not the loop count.
 
 ## What it costs
 
-- One audit round over N units ≈ **N auditor subagent runs + 1 lead pass**. Typical runs
-  take **3–5 rounds**; budget for re-audits of revised units on top. The demo (3 units,
-  1 round) is a fair small-scale preview of the per-round cost.
+- One audit round over N units ≈ **N auditor subagent runs + 1 lead pass**. Budget
+  **3–5 rounds** — and note the honest caveat that the two recorded hardening runs took
+  5, and 9 with an early stop; budget for re-audits of revised units on top. The demo
+  (3 units, 1 round) is a fair small-scale preview of the per-round cost.
 - Calibration ≈ one mini-run over 3–5 units. Cheap relative to a wrong outcome; not free.
 - The write-back and the ledgers cost minutes per round and are what make round N+1
   cheaper than round N. Skipping them keeps the price and drops the compounding.
@@ -83,6 +85,10 @@ Kept honest with counts, updated as runs happen:
   strictly in-scope; the stray number was traced across all units and ruled a
   transposition, not contamination. The full interactive demo (narration beats,
   write-back demonstration) has not yet been executed in a user session — the machinery
-  under it has.
-- Dogfood run of the harness over this plugin's own documentation: see the record in
-  `DESIGN.md`; findings and write-backs are recorded there.
+  under it has. Primary artifacts (the auditor reports and lead report) are preserved in
+  `docs/test-runs/2026-08-24-demo-fixture/`.
+- **Docs dogfood executed (2026-08-24):** 3 scope-isolated auditors over the plugin's own
+  documentation found 30 findings (5 blockers, 11 minors, 14 notes) — including a license
+  contradiction and a fourteen-rounds overclaim that both predate the plugin, and wrong
+  counts in this file's own companion records. Fixes applied; record and written-back
+  lessons in `DESIGN.md`; reports preserved in `docs/test-runs/2026-08-24-docs-dogfood/`.

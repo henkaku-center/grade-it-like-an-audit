@@ -9,8 +9,9 @@ way the design audits everything else.
 **One front door, three working skills.** A novice remembers exactly one thing:
 `/grade-audit`. It reads the workspace and routes; the heavy phases (setup interview,
 audit rounds, demo) are separate skills because they are different jobs with different
-context needs. Every SKILL.md stays short with depth in `references/` — progressive
-disclosure keeps the always-loaded token cost low and the deep material one Read away.
+context needs. Every SKILL.md stays short; the three working skills keep their depth in
+`references/` — progressive disclosure keeps the always-loaded token cost low and the
+deep material one Read away.
 
 **Write-back is structural, not optional.** The methodology's central thesis is that the
 instruction set compounds — every caught failure becomes a durable rule. So write-back is
@@ -67,10 +68,22 @@ environment, so the eval suite ships authored-but-runner-unexecuted, with exact 
 
 ## Dogfood record
 
-The harness was run on this plugin's own documentation before shipping. Per the method:
-counts, not adjectives — see the table below, updated per run.
+The harness is run on this plugin's own material before each release. Per the method:
+counts, not adjectives — the table records each run, and the primary artifacts (auditor
+and lead reports) are preserved under `docs/test-runs/`.
 
 | Run | Units | Rounds | Blockers | Minors | Written back | Notes |
 |---|---|---|---|---|---|---|
-| 2026-08-24 demo-fixture test (fan-out + lead over the demo workspace) | 3 | 1 | 10 (6 planted, 2 unplanted, 2 lead-pass incl. 1 upgrade) | 2 | known-extras section added to the demo answer key | All 6 catchable planted defects caught; world-claim flagged by artifact-vs-world; 3 real unplanted defects found, kept in the fixture deliberately and documented. Blindness 3/3. |
-| 2026-08-24 docs dogfood | (recorded below after the run) | | | | | |
+| 2026-08-24 demo-fixture test (fan-out + lead over the demo workspace) | 3 | 1 | 9 (6 planted, 3 unplanted — 2 found by unit auditors incl. 1 upgraded from minor by the lead, 1 lead-pass only) | 2 | known-extras section added to the demo answer key | All 6 catchable planted defects caught; world-claim flagged by artifact-vs-world; 3 real unplanted defects found, kept in the fixture deliberately and documented. Blindness 3/3. Artifacts: `docs/test-runs/2026-08-24-demo-fixture/`. |
+| 2026-08-24 docs dogfood (3 scope-isolated auditors over README / meta-docs / skills+agents, repo as ground truth) | 3 | 1 | 5 | 11 (+14 notes) | 3 lessons below | Caught a license contradiction and a fourteen-rounds overclaim that predate the plugin, wrong counts in our own "honest counts" records, a path collision in the run protocol, and a one-source violation (a promised template sentence that didn't exist). All blockers and minors fixed same day. Artifacts: `docs/test-runs/2026-08-24-docs-dogfood/`. |
+
+## Lessons banked from the dogfood (the write-back, applied to ourselves)
+
+- 2026-08-24 A pointer to evidence is itself a verification claim — never write
+  "recorded there" before the record exists; create the record first or say "to be
+  recorded."
+- 2026-08-24 When stating a count of your own artifacts, count the artifacts, not your
+  memory of authoring them — the wrong count sat in the section titled "honest counts."
+- 2026-08-24 Preserve the primary artifacts of any run you cite (auditor reports, lead
+  report) in the repo; an unfalsifiable self-report of a clean run is the pattern lesson
+  4 warns about.

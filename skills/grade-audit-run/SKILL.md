@@ -31,10 +31,12 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 4. **Lead consistency pass.** After all reports return, one `lead-consistency` subagent over
    the full set plus the round's reports. Apply the strictest verdict anywhere to every
    instance of a shared phrasing.
-5. **Findings table → human.** Merge findings into one table (unit, severity, exact text,
-   ground truth, proposed fix). Save it as `working-notes/<unit>/audit-round<N>.md` per unit.
-   Present the table and ask the human to approve, reject, or amend EACH fix. Never apply an
-   unapproved fix; never finalize an outcome yourself.
+5. **Findings table → human.** Each auditor's verbatim report is already saved as
+   `working-notes/<unit>/audit-round<N>.md` (per the fan-out protocol). Merge the findings
+   into one set-level table (unit, severity, exact text, ground truth, proposed fix) saved
+   as `working-notes/findings-round<N>.md`. Present the table and ask the human to
+   approve, reject, or amend EACH fix. Never apply an unapproved fix; never finalize an
+   outcome yourself.
 6. **Apply approved fixes**, then **re-audit every revised unit, whole** — a fresh
    `unit-auditor` per revised unit, told it is re-auditing (a fix is a new claim; the auditor
    must re-check everything, not just the flagged spot).

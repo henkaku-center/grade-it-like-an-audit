@@ -37,6 +37,12 @@ both halves of the harness with real examples — the blind auditors caught defe
 author didn't plant, and the lead pass caught a cross-unit unfairness that blind auditors
 *cannot* see, which is exactly why the fan-out alone is not enough.
 
+One known fixture-scope flag to pre-triage: the workspace ships no actual image files
+(`fig*.png`) or `penguins.csv` — figure and code-output claims are checkable only against
+the report and code text, and the rubric deliberately scopes every component to those
+files. An auditor flagging the absent binaries has read carefully; it is fixture scope,
+not a defect.
+
 Findings beyond this key and the known extras are still not failures of the demo. Triage
 honestly with the user: a real defect the key missed (bank it — the write-back loop
 applies to this demo too) or a false positive (discuss why; false positives are part of
