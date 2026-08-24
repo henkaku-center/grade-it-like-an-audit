@@ -29,9 +29,10 @@ adjacent interest, unoccupied niche.
   [Brisk](https://www.briskteaching.com), [Class Companion](https://www.classcompanion.com),
   [TimelyGrader](https://www.timelygrader.ai) (Canvas rubric import + grade passback) —
   are ahead on UI, LMS integration, certification, and classroom scale. This project is a
-  methodology/rigor layer, not a convenience rival. (EssayGrader users report
-  same-essay-different-score inconsistency — exactly the failure mode a convergence rule
-  with a bound exists to catch.)
+  methodology/rigor layer, not a convenience rival. (Run-to-run score inconsistency —
+  the same work scored differently on different passes — is a failure mode reported
+  across single-pass LLM graders generally; it is exactly what a convergence rule with a
+  bound exists to catch.)
 - **PrairieLearn** is ahead on battle-tested infrastructure and a human-override workflow
   proven at course scale.
 - **homework-grader**'s quantitative teacher-calibration was ahead of this project's

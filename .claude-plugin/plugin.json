@@ -3,7 +3,7 @@
   "description": "Audit-style grading and evaluation for high-stakes recurring work: guided setup, a blind per-unit auditor fan-out with a lead consistency pass, a bounded loop to convergence, calibration against your own grading, and a write-back loop that makes your instructions stronger every run.",
   "version": "0.1.0",
   "author": {
-    "name": "Joseph Austerweil and Ira Winder",
+    "name": "Joseph Austerweil (plugin packaging, with Claude Code); methodology by Joseph Austerweil and Ira Winder",
     "url": "https://github.com/josephausterweil/grade-it-like-an-audit"
   },
   "homepage": "https://henkaku-center.github.io/grade-it-like-an-audit/",

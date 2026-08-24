@@ -3,7 +3,7 @@
 **A field-tested method for instructing AI agents on recurring, high-stakes tasks — using
 layered markdown, persistent memory, and a self-correcting write-back loop. Now an
 installable Claude Code plugin with a guided setup, a blind-auditor fan-out, and a
-10-minute demo that catches planted defects in front of you.**
+10-minute demo that hunts planted defects in front of you.**
 
 <!-- demo recording goes here: docs/demo.gif — see RELEASING.md checklist -->
 
@@ -211,8 +211,8 @@ No other Claude Code skill did audit-style grading when we surveyed (2026-08): b
 per-unit fan-out + lead consistency pass + a bounded convergence loop + structural
 write-back — and none we found, in any category, publishes failure-inclusive run
 statistics. Commercial tools are far ahead on UI and LMS integration;
-PrairieLearn on classroom-scale infrastructure; one dormant skill's κ-calibration idea
-was ahead of ours, so we adopted it and credited it. Full table, links, the searches
+PrairieLearn on classroom-scale infrastructure; one apparently dormant skill's
+κ-calibration idea was ahead of ours, so we adopted it and credited it. Full table, links, the searches
 behind every absence claim, and where others beat us: **[COMPARISON.md](COMPARISON.md)**.
 
 ## Quick start (by hand, no plugin)
@@ -276,6 +276,15 @@ by default and offers an anonymize-before-grading option. Where your material in
 students or other people, read the data-handling guidance
 ([`skills/grade-audit-setup/references/data-handling.md`](skills/grade-audit-setup/references/data-handling.md))
 — including the parts that are your institution's call, not a plugin's.
+
+## Repository homes
+
+The canonical repository is
+[josephausterweil/grade-it-like-an-audit](https://github.com/josephausterweil/grade-it-like-an-audit)
+(where the install command points). The
+[henkaku-center copy](https://github.com/henkaku-center/grade-it-like-an-audit) is a push
+mirror kept so the illustrated guide's URL stays put — edits land on the canonical repo
+and are pushed to the mirror at release (see [RELEASING.md](RELEASING.md)).
 
 ## Disclaimer
 
