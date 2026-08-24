@@ -1,0 +1,19 @@
+[
+  {"query": "I have 30 lab reports to grade against my rubric, help me do it rigorously", "should_trigger": true},
+  {"query": "Can you audit the grades I gave my students before I release them?", "should_trigger": true},
+  {"query": "What state is my grading audit in? Where did we leave off?", "should_trigger": true},
+  {"query": "I want to review these five vendor contracts against our playbook with proper evidence", "should_trigger": true},
+  {"query": "Set up an evaluation workspace for my course's final projects", "should_trigger": true},
+  {"query": "Bank this lesson for next time: never trust the summary sheet's totals", "should_trigger": true},
+  {"query": "Run a compliance check of these access-control configs against our policy, one finding at a time", "should_trigger": true},
+  {"query": "Before I trust AI grading, can you check my own feedback letters for misquotes?", "should_trigger": true},
+
+  {"query": "What grade of steel should I use for this bracket?", "should_trigger": false},
+  {"query": "Write a rubric for my ceramics class", "should_trigger": false},
+  {"query": "Help me study for my statistics exam next week", "should_trigger": false},
+  {"query": "Review this PR for bugs", "should_trigger": false},
+  {"query": "What does 'audit' mean in accounting?", "should_trigger": false},
+  {"query": "Grade the steepness of this hiking trail", "should_trigger": false},
+  {"query": "Fix the failing tests in my repo", "should_trigger": false},
+  {"query": "Summarize this compliance report for me", "should_trigger": false}
+]

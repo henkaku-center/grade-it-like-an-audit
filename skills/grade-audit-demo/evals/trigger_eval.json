@@ -1,0 +1,11 @@
+[
+  {"query": "Show me how this audit grading thing works before I trust it with real student work", "should_trigger": true},
+  {"query": "Run the grade audit demo", "should_trigger": true},
+  {"query": "I'm skeptical of AI grading — prove it can actually catch mistakes", "should_trigger": true},
+  {"query": "Can I try the audit workflow on fake data first?", "should_trigger": true},
+
+  {"query": "Demo the new dashboard feature to the team", "should_trigger": false},
+  {"query": "Show me how to use git rebase", "should_trigger": false},
+  {"query": "Run my test suite and show the failures", "should_trigger": false},
+  {"query": "Grade these real submissions in inputs/", "should_trigger": false}
+]
