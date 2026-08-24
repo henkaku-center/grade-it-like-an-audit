@@ -68,9 +68,21 @@ is the human's judgment plus the evidence discipline — not the loop count.
 Kept honest with counts, updated as runs happen:
 
 - `agreement.py` verified against a hand-computed example (quadratic-weighted κ = 0.900
-  reproduced exactly; degenerate inputs handled). 
-- Plugin structure: `claude plugin validate --strict` passes (manifest, skills, agents).
+  reproduced exactly; degenerate inputs handled). CI re-runs this check on every push.
+- Plugin structure: `claude plugin validate --strict` passes (manifest, skills, agents);
+  `scripts/validate-structure.py` 15/15 checks pass.
 - Eval cases executed with `claude plugin eval`: 0 of 3 (runner in early access at
   authoring time — see `evals/README.md`).
+- **Fan-out + lead pass executed for real against the demo fixture (2026-08-24):** 3
+  blind auditors + 1 lead pass. All 6 catchable planted defects caught, all as blockers;
+  the 7th (the world-claim) was flagged as unverifiable by the artifact-vs-world check;
+  **3 additional real defects the author had not planted were found** — 2 by unit
+  auditors (a cohort superlative, an implicit comparison), 1 by the lead pass alone (the
+  same statistic-without-df deducted in one unit and silently waived in another —
+  invisible to blind auditors by construction). Blindness held: 3 of 3 FILES READ lists
+  strictly in-scope; the stray number was traced across all units and ruled a
+  transposition, not contamination. The full interactive demo (narration beats,
+  write-back demonstration) has not yet been executed in a user session — the machinery
+  under it has.
 - Dogfood run of the harness over this plugin's own documentation: see the record in
-  `DESIGN.md` once run; findings and write-backs are recorded there.
+  `DESIGN.md`; findings and write-backs are recorded there.

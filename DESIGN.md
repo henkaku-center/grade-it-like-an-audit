@@ -72,4 +72,5 @@ counts, not adjectives — see the table below, updated per run.
 
 | Run | Units | Rounds | Blockers | Minors | Written back | Notes |
 |---|---|---|---|---|---|---|
-| 2026-08-24 pre-ship | (recorded after the run below) | | | | | |
+| 2026-08-24 demo-fixture test (fan-out + lead over the demo workspace) | 3 | 1 | 10 (6 planted, 2 unplanted, 2 lead-pass incl. 1 upgrade) | 2 | known-extras section added to the demo answer key | All 6 catchable planted defects caught; world-claim flagged by artifact-vs-world; 3 real unplanted defects found, kept in the fixture deliberately and documented. Blindness 3/3. |
+| 2026-08-24 docs dogfood | (recorded below after the run) | | | | | |

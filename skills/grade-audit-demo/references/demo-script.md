@@ -47,7 +47,9 @@ to check it against. This is why the method keeps one HUMAN reader outside the l
 why a real sentence of this class once survived nine rounds and forty-five reviews before
 a person reading cold caught it in one pass.
 
-Triage any extra findings beyond the key per the answer key's last paragraph.
+Then tell the known-extras story (answer key, "Known extras" section): the harness caught
+two defects its own author hadn't planted, in the fixture written to demonstrate
+defect-catching. Triage any further findings per the answer key's last paragraph.
 
 ## Beat 4 — the write-back (show the compounding)
 

@@ -15,8 +15,29 @@ contents) to any subagent. It is the scoring key for the demo, not part of the w
 
 Expected outcome: a competent fan-out catches #1–#6 (auditor check 6, artifact-vs-world,
 may also flag #7 as unverifiable — if it does, celebrate it AND still deliver the closing
-lesson: the check exists because this class of claim once survived 45 reviews).
+lesson: the check exists because this class of claim once survived 45 reviews). In the
+pre-ship test run, all six were caught as blockers and #7 was flagged by the
+artifact-vs-world check.
 
-Findings beyond this key are not failures of the demo. Triage honestly with the user:
-a real defect the key missed (bank it — the write-back loop applies to this demo too) or a
-false positive (discuss why; false positives are part of the cost story).
+## Known extras — real defects the harness caught in the author's own drafts
+
+In the pre-ship test run (2026-08-24), the fan-out caught two defects the author had NOT
+planted, in evaluations written to demonstrate defect-catching. They are kept in the
+fixture deliberately — the harness catching its own author is the best argument the demo
+makes — and listed here so you can triage them as known-real, not false positives:
+
+| Unit | Defect | Caught by | Ground truth |
+|---|---|---|---|
+| B | "The most methodologically ambitious submission" — cohort superlative | unit auditor | unverifiable inside one unit; violates the workspace CLAUDE.md's own cohort-claims precedent |
+| C | "an unusually honest limitation" — implicit cohort comparison | unit auditor (as MINOR; lead pass upgraded to BLOCKER — same class as B's superlative, strictest verdict propagates) | "unusually" has no in-unit source |
+| A + C | df inconsistency: C docked −1 for "H = 244.9" without degrees of freedom while A's "F = 594.8" equally without df got 5/5, no finding | **lead pass only** — C's own auditor called the deduction "defensible" because it could not see A | identical evidence, different deduction; a waiver applies to all comparable units or none |
+
+Tell the user this story at the reveal: it is true, it is on-brand, and it demonstrates
+both halves of the harness with real examples — the blind auditors caught defects the
+author didn't plant, and the lead pass caught a cross-unit unfairness that blind auditors
+*cannot* see, which is exactly why the fan-out alone is not enough.
+
+Findings beyond this key and the known extras are still not failures of the demo. Triage
+honestly with the user: a real defect the key missed (bank it — the write-back loop
+applies to this demo too) or a false positive (discuss why; false positives are part of
+the cost story).
