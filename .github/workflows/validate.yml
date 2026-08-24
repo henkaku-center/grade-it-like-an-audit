@@ -1,0 +1,36 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Structural validation (manifests, skills, agents, evals, sealed key)
+        run: python3 scripts/validate-structure.py
+      - name: agreement.py self-test (hand-computed kappa must reproduce)
+        run: |
+          printf 'unit,human,ai\nA,3,3\nB,4,3\nC,2,2\nD,5,5\n' > /tmp/cal.csv
+          out=$(python3 skills/grade-audit-run/scripts/agreement.py /tmp/cal.csv --scale-min 0 --scale-max 5)
+          echo "$out"
+          echo "$out" | grep -q 'kappa : 0.900' || { echo "FAIL: expected kappa 0.900"; exit 1; }
+          echo "$out" | grep -q 'mean absolute difference : 0.25' || { echo "FAIL: expected MAD 0.25"; exit 1; }
+
+  claude-plugin-validate:
+    runs-on: ubuntu-latest
+    # `claude plugin validate` is static (no login), but the installer or CLI
+    # interface may change; treat this arm as advisory until pinned.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Claude Code CLI
+        run: curl -fsSL https://claude.ai/install.sh | bash
+      - name: Validate manifest, skills, agents (strict)
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          claude plugin validate --strict .
+          claude plugin validate skills
+          claude plugin validate agents

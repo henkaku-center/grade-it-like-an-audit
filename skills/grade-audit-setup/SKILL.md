@@ -50,6 +50,6 @@ call that is theirs.
   decoration — collect it or delete it, and partial capture is worse than none (say why:
   scoring from partial evidence makes the outcome depend on who got recorded).
 - If the user's task involves personal data (students, employees, clients), the
-  never-events question is where you surface the data-handling guidance
-  (`references/data-handling.md` at the plugin root) and default everything sensitive to
-  git-ignored, local-only paths.
+  never-events question is where you surface `references/data-handling.md` — including
+  the anonymize-before-grading option — and default everything sensitive to git-ignored,
+  local-only paths.
