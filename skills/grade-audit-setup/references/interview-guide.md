@@ -91,23 +91,29 @@ walk them through the plugin's `references/data-handling.md` guidance now, and d
 the strictest option they'll accept. Also set where working files live (private repo vs
 local-only).
 
-**Q6a — the institutional gate (MANDATORY when the material is student work).** Ask
-directly: "Has your institution approved this AI service for student educational
-records — and do you know that in writing?" Student submissions and grades are typically
-FERPA-covered education records (or the local equivalent — state law, GDPR), and whether
-they may enter an AI service is the institution's call, not the instructor's or this
-plugin's. If the answer is no or unsure:
+**Q6a — the institutional question (ALWAYS ASKED when the material is student work;
+NEVER a blocker).** Ask directly: "Is your use of this AI service on student work covered
+by your institution's policies or agreements? (Many institutions have approved
+arrangements — an enterprise or education agreement, an approved deployment; you may
+well be covered in a way this tool can't see.)" Student submissions and grades are
+typically FERPA-covered education records (or the local equivalent — state law, GDPR),
+and coverage is determined by the institution's arrangements, which the user knows and
+this plugin cannot.
 
-- Say plainly, without hedging: **check with your university before real student work
-  enters this workflow** — registrar, privacy office, or counsel; the data-handling
-  reference lists the two questions to ask them.
-- Proceed with setup anyway — the workspace, demo, `check-mine` on de-identified text,
-  and an anonymized pilot are all available now — but write the gate into the generated
-  task CLAUDE.md as a never-event: "No identifiable student data enters this workspace
-  until institutional approval is confirmed (recorded here, with date and scope, when it
-  is)."
-- Never present anonymization as a way around the question; de-identification standards
-  are also the institution's to set.
+- **If they say they're covered:** take their word for it, record their answer (what
+  covers it, in their words, with the date) in the generated task CLAUDE.md, and proceed
+  with the full workflow. Their institution's arrangements are theirs to know; this
+  interview is not an audit of them.
+- **If no or unsure:** warn plainly and prominently — **check with your university before
+  real student work enters this workflow** (registrar, privacy office, or counsel; the
+  data-handling reference lists the two questions to ask) — then proceed with whatever
+  the user chooses. Recommend the no-student-data rungs (synthetic demo, de-identified
+  `check-mine`, anonymized pilot) in the meantime, and offer — as an option, not a
+  requirement — to record a reminder in the task CLAUDE.md ("institutional coverage
+  unconfirmed as of [date]; confirm before scaling up"). The decision, and the
+  responsibility, are the user's — say that last part in so many words.
+- In all cases, note once: this conversation is not legal advice, and use of the tool on
+  student data is at the user's responsibility (see the Disclaimer in the README).
 
 ## Q7 — What the subject was owed
 

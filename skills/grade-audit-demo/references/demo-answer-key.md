@@ -32,6 +32,11 @@ makes — and listed here so you can triage them as known-real, not false positi
 | C | "an unusually honest limitation" — implicit cohort comparison | unit auditor (as MINOR; lead pass upgraded to BLOCKER — same class as B's superlative, strictest verdict propagates) | "unusually" has no in-unit source |
 | A + C | df inconsistency: C docked −1 for "H = 244.9" without degrees of freedom while A's "F = 594.8" equally without df got 5/5, no finding | **lead pass only** — C's own auditor called the deduction "defensible" because it could not see A | identical evidence, different deduction; a waiver applies to all comparable units or none |
 
+(A fourth, minor-level unplanted catch — Student A's "three figures, all relevant", an
+unprovable universal in tension with the same evaluation's advice to drop Figure 3 — is
+recorded in the preserved reports at `docs/test-runs/2026-08-24-demo-fixture/`; the table
+above lists the blocker-class extras.)
+
 Tell the user this story at the reveal: it is true, it is on-brand, and it demonstrates
 both halves of the harness with real examples — the blind auditors caught defects the
 author didn't plant, and the lead pass caught a cross-unit unfairness that blind auditors

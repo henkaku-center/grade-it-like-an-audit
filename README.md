@@ -19,7 +19,8 @@ contract review: any task where a *plausible-but-wrong* result is expensive and 
 comes around again.
 
 > **This repository contains no personal data about any student, subject, or evaluated
-> person** — the only people named are the authors. No submitted work, no evaluation
+> person.** The only individuals named are the authors and, in the comparison survey,
+> public maintainers of the projects surveyed. No submitted work, no evaluation
 > outputs. Generic methodology, reusable templates, and synthetic demo data only. See
 > [Privacy & scope](#privacy--scope).
 
@@ -31,9 +32,9 @@ The demo grades three **fictional** students whose draft evaluations contain **s
 planted defects** — a misquote, a wrong number, an overclaimed compliment, a
 misattribution, broken arithmetic, an error hiding inside a previous "fix," and one defect
 the system **cannot catch by design**. You watch independent auditors hunt the six (our
-pre-ship test run caught all six — plus three defects we hadn't planted), then the answer
-key is unsealed, the seventh is revealed, and you learn why a human stays in the loop.
-Ten minutes, zero real data.
+pre-ship test run caught all six — plus three blocker-class defects we hadn't planted),
+then the answer key is unsealed, the seventh is revealed, and you learn why a human
+stays in the loop. Ten minutes, zero real data.
 
 ```
 /plugin marketplace add josephausterweil/grade-it-like-an-audit
@@ -59,16 +60,19 @@ When you're ready: `/grade-audit setup` interviews you in plain language and gen
 your whole workspace. From then on, `/grade-audit` alone always tells you where you are
 and what's next.
 
-> ⚠️ **Educators: check with your university before real student work enters any AI
-> tool — this one included.** Student submissions and grades are typically education
-> records under FERPA (or your local equivalent: state student-privacy law, GDPR), and
-> whether they may be processed by an AI service is decided by your institution's
-> agreements, not by this plugin or any provider's marketing. Ask your registrar,
-> privacy office, or counsel, get it in writing, and until then stay on the rungs that
-> use no student data (the demo is fully synthetic). The setup interview asks about
-> this explicitly and holds the gate. Details:
+> ⚠️ **Educators: know where your institution stands before real student work enters
+> any AI tool — this one included.** Student submissions and grades are typically
+> education records under FERPA (or your local equivalent: state student-privacy law,
+> GDPR). Many institutions already have approved arrangements that cover AI services —
+> yours may too — but that coverage comes from *your institution's* policies and
+> agreements, not from this plugin or any provider's marketing. If you're not sure, ask
+> your registrar, privacy office, or counsel before you start, and use the
+> no-student-data rungs meanwhile (the demo is fully synthetic). The setup interview
+> asks about this explicitly and records your answer; it will never block you — the
+> decision and the responsibility are yours. Details:
 > [data-handling guidance](skills/grade-audit-setup/references/data-handling.md). This
-> is not legal advice — your institution's rules govern.
+> is not legal advice, and the authors accept no liability for unauthorized or
+> non-compliant use — see the [Disclaimer](#disclaimer).
 
 ## Never used Claude Code?
 
@@ -246,8 +250,9 @@ This repository is a **methodology, template kit, and plugin only**. It delibera
 contains:
 
 - **No** names or identifying details of any student, subject, or evaluated person (the
-  authors are credited by name below — they are the only real people here). The demo's
-  "students" and their work are synthetic, written for the demo.
+  only real people named anywhere are the credited authors and the public maintainers
+  of projects in the comparison survey). The demo's "students" and their work are
+  synthetic, written for the demo.
 - **No** submitted work, evaluations, scores, quotes, or transcripts.
 - **No** illustration that reproduces anyone's actual work. Every anecdote is described
   by *shape* — "a paraphrase inside quotation marks," "a claim that predicted how the
@@ -272,6 +277,20 @@ students or other people, read the data-handling guidance
 ([`skills/grade-audit-setup/references/data-handling.md`](skills/grade-audit-setup/references/data-handling.md))
 — including the parts that are your institution's call, not a plugin's.
 
+## Disclaimer
+
+This project — the methodology, templates, plugin, and documentation — is provided **"as
+is," without warranty of any kind**, express or implied. It is not legal advice, and
+nothing in it establishes compliance with FERPA, GDPR, or any other law, regulation, or
+institutional policy. **You are solely responsible for how you use it**: for confirming
+that your use of any AI service on student work or other personal data complies with
+applicable law and your institution's policies and agreements, and for the evaluative
+decisions you ship. To the maximum extent permitted by law, the authors accept **no
+liability for inappropriate, unauthorized, or non-compliant use** of this project or of
+any AI service used with it. (The CC BY 4.0 license below carries the governing
+warranty-and-liability terms; this section restates them in plain words for this
+project's context.)
+
 ## Authors
 
 Built by [Joseph Austerweil](https://github.com/josephausterweil)
@@ -280,5 +299,5 @@ Built by [Joseph Austerweil](https://github.com/josephausterweil)
 
 ## License
 
-Released under [CC BY 4.0](LICENSE) — use it, adapt it, share it; the license's one
-condition is attribution, and a credit link back satisfies it.
+Released under [CC BY 4.0](LICENSE) — use it, adapt it, share it. The license's
+condition is attribution: give credit, link to the license, and note any changes.

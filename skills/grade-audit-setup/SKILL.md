@@ -31,7 +31,8 @@ call that is theirs.
    confirmation (or corrections) before generating anything.
 4. **Generate** per `references/generation-rules.md`: root `CLAUDE.md`, per-task
    `CLAUDE.md`, the output-format template, the directory tree, and a `.gitignore`
-   covering inputs and working notes (when the material involves people, per Q6).
+   covering inputs and working notes (when the material involves people, or when the
+   user chose it in Q6).
    Everything is generated from the plugin's `templates/` — one source — with the user's
    answers substituted for the brackets.
 5. **Walk through what was written**, one file at a time, one paragraph each: what it is,
@@ -54,10 +55,11 @@ call that is theirs.
   never-events question is where you surface `references/data-handling.md` — including
   the anonymize-before-grading option — and default everything sensitive to git-ignored,
   local-only paths.
-- **Student work triggers the institutional gate (interview Q6a), always.** Student
-  submissions and grades are typically FERPA-covered education records; whether they may
-  enter an AI service is the institution's decision. Unless the user confirms written
-  institutional approval, tell them plainly to check with their university first, keep
-  the workspace on synthetic/de-identified paths, and write the gate into the generated
-  task CLAUDE.md as a never-event. Be direct about this — it is the one place this skill
-  does not defer to user convenience.
+- **Student work triggers the institutional question (interview Q6a), always — asked
+  every time, never a blocker.** Student submissions and grades are typically
+  FERPA-covered education records; whether an AI service may process them is governed by
+  the institution's arrangements, which the user may well have and this skill cannot see.
+  Ask, warn plainly if they're unsure (check with your university first), record their
+  answer in the generated task CLAUDE.md, recommend the no-student-data rungs until
+  they're confident — and then respect their decision. The responsibility is theirs;
+  say so once, kindly and clearly, with a pointer to the README's Disclaimer.

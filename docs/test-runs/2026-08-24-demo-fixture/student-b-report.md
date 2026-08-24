@@ -12,3 +12,12 @@
 Verified clean: quotes 1/1 verbatim; numbers 2/3 (Gentoo mean failed); score arithmetic 20/20 consistent; universals 5 found, 3 verified, 2 unprovable; attribution 2/2 checked (choice mis-attributed; pairwise limitation correctly credited via the queued-input field); behavior claims 3/3; policy: cross-unit rule violated once (finding 4).
 
 FILES READ: agents/unit-auditor.md; demo-workspace CLAUDE.md, assignment.md, rubric.md; student-b draft-evaluation.md, ledger.md, report.md, analysis.py, session-log.md (all in-scope).
+
+---
+*Round-2 annotations (2026-08-24 re-audit of this preserved report; the report above is
+kept verbatim):* finding 3's quotation elides "in `analysis.py`" without an ellipsis —
+see draft-evaluation.md for the exact text (the answer key's version uses "…" correctly).
+Finding 6 overstates: B's ledger does contain rows touching two of the failed claims
+("Gentoo mean flipper length", "Permutation test chosen"); the accurate statement is
+that those rows name sources but omit the failed specifics — no numeric value recorded,
+no origination check.

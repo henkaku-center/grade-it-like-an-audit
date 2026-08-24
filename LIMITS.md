@@ -84,10 +84,11 @@ Kept honest with counts, updated as runs happen:
 - **Fan-out + lead pass executed for real against the demo fixture (2026-08-24):** 3
   blind auditors + 1 lead pass. All 6 catchable planted defects caught, all as blockers;
   the 7th (the world-claim) was flagged as unverifiable by the artifact-vs-world check;
-  **3 additional real defects the author had not planted were found** — 2 by unit
-  auditors (a cohort superlative, an implicit comparison), 1 by the lead pass alone (the
-  same statistic-without-df deducted in one unit and silently waived in another —
-  invisible to blind auditors by construction). Blindness held: 3 of 3 FILES READ lists
+  **3 additional blocker-class defects the author had not planted were found** — 2 by
+  unit auditors (a cohort superlative, an implicit comparison), 1 by the lead pass alone
+  (the same statistic-without-df deducted in one unit and silently waived in another —
+  invisible to blind auditors by construction); a 4th, minor-level unplanted catch is in
+  the preserved reports. Blindness held: 3 of 3 FILES READ lists
   strictly in-scope; the stray number was traced across all units and ruled a
   transposition, not contamination. The full interactive demo (narration beats,
   write-back demonstration) has not yet been executed in a user session — the machinery
@@ -96,5 +97,10 @@ Kept honest with counts, updated as runs happen:
 - **Docs dogfood executed (2026-08-24):** 3 scope-isolated auditors over the plugin's own
   documentation found 30 findings (5 blockers, 11 minors, 14 notes) — including a license
   contradiction and a fourteen-rounds overclaim that both predate the plugin, and wrong
-  counts in this file's own companion records. Fixes applied; record and written-back
-  lessons in `DESIGN.md`; reports preserved in `docs/test-runs/2026-08-24-docs-dogfood/`.
+  counts in this file's own companion records. Fixes applied; a **round-2 diff-scoped
+  re-audit of those fixes** (a fix is a new claim) found 0 blockers and 7 minors — all
+  residue of the fixes themselves — which were fixed in prose and annotated (never
+  silently edited) in the preserved artifacts. Record and written-back lessons in
+  `DESIGN.md`; reports in `docs/test-runs/2026-08-24-docs-dogfood/`.
+- **Headless load test (2026-08-24):** `claude --plugin-dir . -p` confirmed a live Claude
+  Code session sees all 4 skills and all 3 agents under the plugin's namespace.

@@ -25,7 +25,7 @@ task directories):
 |---|---|---|
 | No workspace | nothing found | First-timer path: offer the demo (10 min, synthetic data, watch it catch planted defects) or setup. Skeptic-friendly framing: demo first, or `check-mine` if they'd rather have their OWN evaluations fact-checked before the AI drafts anything. |
 | Workspace, no drafts | task dirs exist, `working-notes/` empty or ledger-less | Explain drafting with an evidence ledger (claim + source, logged as you write — the map auditors use to check each claim against its source). Offer to draft with them, or calibration first if they have self-graded units. |
-| Drafts, no audit yet | draft evaluations exist, no `audit-round*` files | Offer to run round 1. State the cost first: one auditor subagent per unit, plus a consistency pass, typically 3–5 rounds to converge. Point them at LIMITS.md (plugin root) before their first real run. |
+| Drafts, no audit yet | draft evaluations exist, no `audit-round*` files | Offer to run round 1. State the cost first: one auditor subagent per unit, plus a consistency pass; budget 3–5 rounds (the recorded runs took 5, and 9 with an early stop). Point them at LIMITS.md (plugin root) before their first real run. |
 | Mid-loop | `audit-round*` files exist | Status report, then offer the next round (or the bounding check, if the metrics say the loop may be measuring itself — see grade-audit-run's convergence reference). |
 | Converged | round metrics show an all-clean pass | Remind of the ship checklist: deliverables from one source, write-back done, and the box no harness ticks — one human reader outside the loop, cold. |
 

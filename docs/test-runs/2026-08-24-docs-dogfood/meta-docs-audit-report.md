@@ -39,3 +39,12 @@ executing validate-structure.py, agreement.py, and claude plugin validate), 2 fa
 artifacts); paths 19/20 (docs/demo.gif explicitly future); cross-file quotes 2/2
 verbatim; bare "all verified" assertions found: 0; DESIGN behavior claims vs actual
 skills/agents: 9/9 supported.
+
+---
+*Round-2 annotation (2026-08-24; the report above is kept as condensed):* the
+verified-clean tally reads "22 stated counts checked" but its listed categories sum to
+20 — this condensation dropped two categories present in the auditor's full report: 1
+weakly-supported count (the "3–5 rounds typical" figure) and 1
+unevidenced-but-uncontradicted count (DESIGN's "Minors 2"). 16+2+1+1+1+1 = 22. A tally
+short by two, caught on re-audit — the exact failure class METHODOLOGY's run B round 7
+records.

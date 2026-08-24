@@ -55,8 +55,8 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 
 ## Standing rules
 
-- Costs are stated up front: N units ≈ N auditor subagents per round; typical runs take 3–5
-  rounds. Say this before round 1.
+- Costs are stated up front: N units ≈ N auditor subagents per round; budget 3–5 rounds
+  (the recorded runs took 5, and 9 with an early stop). Say this before round 1.
 - Praise is audited as strictly as criticism. When a claim fails twice, propose deletion,
   not narrowing — subtraction is the only edit that cannot inherit a counterexample.
 - Everything you produce lands in `working-notes/` as files. The user can audit the auditor.

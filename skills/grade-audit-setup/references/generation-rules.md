@@ -25,8 +25,8 @@ a bracket unfilled — anything the interview didn't cover gets asked, not guess
   subject-facing rules incl. anonymization from Q6). The discrete-findings rule, pre-send
   audit protocol, and precedents section come through from the template intact. Seed
   "Accumulated precedents" with the template's hard-won rules, marked `(seeded)` — the
-  user's own will accumulate marked by date, and the file says the pilot-before-cohort
-  default: "pilot on 2–3 units before a full set."
+  user's own will accumulate marked by date, and the file states the pilot-before-cohort
+  default ("run the full loop on 2–3 units before the full set").
   Delete the three-contexts section unless the user's workflow ships an instruction file
   to a different audience (ask only if Q3 hinted at one; offer
   templates/CLAUDE.end-user-facing.md if yes).
