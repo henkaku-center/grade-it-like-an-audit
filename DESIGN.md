@@ -5,10 +5,11 @@ engineering decisions that turned it into a plugin, so a reader can audit the de
 way the design audits everything else.
 
 Provenance: the methodology and templates are joint work by Joseph Austerweil and Ira
-Winder, hardened on real runs. The plugin conversion recorded here (skills, agents,
-demo, evals, 2026-08 docs) was authored by Joseph Austerweil with Claude Code; the
-design decisions below draw on the shared methodology but predate co-author review —
-anything wrong in the packaging is on this layer, not on the method.
+Winder, hardened on real runs, and the plugin carries the same joint credit. The
+conversion itself (skills, agents, demo, evals, 2026-08 docs) was built with Claude
+Code; the design decisions below draw on the shared methodology but predate the
+co-author's cold read — anything wrong in the packaging is on this layer, not on the
+method.
 
 ## Decisions
 

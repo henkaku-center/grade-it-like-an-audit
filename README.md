@@ -302,12 +302,12 @@ project's context.)
 
 ## Authors
 
-The methodology and templates were built and field-hardened by
-[Joseph Austerweil](https://github.com/josephausterweil)
+Built by [Joseph Austerweil](https://github.com/josephausterweil)
 ([@josephausterweil](https://github.com/josephausterweil)) and
-[Ira Winder](https://github.com/irawinder) ([@irawinder](https://github.com/irawinder)).
-The plugin packaging (skills, agents, demo, evals, and the 2026-08 documentation) was
-authored by Joseph Austerweil with Claude Code, generated from that shared methodology.
+[Ira Winder](https://github.com/irawinder) ([@irawinder](https://github.com/irawinder)) —
+the methodology and templates field-hardened together on real runs; the plugin packaging
+(skills, agents, demo, evals, and the 2026-08 documentation) authored with Claude Code,
+generated from that shared methodology.
 
 ## License
 
