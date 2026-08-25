@@ -35,7 +35,16 @@ is the human's judgment plus the evidence discipline — not the loop count.
    `fresh-reader` agent are the same class of system. A harness converges on the failure
    modes it was built to catch and grows blind to the rest in proportion to how well it
    works. More subagents is not the fix; a human outside the loop is.
-4. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
+4. **Pricing, not detection, is where a run goes wrong.** Measured against a real cohort's
+   issued grades, the harness found substantially the same defects — but charging every
+   instance instead of one charge per defect family moved the mean absolute error from
+   **3.6 to 11.4 points on a /90 basis**, more than every other cause combined. The
+   deduction matrix exists for exactly this: a run can be evidence-perfect and still unfair,
+   because fairness is a property of the set and no blind auditor can see the set. And a run
+   carrying the prior rounds' rulings matched the issued grades to **3.0**, while the same
+   harness without them diverged by 11.4 and moved one outcome band — the measured argument
+   for write-back.
+5. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
    their prompts contain — there is no per-unit filesystem sandbox. Each auditor reports
    the files it read, and the lead pass checks those reports; but per the method's own
    lesson 4, a "files I read" line is itself a claim. The eval suite includes a
@@ -77,6 +86,22 @@ Kept honest with counts, updated as runs happen:
 
 - `agreement.py` verified against a hand-computed example (quadratic-weighted κ = 0.900
   reproduced exactly; degenerate inputs handled). CI re-runs this check on every push.
+- Script self-tests, all in CI, all fixtures with hand-computed answers:
+  `code-units.py` **42/42**, `reconcile-deductions.py` **24/24**, `compare-runs.py` **13/13**.
+  Two of those suites exist because a feature shipped broken under a green self-test that did
+  not exercise it — the matrix emitters raised a `NameError` on first real use. Coverage of
+  new code is now part of adding it.
+- **Validated against a real cohort's issued grades (2026-08-25), two arms.** Primed (the
+  task's own precedents supplied): MAD **3.0 points on a /90 basis**, no outcome-band change.
+  Unprimed (precedents withheld, policy and waiver kept): MAD **11.4**, one outcome-band
+  change, 38 fresh deductions against 3 issued in-scope findings. Diagnosis: **both arms
+  found substantially the same defects** — the divergence is pricing. Re-aggregating the
+  unprimed run's own findings into the issued run's defect families, one charge per (family,
+  unit), returns MAD to **3.6**. The withheld rulings account for 17 of 63 points; family
+  aggregation accounts for most of the rest. Caveats that limit all of it: n=5 units, only 3
+  issued in-scope findings (2 unlabelled and excluded as uncomparable), no
+  same-condition control arm, and the adjudication of finding-pairs was done by hand after
+  lexical matching produced false pairs.
 - Plugin structure: `claude plugin validate --strict` passes (manifest, skills, agents);
   `scripts/validate-structure.py` 15/15 checks pass.
 - Eval cases executed with `claude plugin eval`: 0 of 3 (runner in early access at

@@ -48,6 +48,10 @@ new error. A prior "clean" verdict is NOT evidence; assume it missed something a
    artifact/code, not the session narrative.
 6. CONSISTENCY — the outcome in the summary table = the per-component lines = the subject-facing
    breakdown. Arithmetic checks. No stray/removed-elsewhere language survives.
+6b. TOOLING vs SUBJECT — if this workspace is coded, the coding pass copied file contents
+   byte-for-byte and renamed only the folder. Never charge the subject for a blank field, a
+   missing name or an empty section on the assumption the tooling removed it; a blank here was
+   blank in the submission. If you think content was altered, report it as a TOOLING finding.
 7. POLICY — [your rules: no cross-unit comparisons, no other unit named, required anonymization,
    tone constraints, etc.].
 8. EXTRACTION FIDELITY — if the delivered copy is extracted from a master file, confirm it

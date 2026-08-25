@@ -12,6 +12,25 @@ First release of the plugin (the methodology and templates predate it).
   weak proxy for the human outside reader).
 - Calibration metrics script (`agreement.py`, stdlib-only: weighted κ, Spearman ρ, MAD,
   small-n caveat).
+- **Deduction matrix — cross-unit reconciliation.** A family x unit artifact built each
+  round (`reconcile-deductions.py --emit-matrix`), with the binding rule **one charge per
+  (family, unit), never per instance**. Clustering runs on the named issue rather than the
+  label plus its evidence, so one defect family occupies one row and an inconsistent price
+  is impossible to miss. The `lead-consistency` agent arbitrates what the instruction files
+  authorize, flags analogy-based extensions for reversal, and refuses the rest.
+- **Ruling requests — questions for the human grader** (`--emit-rulings`): raised whenever
+  two units are charged differently for the same item, a family is charged unevenly with no
+  evidence for the difference, a defect class has no precedent, a finding sits on a policy
+  boundary, or a waiver's scope is unclear. Each carries three ready dispositions. Answers
+  become numbered rulings and write-back candidates.
+- **Recursion to convergence extended to the matrix**: a round is done when no unit blocks
+  AND the matrix has no unarbitrated flag and no cell moved. `round-metrics.md` gains
+  `matrix cells moved` and `open ruling requests`; oscillating cell movement means two
+  rulings are fighting, which is a question for the human. The human closes the loop, not
+  the counter.
+- **Anonymization can never be mistaken for a student's blank:** the coding pass records
+  identity template fields already empty in the source, before grading, and the auditors and
+  the run preflight are told to treat a blank as the submission's, never the tooling's.
 - Eval suite: 3 plugin-level cases, trigger evals for the front-door and demo skills;
   runner early-access at release — see `evals/README.md` for exact verification status.
 - New documents: `LIMITS.md`, `DESIGN.md`, `COMPARISON.md`, data-handling reference,

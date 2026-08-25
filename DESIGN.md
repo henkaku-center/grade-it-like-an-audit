@@ -66,6 +66,18 @@ script (`skills/grade-audit-run/scripts/agreement.py`) computes κ/ρ/MAD. Compu
 asserted; and the script prints its own small-n caveat rather than letting a coefficient
 overclaim.
 
+**Consistency is a structure, not a memory.** A blind auditor cannot police fairness across
+units — it cannot know unit B was charged −1 for the thing it just charged −3 — so asking it
+to be consistent asks for what its isolation forbids. The deduction matrix moves the charge
+decision to the only place with cohort sight: one row per defect family, one column per
+unit, one charge per cell. A row reading `−1 | −1 | — | −2 | —` is self-evidently a question,
+which is the point; run against a real cohort it surfaced one family charged −1, −2, −2, —
+and −3 across five units. The lead pass arbitrates what the instruction files authorize and
+**refuses the rest**, because a price set by acting becomes a precedent nobody chose. What it
+refuses becomes a numbered question for the human, and the answer becomes a written
+precedent — the same write-back loop, now fed by fairness questions and not only by caught
+defects.
+
 **Deviations from the original plan, recorded.** (1) No `commands/` alias was shipped:
 skills are already user-invocable as `/grade-audit`, and a same-named command would
 collide rather than help. (2) `claude plugin eval` was early-access-gated in the build

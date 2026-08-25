@@ -10,3 +10,7 @@ memory/
 *.local.md
 .DS_Store
 node_modules/
+
+# python bytecode from the bundled stdlib scripts
+__pycache__/
+*.pyc

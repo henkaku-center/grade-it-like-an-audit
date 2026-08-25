@@ -21,35 +21,62 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    artifact that evidences it). Anything missing → stop and tell the user what to produce
    first; do not audit undrafted work. Determine the round number from
    `working-notes/*/audit-round*` files — all state lives in inspectable files, never in
-   your memory of the session.
+   your memory of the session. **If the inputs are coded units**, confirm the coding pass's
+   byte-identity line (`N/N copied files hash-match their source`) in its scan report before
+   fanning out. Without that proof you cannot tell a student's blank field from one the
+   tooling removed — and the auditors will be asked to charge it. No proof → re-run the
+   coding pass or grade the originals; do not guess.
 2. **Lead normalize.** Skim all drafts for structural conformance to the output format
    (sections present, tables well-formed). Fix format only — never content — and note what
    you touched.
 3. **Fan out.** One `unit-auditor` subagent per unit, in parallel, each prompted with ONLY
    its own unit's paths. Construction rules in `references/fan-out-protocol.md` — follow the
    path-isolation rules exactly; they are the blindness guarantee.
-4. **Lead consistency pass.** After all reports return, one `lead-consistency` subagent over
-   the full set plus the round's reports. Apply the strictest verdict anywhere to every
-   instance of a shared phrasing.
-5. **Findings table → human.** Each auditor's verbatim report is already saved as
-   `working-notes/<unit>/audit-round<N>.md` (per the fan-out protocol). Merge the findings
-   into one set-level table (unit, severity, exact text, ground truth, proposed fix) saved
-   as `working-notes/findings-round<N>.md`. Present the table and ask the human to
-   approve, reject, or amend EACH fix. Never apply an unapproved fix; never finalize an
-   outcome yourself.
-6. **Apply approved fixes**, then **re-audit every revised unit, whole** — a fresh
-   `unit-auditor` per revised unit, told it is re-auditing (a fix is a new claim; the auditor
-   must re-check everything, not just the flagged spot).
-7. **Convergence check.** Update `working-notes/round-metrics.md` and evaluate BOTH rules in
-   `references/convergence-and-bounding.md`: converged (one pass clean for ALL units at
-   once) → ship path; bounding triggered (blockers at zero, findings concentrating in prior
-   fixes) → stop looping, diff what ships, verify only changed shipped text. Otherwise →
-   another round, with the human's go-ahead.
-8. **Write-back — the round is not closed without it.** Propose dated precedent lines for
-   every new failure mode this round caught, per `references/write-back.md`. Show as a diff
-   to the task (or root) `CLAUDE.md`; append only what the human approves.
-9. **Round report.** Verdict per unit, the metrics table (trajectory across rounds), what
-   was written back, and what happens next. If the run has converged: remind the user of the
+4. **Build the deduction matrix.** Blind auditors cannot police fairness across units, so
+   consistency is made structural instead. Run
+   `scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md --emit-matrix
+   working-notes/deduction-matrix.md --emit-rulings working-notes/ruling-requests.md`.
+   One row per defect family, one column per unit. **One charge per (family, unit) — never
+   per instance.** Protocol in `references/deduction-matrix.md`; that one rule is worth more
+   accuracy than everything else in this skill combined.
+5. **Lead consistency pass.** One `lead-consistency` subagent over the full set, the round's
+   reports, AND the matrix. It arbitrates every flagged row it has authority to settle
+   (normalize a price the instruction files fix; propagate a waiver everywhere-or-nowhere;
+   collapse instances), flags analogy-based extensions for reversal, applies the strictest
+   verdict anywhere to every instance of a shared phrasing — and refuses the rest. It is
+   read-only; you write its decisions into the matrix.
+6. **Two things → human, together.** (a) The findings table (unit, severity, exact text,
+   ground truth, proposed fix), saved as `working-notes/findings-round<N>.md`. (b) The
+   **ruling requests** — the fairness questions the lead would not settle: same item priced
+   differently in two units, a family charged unevenly with no evidence for the difference, a
+   defect class with no precedent, a policy boundary (including any uncertainty an auditor
+   flagged about itself), an unclear waiver scope. Each carries three ready dispositions, so
+   answering costs a sentence. Ask the human to approve/reject/amend EACH fix and to rule on
+   EACH question. Never apply an unapproved fix; never answer a ruling request yourself.
+7. **Apply approved fixes and rulings.** Write each ruling into the matrix numbered, dated
+   and attributed; re-price the affected cells. Then **re-audit every revised or re-priced
+   unit, whole** — a fresh `unit-auditor` per unit, told it is re-auditing (a fix is a new
+   claim; re-check everything, not just the flagged spot).
+8. **Rebuild the matrix and diff it.** Regenerate and count `cells moved` against last
+   round. A ruling can re-price one row into a discrepancy on another — that is a new
+   question, not a finished round.
+9. **Convergence check.** Update `working-notes/round-metrics.md` (blockers, minors,
+   findings-in-prior-fixes, **matrix cells moved**, **open ruling requests**) and evaluate
+   the rules in `references/convergence-and-bounding.md`. Converged = one pass where no unit
+   blocks AND the matrix has no unarbitrated flag AND no cell moved. Bounding triggered →
+   stop looping, diff what ships. Otherwise → another round, with the human's go-ahead.
+   **The human closes the loop, not the counter:** once cell movement is small and blockers
+   are zero, show the diff of what moved and offer the close explicitly — the recorded runs
+   ended at round 9 on "the latest changes seem minor," with round 10 never run.
+10. **Write-back — the round is not closed without it.** Every ruling the human gave is a
+   precedent that would have prevented this round's discrepancy; propose it as a dated line
+   per `references/write-back.md`, alongside precedents for new failure modes. Show as a diff
+   to the task (or root) `CLAUDE.md`; append only what the human approves. Measured: a run
+   carrying prior rulings matched the issued grades to 3.0 points; the same harness without
+   them diverged by 11.4 and moved one outcome band.
+11. **Round report.** Verdict per unit, the matrix (rows, arbitrated, open questions, cells
+   moved), the metrics table (trajectory across rounds), what was written back, and what
+   happens next. If the run has converged: remind the user of the
    one box you cannot tick — **book one human reader outside the loop** (the `fresh-reader`
    agent is available as a labeled weak proxy, never a substitute).
 
@@ -60,3 +87,5 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 - Praise is audited as strictly as criticism. When a claim fails twice, propose deletion,
   not narrowing — subtraction is the only edit that cannot inherit a counterexample.
 - Everything you produce lands in `working-notes/` as files. The user can audit the auditor.
+- Never set a price by acting. A price chosen because nobody objected becomes a precedent
+  nobody chose — ask, and let the answer become the rule.

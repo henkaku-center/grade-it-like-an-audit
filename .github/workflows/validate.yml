@@ -19,6 +19,16 @@ jobs:
           echo "$out" | grep -q 'kappa : 0.900' || { echo "FAIL: expected kappa 0.900"; exit 1; }
           echo "$out" | grep -q 'mean absolute difference : 0.25' || { echo "FAIL: expected MAD 0.25"; exit 1; }
 
+      - name: code-units.py self-test (fixture with a known answer)
+        # exits nonzero and names every failed check
+        run: python3 skills/grade-audit-setup/scripts/code-units.py --self-test
+
+      - name: reconcile-deductions.py self-test (hand-computed fixture)
+        run: python3 skills/grade-audit-run/scripts/reconcile-deductions.py --self-test
+
+      - name: compare-runs.py self-test (fixture with a known answer)
+        run: python3 skills/grade-audit-run/scripts/compare-runs.py --self-test
+
   claude-plugin-validate:
     runs-on: ubuntu-latest
     # `claude plugin validate` is static (no login), but the installer or CLI
