@@ -44,15 +44,31 @@ another's feedback, it catches one:
 | how the reference appears | caught here? |
 | --- | --- |
 | names another unit's code — "unlike unit-b" | **yes** |
-| names the student — "unlike Grace's proof" | no, here; **yes at delivery**, where the map is in hand |
+| names the student — "unlike Grace's proof" | **yes at delivery**, where the map is in hand |
+| quotes another student's work verbatim | **yes**, with `--verify-quotes` |
 | identifies without naming — "the only submission that used a permutation test" | **no** |
-| quotes another student's work verbatim | **no** |
 
-The last two are judgment, which is what the auditors' cross-contamination check and the lead
-pass are for; the harness cannot mechanise them and does not pretend to. The name case is
-deliberately split: at matrix time the grading session is denied the map — that is the point
-of keeping it outside the workspace — so it cannot search for names; `--personalize` has the
-map legitimately and refuses on real names as well as codes.
+Only the last is genuinely beyond a mechanical check: there is no token to match, so it stays
+with the auditors' cross-contamination check and the lead pass.
+
+The name case is deliberately split. At matrix time the grading session is denied the map —
+that is the point of keeping it outside the workspace — so it cannot search for names;
+`--personalize` has the map legitimately and refuses on real names as well as codes.
+
+## Verbatim quotes — `--verify-quotes inputs/`
+
+Every quoted span of 25 characters or more in a unit's evaluation, checked against the
+submissions on disk. Three outcomes, two of which are defects the method already names:
+
+- **found in this unit's own submission** — properly sourced, silent.
+- **found only in ANOTHER unit's submission** — *borrowed evidence*, a never-event: this
+  unit's evaluation is quoting someone else's work.
+- **found nowhere** — an unsourced quote, which is the paraphrase-in-quotes defect the
+  grounding check exists to catch.
+
+Shared material (`handout/`, `reference/`, `solution/`, `stencils/`, the rubric) is excluded,
+because every subject legitimately quotes from it. Run it alongside the matrix build; on a
+real 3-unit workspace it examined 2 spans and traced both.
 
 ## Strictness: the preset seeds the schedule, the ruling overrides it
 

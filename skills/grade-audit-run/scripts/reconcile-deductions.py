@@ -212,6 +212,74 @@ def cross_reference_check(per_file):
     return hits
 
 
+QUOTE = re.compile(r"[\u201c\"]([^\u201c\u201d\"\n]{25,400})[\u201d\"]")
+SHARED_DIRS = ("handout", "reference", "solution", "assignment", "stencils", "rubric",
+               "for-students", "starter")
+
+
+def _norm_space(s):
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def verify_quotes(per_file, inputs_dir):
+    """Every quoted span in a unit's evaluation, checked against the corpus on disk.
+
+    Three outcomes, and two of them are defects the method already names:
+      - found in this unit's own submission            -> properly sourced, silent
+      - found in ANOTHER unit's submission             -> BORROWED EVIDENCE (never-event)
+      - found nowhere                                  -> unsourced quote (paraphrase-in-quotes)
+
+    Shared material — the handout, reference solution, stencils — is excluded, because every
+    student legitimately quotes from it.
+    """
+    root = Path(inputs_dir)
+    if not root.is_dir():
+        return None
+    corpus, shared = {}, []
+    for unit_dir in sorted(d for d in root.iterdir() if d.is_dir()):
+        if unit_dir.name.lower() in SHARED_DIRS:
+            continue
+        blob = []
+        for f in unit_dir.rglob("*"):
+            if f.is_file() and f.suffix.lower() in (".md", ".txt", ".py", ".js", ".r", ".rmd",
+                                                    ".ipynb", ".json", ".jsonl", ".mjs", ".html"):
+                try:
+                    blob.append(f.read_text(encoding="utf-8", errors="replace"))
+                except OSError:
+                    pass
+        corpus[unit_dir.name] = _norm_space(" ".join(blob))
+    for name in SHARED_DIRS:
+        d = root.parent / name
+        if d.is_dir():
+            for f in d.rglob("*"):
+                if f.is_file() and f.suffix.lower() in (".md", ".txt", ".ipynb", ".py", ".rmd"):
+                    try:
+                        shared.append(f.read_text(encoding="utf-8", errors="replace"))
+                    except OSError:
+                        pass
+    shared_blob = _norm_space(" ".join(shared))
+
+    borrowed, unsourced, checked = [], [], 0
+    for lab, text in per_file:
+        own = corpus.get(lab, "")
+        for m in QUOTE.finditer(text):
+            span = _norm_space(m.group(1))
+            if len(span) < 25:
+                continue
+            checked += 1
+            if span in own or (shared_blob and span in shared_blob):
+                continue
+            elsewhere = [u for u, blob in corpus.items() if u != lab and span in blob]
+            line = text.count("\n", 0, m.start()) + 1
+            if elsewhere:
+                borrowed.append({"unit": lab, "line": line, "from": sorted(elsewhere),
+                                 "quote": m.group(1)[:80]})
+            else:
+                unsourced.append({"unit": lab, "line": line, "quote": m.group(1)[:80]})
+    return {"checked": checked, "borrowed": borrowed, "unsourced": unsourced,
+            "units_in_corpus": len(corpus)}
+
+
 def code_unit_labels(units, deductions):
     """Column headers must never be identities — but do not invent a SECOND code for labels
     that are already coded.
@@ -402,6 +470,10 @@ def main():
     ap.add_argument("--tolerance", type=float, default=None, metavar="N",
                     help="gap below which the target is treated as met "
                          "(default: 1%% of the basis — 1.0 on a /100 rubric, 0.06 on a /6 one)")
+    ap.add_argument("--verify-quotes", metavar="INPUTS_DIR",
+                    help="check every quoted span in each unit's evaluation against the "
+                         "submissions on disk: sourced in its own unit, borrowed from another "
+                         "(a never-event), or sourced nowhere")
     ap.add_argument("--show-preset", metavar="NAME",
                     help="print a strictness preset's schedule and exit")
     ap.add_argument("--self-test", action="store_true", help="fixture check; exits nonzero on failure")
@@ -446,6 +518,23 @@ def main():
         if len(xrefs) > 20:
             print(f"     …and {len(xrefs) - 20} more")
         print()
+    if args.verify_quotes:
+        q = verify_quotes(per_file, args.verify_quotes)
+        if q is None:
+            print(f"--verify-quotes: {args.verify_quotes} is not a directory; skipped.\n")
+        else:
+            print(f"quote check: {q['checked']} quoted span(s) across {q['units_in_corpus']} "
+                  f"unit(s) in the corpus")
+            for b in q["borrowed"]:
+                print(f"  ** BORROWED EVIDENCE — {b['unit']} line {b['line']} quotes text found "
+                      f"only in {', '.join(b['from'])}: \"{b['quote']}…\"")
+            for u in q["unsourced"]:
+                print(f"  unsourced quote — {u['unit']} line {u['line']}: "
+                      f"\"{u['quote']}…\" appears in no submission")
+            if not q["borrowed"] and not q["unsourced"]:
+                print("  every quoted span traces to its own unit's submission "
+                      "(or to shared material).")
+            print()
     legend = code_unit_labels(all_units, all_ded)
     if legend:
         print("These units were NOT already coded, so they were relabelled for the written")
@@ -812,6 +901,38 @@ def self_test():
                                          ("unit-ab", "x\n")])) == 1)
         check("underscore counts as a separator when matching a label",
               len(cross_reference_check([("unit-a", "unit-b_notes\n"), ("unit-b", "x\n")])) == 1)
+
+        # verbatim quotes, checked against the corpus on disk
+        qroot = Path(tmp) / "qc"
+        (qroot / "inputs" / "unit-a").mkdir(parents=True)
+        (qroot / "inputs" / "unit-b").mkdir(parents=True)
+        (qroot / "handout").mkdir(parents=True)
+        (qroot / "inputs" / "unit-a" / "r.md").write_text(
+            "I removed rows with missing flipper measurements before the test.\n",
+            encoding="utf-8")
+        (qroot / "inputs" / "unit-b" / "r.md").write_text(
+            "A permutation test avoids the equal-variance assumption entirely.\n",
+            encoding="utf-8")
+        (qroot / "handout" / "assignment.md").write_text(
+            "Report means from batch mode, not estimates from single runs.\n", encoding="utf-8")
+        ev_a = ('- A: 4/5 — x\n'
+                '  own:      "I removed rows with missing flipper measurements before the test."\n'
+                '  borrowed: "A permutation test avoids the equal-variance assumption entirely."\n'
+                '  shared:   "Report means from batch mode, not estimates from single runs."\n'
+                '  invented: "The central limit theorem clearly justifies this approximation."\n')
+        q = verify_quotes([("unit-a", ev_a), ("unit-b", "- A: 5/5 — clean.\n")],
+                          qroot / "inputs")
+        check("every quoted span is examined", q["checked"] == 4)
+        check("a quote from the unit's own submission is not flagged",
+              not any("flipper" in b["quote"] for b in q["borrowed"] + q["unsourced"]))
+        check("a quote found only in ANOTHER unit is borrowed evidence",
+              len(q["borrowed"]) == 1 and q["borrowed"][0]["from"] == ["unit-b"])
+        check("a quote from shared material is not flagged",
+              not any("batch mode" in x["quote"] for x in q["borrowed"] + q["unsourced"]))
+        check("a quote sourced nowhere is reported as unsourced",
+              len(q["unsourced"]) == 1 and "central limit" in q["unsourced"][0]["quote"].lower())
+        check("a missing inputs directory is handled, not crashed",
+              verify_quotes([("unit-a", ev_a)], qroot / "nope") is None)
 
         # a deduction that names no issue must say so, not borrow a sentence of prose
         unnamed_ws = Path(tmp) / "unnamed" / "alpha"

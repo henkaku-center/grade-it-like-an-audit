@@ -47,14 +47,14 @@ is the human's judgment plus the evidence discipline — not the loop count.
 5. **The cross-reference check is deterministic for codes, not for references.** Naming one
    student inside another's feedback is a never-event, and the harness now checks for it
    mechanically every round rather than only at delivery. But it searches for unit *labels*.
-   Of four ways one student can appear in another's letter it catches one and a half: a unit
-   code (always), a real name (at delivery only, where the map is legitimately in hand — the
-   grading session is denied the map by design and cannot search for names), and **neither**
-   an identifying description without a name ("the only submission that used a permutation
-   test") nor a verbatim quote of another student's work. Those two are judgment, which is
-   what the auditors' cross-contamination check and the lead pass exist for. Do not read the
-   mechanical check as a guarantee that no student is ever referenced; read it as the cheap
-   half being covered cheaply.
+   Of four ways one student can appear in another's letter, three are now mechanical: a unit
+   code (every round), a real name (at delivery, where the map is legitimately in hand — the
+   grading session is denied it by design), and a verbatim quote of another unit's work
+   (`--verify-quotes`, which also catches quotes sourced nowhere). The fourth — an identifying
+   description carrying no name and no quote, "the only submission that used a permutation
+   test" — has no token to match and stays with the auditors' cross-contamination check and
+   the lead pass. Do not read the mechanical checks as a guarantee that no student is ever
+   referenced: they cover the forms that leave a trace.
 6. **Strictness is a real axis, and the presets do not settle it for you.** The same harness
    on the same submissions produced **96–100** under one rulebook and **63–84** under a
    stripped-back one. The presets (`lenient`/`standard`/`strict`) make that axis explicit

@@ -26,12 +26,16 @@
   mistake for a naming problem: **no coding scheme prevents this.** The defect is in the
   sentence, not the label — rename the unit and the letter still points at another student.
   And it is not a guarantee that no student is ever referenced: it searches for *labels*. Of
-  four ways one student can surface in another's letter it covers one and a half — a unit code
+  four ways one student can surface in another's letter it covers three — a unit code
   always, a real name at delivery only (the grading session is denied the map by design, so it
-  cannot search names; `--personalize` has it legitimately and refuses on names too), and
-  neither an identifying description nor a verbatim quote of another's work. Those are
-  judgment, which is what the auditors and the lead pass are for. Documented as such in
-  LIMITS.md rather than left to be assumed.
+  cannot search names; `--personalize` has it legitimately and refuses on names too), and a
+  **verbatim quote of another unit's work** via `--verify-quotes`, which checks every quoted
+  span of 25+ characters against the submissions on disk: sourced in its own unit (silent),
+  found only in another unit (borrowed evidence, a never-event), or found nowhere (the
+  paraphrase-in-quotes defect). Shared material — handout, reference solution, stencils — is
+  excluded, since every subject quotes from it legitimately. The one remaining form is an
+  identifying description carrying no name and no quote; it has no token to match and stays
+  with the auditors and the lead pass. Documented in LIMITS.md rather than left to be assumed.
 - **`--personalize` puts the real names back into the letters, locally.** Reads the coded
   letters and the map, writes named copies, sends nothing — no script this plugin ships
   imports `socket`, `http`, `urllib` or `requests`, and that is checkable with one grep.
