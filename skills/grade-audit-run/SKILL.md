@@ -52,6 +52,11 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    consistency is made structural instead. Run
    `python3 "<this skill's directory>/scripts/reconcile-deductions.py" working-notes/*/draft-evaluation.md --emit-matrix
    working-notes/deduction-matrix.md --emit-rulings working-notes/ruling-requests.md`.
+   It also runs a deterministic **cross-reference check**: if any unit's own evaluation
+   names another unit, that is a never-event (no subject named or identifiable in another
+   subject's feedback) and it prints before anything else. Fix those before the round
+   proceeds — the auditors are asked to catch this too, but this one is arithmetic.
+
    One row per defect family, one column per unit. **One charge per (family, unit) — never
    per instance.** Seed the price schedule from the task's preset
    (`--show-preset <name>` prints it); a ruling on any family overrides the seed. Protocol in `references/deduction-matrix.md`; that one rule is worth more

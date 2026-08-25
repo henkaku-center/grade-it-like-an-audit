@@ -768,22 +768,23 @@ def personalize(letters_dir, mapfile, out_dir, name_field, apply, code_phrase=No
     if not letters:
         die(f"no .md/.txt/.html letters found under {src}")
 
-    plan, problems = [], []
+    # Match on the exact filename stem (or the containing folder), not a substring search.
+    # `unit-a.md` and `working-notes/unit-a/letter.md` both resolve to exactly one unit, and a
+    # file that resolves to none simply is not a letter — a README sitting in the folder should
+    # not be able to stop a delivery.
+    plan, problems, skipped = [], [], []
     for f in letters:
-        hay = f"{f.name} {f.parent.name}"
-        owners = [c for c in names if term_regex(c).search(hay)]
-        if not owners:
-            problems.append((f, "matches no unit code in its name or folder"))
+        me = next((c for c in names if f.stem == c or f.parent.name == c), None)
+        if me is None:
+            skipped.append(f)
             continue
-        if len(owners) > 1:
-            problems.append((f, f"matches more than one unit ({', '.join(sorted(owners))})"))
-            continue
-        me = owners[0]
         text = f.read_text(encoding="utf-8", errors="replace")
         intruders = sorted(c for c in names if c != me and term_regex(c).search(text))
         if intruders:
-            problems.append((f, f"names another unit inside the letter ({', '.join(intruders)}) "
-                                f"— that would put one student's code in another's letter"))
+            problems.append((f, f"NEVER-EVENT: this letter names another unit "
+                                f"({', '.join(intruders)}) inside it. No subject may be named "
+                                f"or identifiable in another subject's feedback — fix the "
+                                f"letter, not the mapping"))
             continue
         # A unit code in the BODY refers to the work, not the person: substituting a name
         # there turns "your work on unit-a" into "your work on Grace Hopper". Only greeting
@@ -803,14 +804,21 @@ def personalize(letters_dir, mapfile, out_dir, name_field, apply, code_phrase=No
                     f"(line{'s' if len(body_codes) > 1 else ''} " \
                     f"{', '.join(str(n) for n in body_codes[:6])})"
         print(f"  {f.relative_to(src)}  →  {code} = {who}   [{note}]")
+    for f in skipped:
+        print(f"  skipped  {f.relative_to(src)} — no unit code in its filename or folder; "
+              f"not treated as a letter")
     for f, why in problems:
         print(f"  REFUSED  {f.relative_to(src)} — {why}")
     print()
     if problems:
-        print(f"** {len(problems)} letter(s) refused. Nothing is written while any letter is")
-        print("   ambiguous: a letter delivered to the wrong student is not a recoverable")
-        print("   error, and a near-miss here is indistinguishable from a correct run.")
+        print(f"** {len(problems)} letter(s) refused, so nothing was written for any of them.")
+        print("   These are not mapping ambiguities — each names another subject inside a")
+        print("   subject's own feedback, which is a never-event this method forbids. Fix the")
+        print("   letters; a delivered one is not recoverable by apologising.")
         return 1
+    if not plan:
+        die(f"no letter under {src} resolves to a unit — expected files named `<unit-code>.md` "
+            f"or living in a `<unit-code>/` folder")
     leftover = sum(len(bc) for _, _, _, _, bc in plan)
     if leftover and not code_phrase:
         print(f"note: {leftover} body reference(s) to a unit code will remain. A student "
@@ -1040,12 +1048,24 @@ def self_test():
               body.count("Quilla Brandsmith") == 1 and code_a in body)
         check("the filename is de-coded too", "quilla" in wrote[0].name.lower())
 
-        # the refusal that matters: a letter naming another unit
+        # the refusal that matters needs TWO units, so build a two-unit run for it
+        two = Path(tmp) / "two"
+        (two / "inputs" / "ada-lovelace").mkdir(parents=True)
+        (two / "inputs" / "grace-hopper").mkdir(parents=True)
+        (two / "inputs" / "ada-lovelace" / "e.md").write_text("x\n", encoding="utf-8")
+        (two / "inputs" / "grace-hopper" / "e.md").write_text("x\n", encoding="utf-8")
+        rost2 = two / "roster.csv"
+        rost2.write_text("path,name\nada-lovelace,Ada Lovelace\ngrace-hopper,Grace Hopper\n",
+                         encoding="utf-8")
+        run(["--inputs", str(two / "inputs"), "--roster", str(rost2),
+             "--out", str(two / "coded"), "--keys", str(keydir / "twok"), "--apply"])
+        key2 = next((keydir / "twok").glob("*.map.json"))
+        codes2 = sorted(u["code"] for u in json.loads(key2.read_text())["units"])
         bad = Path(tmp) / "bad"; bad.mkdir()
-        other = json.loads(keyfile.read_text())["units"]
-        (bad / f"{code_a}.md").write_text(
-            f"Dear [student],\n\nUnlike unit-zz, your proof held.\n", encoding="utf-8")
+        (bad / f"{codes2[0]}.md").write_text(
+            f"Dear [student],\n\nUnlike {codes2[1]}, your proof held.\n", encoding="utf-8")
         (bad / "no-code-here.md").write_text("Dear [student],\n", encoding="utf-8")
+        keyfile = key2
         badout = Path(tmp) / "badout"
         sys.argv = ["code-units.py", "--personalize", str(bad), "--map", str(keyfile),
                     "--out", str(badout), "--apply"]
@@ -1055,9 +1075,14 @@ def self_test():
             ob = b.getvalue()
         finally:
             sys.argv = old_argv
-        check("a letter matching no unit is refused", "matches no unit code" in ob)
-        check("refusal is non-zero and writes nothing",
+        check("a file that is not a letter is skipped, not fatal",
+              "not treated as a letter" in ob)
+        check("a letter naming another unit is refused as a NEVER-EVENT",
+              "NEVER-EVENT" in ob)
+        check("that refusal is non-zero and writes nothing",
               rcb == 1 and not badout.exists())
+        check("matching is by exact stem, so one filename cannot claim two units",
+              "matches more than one" not in ob)
         check("detail log holds the matched strings",
               "Quilla Brandsmith" in next(keys.glob("*.detail.jsonl")).read_text())
 

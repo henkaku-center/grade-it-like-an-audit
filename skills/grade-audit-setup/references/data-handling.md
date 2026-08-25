@@ -130,11 +130,15 @@ What it does and deliberately does not do:
   in the body refers to the *work* — substituting a name turns "your work on unit-a" into "your
   work on Ada Lovelace". Pass `--code-phrase "your submission"` if you want them replaced, and
   choose the wording yourself.
-- **It refuses rather than guesses.** A letter whose name matches no unit, or more than one, or
-  which mentions a *different* unit's code inside it, stops the whole run before anything is
-  written. That last one would put one student's code in another student's letter. Nothing is
-  written while any letter is ambiguous, because a near-miss is indistinguishable from a
-  correct run until a student replies.
+- **Mapping is exact, not fuzzy.** A letter belongs to the unit whose code is its filename
+  stem (`unit-a.md`) or its containing folder (`unit-a/letter.md`). Nothing else is guessed at,
+  so one filename cannot claim two units, and a file that resolves to no unit — a README, a
+  cohort summary — is simply skipped as not-a-letter rather than stopping the batch.
+- **One thing does stop the whole run: a letter that names another unit inside it.** That is
+  not a mapping problem and no naming scheme prevents it; it is the never-event rule firing —
+  no subject may be named or identifiable in another subject's feedback. Fix the letter, not
+  the mapping. Nothing is written for any letter while one is outstanding, because a
+  mis-delivered letter is indistinguishable from a correct one until a student replies.
 - **Output goes somewhere separate** from the coded letters, and it refuses to overwrite them.
   Those files now carry identities: keep them out of version control, and hand-check one
   against the map before sending the batch.

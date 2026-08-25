@@ -21,6 +21,22 @@ comparable share of the same gap; the two overlap and cannot be attributed indep
 Instances still belong in the evidence; they justify the charge and they belong in the
 letter. They do not each carry a price.
 
+## The cross-reference check — run before anything else
+
+Every time the matrix is built, each unit's own evaluation is searched for any *other* unit's
+label. A hit is a **never-event**: no subject may be named or identifiable in another
+subject's feedback, and a comparison like "unlike unit-b, the derivation stalled" carries a
+pointer to another student's work into this student's letter.
+
+This is deliberately mechanical. The blind auditors are told to catch it and the lead pass
+looks for it, but both are judgment; this is arithmetic, it runs every round, and it costs
+nothing. The same check runs again at delivery in `code-units.py --personalize`, which refuses
+to write any letter while one is outstanding — but catching it in round 1 costs a line, and
+catching it at delivery costs the whole grading pass.
+
+No naming scheme prevents this, which is worth being clear about: the defect is in the
+sentence, not the label. Rename the unit and the letter still points at another student.
+
 ## Strictness: the preset seeds the schedule, the ruling overrides it
 
 The task CLAUDE.md carries a preset. It sets two thresholds and a starting price per severity

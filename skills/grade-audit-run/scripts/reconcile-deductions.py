@@ -30,11 +30,11 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 # `## Name — 97/100`  (em dash, en dash or hyphen; score optional on some headings)
-UNIT_HEAD = re.compile(r"^##\s+(?P<label>.+?)\s*[—–-]\s*(?P<got>\d+)\s*/\s*(?P<max>\d+)\s*$")
+UNIT_HEAD = re.compile(r"^##\s+(?P<label>.+?)\s*[—–-]\s*(?P<got>\d+(?:\.\d+)?)\s*/\s*(?P<max>\d+(?:\.\d+)?)\s*$")
 ANY_HEAD = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<label>.+?)\s*$")
 # `- **Communication: 9/10** — …` or `- Task 5: 19/20 — …`
 COMPONENT = re.compile(r"^\s*[-*]\s+\*{0,2}(?P<name>[^:*]{1,60}?):?\s*\*{0,2}\s*"
-                       r"(?P<got>\d+)\s*/\s*(?P<max>\d+)")
+                       r"(?P<got>\d+(?:\.\d+)?)\s*/\s*(?P<max>\d+(?:\.\d+)?)")
 # A deduction must be *enclosed*: `(-1)` or `(−1)`. Without the brackets this also matches
 # every number range in the prose ("Tasks 19–25") and every hyphenated figure reference,
 # which is how the first version reported 9 points lost from a 99/100 unit.
@@ -182,6 +182,36 @@ def target_analysis(units, deductions, target, basis=None, quantum=None):
 ALREADY_CODED = re.compile(r"^(unit-[a-z]+|U\d+)$", re.I)
 
 
+def label_regex(label):
+    """Match a unit label as a whole token. Underscore counts as a separator, not a word
+    character, for the same reason it does in the coding pass: `unit-a` must be found in
+    `unit-a_notes` and must NOT be found inside `unit-ab`."""
+    return re.compile(r"(?<![A-Za-z0-9])" + re.escape(label) + r"(?![A-Za-z0-9])", re.I)
+
+
+def cross_reference_check(per_file):
+    """Every round, deterministically: does any unit's own evaluation name another unit?
+
+    Referencing one subject's work inside another's feedback is a never-event. The blind
+    auditors are asked to catch it and the lead pass looks for it, but both are judgment; this
+    is arithmetic. Catching it in round 1 costs a line — catching it at delivery costs the
+    whole grading pass, and missing it costs a student's privacy.
+
+    Only meaningful when each file IS one unit. A single evaluations.md covering the whole
+    cohort mentions every unit by construction and is not a letter.
+    """
+    labels = [lab for lab, _ in per_file]
+    hits = []
+    for lab, text in per_file:
+        for other in labels:
+            if other == lab:
+                continue
+            for m in label_regex(other).finditer(text):
+                hits.append({"unit": lab, "names": other,
+                             "line": text.count("\n", 0, m.start()) + 1})
+    return hits
+
+
 def code_unit_labels(units, deductions):
     """Column headers must never be identities — but do not invent a SECOND code for labels
     that are already coded.
@@ -250,8 +280,8 @@ def parse(path):
         if m:
             names.append(m.group("label").strip())
             src = Path(path).parent.name
-            units.append({"label": f"{src}:U{len(units) + 1}", "got": int(m.group("got")),
-                          "max": int(m.group("max")), "source": src})
+            units.append({"label": f"{src}:U{len(units) + 1}", "got": float(m.group("got")),
+                          "max": float(m.group("max")), "source": src})
             cur = len(units) - 1
             continue
         if ANY_HEAD.match(raw) and len(ANY_HEAD.match(raw).group("hashes")) <= 2:
@@ -262,7 +292,7 @@ def parse(path):
         comp = COMPONENT.match(raw)
         if not comp:
             continue                      # narrative prose restates losses; never re-count it
-        got, mx = int(comp.group("got")), int(comp.group("max"))
+        got, mx = float(comp.group("got")), float(comp.group("max"))
         name = comp.group("name").strip()
         if got >= mx:
             continue
@@ -302,7 +332,7 @@ def parse_file_as_unit(path, text):
         comp = COMPONENT.match(raw)
         if not comp:
             continue
-        g, m = int(comp.group("got")), int(comp.group("max"))
+        g, m = float(comp.group("got")), float(comp.group("max"))
         got += g
         mx += m
         if g >= m:
@@ -394,15 +424,28 @@ def main():
         return 0
     args = ap.parse_args()
 
-    all_units, all_ded, all_names = [], [], []
+    all_units, all_ded, all_names, per_file = [], [], [], []
     for f in args.files:
         u, d, n = parse(f)
+        if len(u) == 1:                      # one file, one unit -> a letter-shaped artifact
+            per_file.append((u[0]["label"],
+                             Path(f).read_text(encoding="utf-8", errors="replace")))
         all_units += u
         all_ded += d
         all_names += n
     if not all_units:
         print("no unit sections found (expected `## <label> — NN/NN`)")
         return 1
+    xrefs = cross_reference_check(per_file)
+    if xrefs:
+        print(f"** NEVER-EVENT: {len(xrefs)} cross-reference(s) — a unit's own evaluation names")
+        print("   another unit. No subject may be named or identifiable in another subject's")
+        print("   feedback. Fix these before anything is delivered:")
+        for h in xrefs[:20]:
+            print(f"     {h['unit']}  names  {h['names']}  at line {h['line']}")
+        if len(xrefs) > 20:
+            print(f"     …and {len(xrefs) - 20} more")
+        print()
     legend = code_unit_labels(all_units, all_ded)
     if legend:
         print("These units were NOT already coded, so they were relabelled for the written")
@@ -480,6 +523,7 @@ def main():
             print(f"      {m['unit']} -{m['amount']:g}  {redact(m['label'], all_names)[:110]}")
     print()
 
+    tol = args.tolerance if args.tolerance is not None else (args.basis if args.basis else 100) / 100.0
     if args.target_average is not None:
         ta = target_analysis(all_units, all_ded, args.target_average, args.basis)
         tol = args.tolerance if args.tolerance is not None else ta.get("basis", 100) / 100.0
@@ -522,7 +566,7 @@ def main():
     print(f"  {'unit':6s} {'score':>9s} {'deductions':>11s} {'points lost':>12s}")
     for u in all_units:
         n = len([d for d in all_ded if d["unit"] == u["label"]])
-        print(f"  {u['label']:6s} {u['got']:>5d}/{u['max']:<3d} {n:>11d} {lost[u['label']]:>12g}")
+        print(f"  {u['label']:6s} {u['got']:>5g}/{u['max']:<3g} {n:>11d} {lost[u['label']]:>12g}")
     return 0
 
 
@@ -751,6 +795,23 @@ def self_test():
               len(fd) == 1 and fd[0]["amount"] == 1 and fd[0]["unit"] == "student-a")
         check("full-credit component lines produce no deduction",
               all(d["component"] != "Data cleaning" for d in fd))
+
+        # the never-event, checked deterministically every round rather than left to judgment
+        xr = cross_reference_check([("unit-a", "Unlike unit-b, this stalled.\nmore\n"),
+                                    ("unit-b", "Clean work.\n")])
+        check("a unit's evaluation naming another unit is caught", len(xr) == 1)
+        check("and it reports which unit, which other, and where",
+              xr[0]["unit"] == "unit-a" and xr[0]["names"] == "unit-b" and xr[0]["line"] == 1)
+        check("a clean set produces no cross-reference finding",
+              cross_reference_check([("unit-a", "Good.\n"), ("unit-b", "Good.\n")]) == [])
+        check("a label is matched as a whole token, so unit-a is not found inside unit-ab",
+              cross_reference_check([("unit-ab", "discussing my own unit-ab work\n"),
+                                     ("unit-a", "x\n")]) == [])
+        check("but a genuine mention of a longer label is still caught",
+              len(cross_reference_check([("unit-a", "see unit-ab elsewhere\n"),
+                                         ("unit-ab", "x\n")])) == 1)
+        check("underscore counts as a separator when matching a label",
+              len(cross_reference_check([("unit-a", "unit-b_notes\n"), ("unit-b", "x\n")])) == 1)
 
         # a deduction that names no issue must say so, not borrow a sentence of prose
         unnamed_ws = Path(tmp) / "unnamed" / "alpha"
