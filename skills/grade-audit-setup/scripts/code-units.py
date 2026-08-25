@@ -375,7 +375,7 @@ def sanitize(text, terms):
 
 
 def render_report(run_id, mode, units, per_unit, findings, path_leaks, skipped_terms,
-                  missing, copy_verified, all_terms, attest=()):
+                  missing, copy_verified, all_terms, attest=(), renamed_files=False):
     ident = [f for f in findings if f["class"] == "identity"]
     cites = [f for f in findings if f["class"] == "citation"]
     flags = [f for f in findings if f["class"] == "flag"]
@@ -494,11 +494,16 @@ def render_report(run_id, mode, units, per_unit, findings, path_leaks, skipped_t
                      f"{sum(n for _, n in byfile.most_common()[25:])} |")
         L += ["", "Line numbers and matched strings are in the private detail log, not here."]
     L += ["", "## Attestation — this pass did not blank anything", "",
-          "File **contents were copied byte-for-byte** and hash-verified; only the top-level",
-          "folder was renamed. A blank name field, a missing date or an empty section in a",
-          "coded unit was blank in the submission. **Never attribute one to this tool** — and",
-          "if you believe content was altered, that is a tooling finding, not a subject",
-          "defect.", ""]
+          "File **contents were copied byte-for-byte** and hash-verified. A blank name field, a",
+          "missing date or an empty section in a coded unit was blank in the submission.",
+          "**Never attribute one to this tool** — and if you believe content was altered, that is",
+          "a tooling finding, not a subject defect.", ""]
+    if renamed_files:
+        L += ["Filenames **were** coded in this run (`--rename-files`), so a cross-reference that",
+              "no longer resolves is a tooling artefact — never charge a subject for it. Only the",
+              "top-level folder is renamed without that flag.", ""]
+    else:
+        L += ["Only the top-level folder was renamed; filenames are untouched.", ""]
     blanks = [a for a in attest if a.get("blank")]
     filled = [a for a in attest if not a.get("blank")]
     with_field = {a["file"].split("/")[0] for a in attest}
@@ -651,7 +656,8 @@ def main():
                         key=len, reverse=True)
     report = render_report(run_id, mode, units, per_unit, findings, sorted(set(path_leaks)),
                            skipped_terms, missing,
-                           (verified, copied) if args.apply else None, every_term, attest)
+                           (verified, copied) if args.apply else None, every_term, attest,
+                           args.rename_files)
 
     if keys and (args.apply or args.scan_only):
         keys.mkdir(parents=True, exist_ok=True)
@@ -911,6 +917,21 @@ def self_test():
               "three states, not two" in out5
               and "contain no such field at all" in out5
               and "nothing scannable" in out5)
+        rn = tmp / "rn"
+        (rn / "inputs" / "quilla-brandsmith").mkdir(parents=True)
+        (rn / "inputs" / "quilla-brandsmith" / "quilla-brandsmith-essay.md").write_text(
+            "Body.\n", encoding="utf-8")
+        rc8, out8 = run(["--inputs", str(rn / "inputs"), "--roster", str(roster),
+                         "--out", str(rn / "coded"), "--keys", str(keydir / "rk"),
+                         "--apply", "--rename-files"])
+        check("with --rename-files the attestation does not claim only the folder was renamed",
+              "Filenames **were** coded in this run" in out8
+              and "only the top-level\nfolder was renamed" not in out8)
+        rc9, out9 = run(["--inputs", str(rn / "inputs"), "--roster", str(roster),
+                         "--out", str(rn / "coded2"), "--keys", str(keydir / "rk2"), "--apply"])
+        check("without it, the attestation says filenames are untouched",
+              "filenames are untouched" in out9)
+
         check("the control names the filled-in units as the evidence",
               "it was **filled in**" in out5)
         att = []

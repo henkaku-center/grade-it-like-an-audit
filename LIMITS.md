@@ -185,6 +185,13 @@ Kept honest with counts, updated as runs happen:
   residue of the fixes themselves — which were fixed in prose and annotated (never
   silently edited) in the preserved artifacts. Record and written-back lessons in
   `DESIGN.md`; reports in `docs/test-runs/2026-08-24-docs-dogfood/`.
+- **Coded units run on real student work for the first time (2026-08-25).** Three real
+  submissions (two notebooks, one PDF): **zero real names reached the scan report**,
+  byte-identity 3/3, the PDF correctly reported as *uninspected* rather than clean, and both
+  scanned units carried no identity inside their contents. It also found one defect — the
+  attestation claimed only the folder was renamed while `--rename-files` had coded every
+  filename — which is the same false claim the dogfood caught in two other files and this one
+  had kept. Fixed in 0.2.1.
 - **The full audit round executed in a live user session (2026-08-25)** — the first time,
   and it exercised the machinery this file previously listed as unrun. A 3-unit round
   produced per-unit auditor reports, a lead-consistency pass, a deduction matrix and a

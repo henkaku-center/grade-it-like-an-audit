@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1 — 2026-08-25
+
+One correction, found by running 0.2.0 against real student submissions within the hour.
+
+- **The scan report claimed "only the top-level folder was renamed" while `--rename-files`
+  had just renamed every file.** The same false claim was caught by the release dogfood and
+  fixed in the auditor agent and the prompt template — and missed in the report itself, which
+  is the one place a grader actually reads it. The attestation is now conditional on the flag,
+  and when filenames were coded it adds the rule that follows: a cross-reference broken by a
+  coded filename is a tooling artefact, never the subject's error. Regression covers both
+  branches; `code-units.py` self-test 49 → 51.
+
+Also recorded from that run, which was the first use of the coded-units pass on real student
+work: zero real names reached the scan report, byte-identity held 3/3, the PDF was reported as
+*uninspected* rather than clean, and the notebooks carried no identity inside their contents.
+
 ## 0.2.0 — 2026-08-25
 
 Cross-unit fairness, a privacy pass that cannot corrupt the evidence, and a strictness dial.
