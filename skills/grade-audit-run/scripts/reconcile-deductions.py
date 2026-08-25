@@ -23,6 +23,7 @@ Stdlib only. Usage:
 
 import argparse
 import difflib
+import math
 import re
 import sys
 from collections import Counter, defaultdict
@@ -90,7 +91,34 @@ def apply_preset(findings, preset):
     return out
 
 
-def target_analysis(units, deductions, target, basis=None):
+def round_half_away(x, q):
+    """Round to the nearest multiple of `q`, breaking ties AWAY from zero.
+
+    Python's round() is half-to-even, so a scaled price landing exactly on a half-quantum
+    rounds DOWN — silently turning a charged finding into a free one. A residual is visible in
+    the report; a finding that quietly stopped costing anything is not. Tie-break in the
+    direction that keeps the finding priced, and let the residual carry the cost."""
+    n = x / q
+    return (math.floor(n + 0.5) if n >= 0 else math.ceil(n - 0.5)) * q
+
+
+def price_quantum(amounts):
+    """The granularity a schedule is actually written in.
+
+    Rounding a scaled price to the nearest whole point is wrong on any rubric that does not
+    use whole points: on a 6-point schedule priced in halves, scaling by 0.5 turns a −0.5 into
+    0.25, which rounds away to nothing. Infer the step from the prices in front of us and
+    round to that instead."""
+    vals = [abs(a) for a in amounts if a]
+    if not vals:
+        return 1.0
+    for q in (1.0, 0.5, 0.25, 0.2, 0.1, 0.05, 0.01):
+        if all(abs(v / q - round(v / q)) < 1e-9 for v in vals):
+            return q
+    return 0.01
+
+
+def target_analysis(units, deductions, target, basis=None, quantum=None):
     """What uniform tariff multiplier would bring the cohort average to `target`?
 
     Scaling the schedule is the only enforcement route that keeps attribution intact: every
@@ -134,17 +162,19 @@ def target_analysis(units, deductions, target, basis=None):
                                         "unreachable without awarding points for nothing"})
         return res
     k = (mean_max - float(target)) / mean_lost
-    # apply the multiplier with discrete rounding, then measure what that actually achieves
+    # apply the multiplier, rounding to the schedule's own granularity rather than to whole
+    # points, then measure what that actually achieves
+    q = quantum or price_quantum([d["amount"] for d in deductions])
     rounded, vanished = {u["label"]: 0.0 for u in units}, 0
     for d in deductions:
         if d["unit"] not in rounded:
             continue
-        new = round(d["amount"] * k)
+        new = round_half_away(d["amount"] * k, q)
         if d["amount"] > 0 and new == 0:
             vanished += 1
         rounded[d["unit"]] += new
     achieved = mean_max - sum(rounded.values()) / len(rounded)
-    res.update({"multiplier": k, "achieved": achieved,
+    res.update({"multiplier": k, "achieved": achieved, "quantum": q,
                 "residual": float(target) - achieved, "vanished": vanished})
     return res
 
@@ -327,8 +357,9 @@ def main():
                          "multiplier that would close it. Reports; never decides.")
     ap.add_argument("--basis", type=float, metavar="N",
                     help="score basis for the target (default: the units' own max)")
-    ap.add_argument("--tolerance", type=float, default=1.0, metavar="N",
-                    help="gap below which the target is treated as met (default 1.0)")
+    ap.add_argument("--tolerance", type=float, default=None, metavar="N",
+                    help="gap below which the target is treated as met "
+                         "(default: 1%% of the basis — 1.0 on a /100 rubric, 0.06 on a /6 one)")
     ap.add_argument("--show-preset", metavar="NAME",
                     help="print a strictness preset's schedule and exit")
     ap.add_argument("--self-test", action="store_true", help="fixture check; exits nonzero on failure")
@@ -436,6 +467,7 @@ def main():
 
     if args.target_average is not None:
         ta = target_analysis(all_units, all_ded, args.target_average, args.basis)
+        tol = args.tolerance if args.tolerance is not None else ta.get("basis", 100) / 100.0
         print("=== Expected average ===")
         if not ta.get("ok"):
             print(f"  actual {ta.get('actual', float('nan')):.2f} vs target "
@@ -449,13 +481,13 @@ def main():
                       f"{ta['extracted_implies']:.2f}, not the awarded {ta['actual']:.2f} — "
                       f"the extraction is incomplete, so the multiplier below is approximate. "
                       f"Fix the parse or price by hand.")
-            if abs(ta["gap"]) <= args.tolerance:
-                print(f"  within tolerance ({args.tolerance:g}) — no re-pricing indicated.")
+            if abs(ta["gap"]) <= tol:
+                print(f"  within tolerance ({tol:g}, 1% of basis) — no re-pricing indicated.")
             else:
                 print(f"  uniform tariff multiplier that would close it: "
                       f"x{ta['multiplier']:.3f}")
-                print(f"  after discrete rounding it achieves {ta['achieved']:.2f} "
-                      f"(residual {ta['residual']:+.2f})")
+                print(f"  after rounding to the schedule's own step ({ta['quantum']:g}) it "
+                      f"achieves {ta['achieved']:.2f} (residual {ta['residual']:+.2f})")
                 if ta["vanished"]:
                     print(f"  WARNING: {ta['vanished']} deduction(s) would round to zero — "
                           f"they become notes, so say so in the letters.")
@@ -469,7 +501,7 @@ def main():
         n = write_rulings(args.emit_rulings, all_units, clusters, all_names,
                           target_analysis(all_units, all_ded, args.target_average, args.basis)
                           if args.target_average is not None else None,
-                          args.tolerance)
+                          tol)
         print(f"ruling requests written: {args.emit_rulings} ({n} question(s) for the human)")
     print("=== 3. Per-unit deduction inventory ===")
     print(f"  {'unit':6s} {'score':>9s} {'deductions':>11s} {'points lost':>12s}")
@@ -749,6 +781,30 @@ def self_test():
         write_matrix(mm, mu, cluster(multi, 0.62), [])
         check("a price difference is flagged even when one unit has two instances",
               "PRICE DIFFERS" in mm.read_text())
+
+        # small-basis rubrics: a 6-point schedule priced in halves must not be rounded to
+        # whole points, and a tie must not silently waive a charged finding
+        check("the schedule's own step is inferred, not assumed to be 1",
+              price_quantum([1.0, 0.5, 1.5]) == 0.5
+              and price_quantum([1, 2, 3]) == 1.0
+              and price_quantum([0.25, 0.75]) == 0.25
+              and price_quantum([]) == 1.0)
+        check("a tie rounds away from zero, so a charged finding stays charged",
+              round_half_away(0.25, 0.5) == 0.5 and round_half_away(-0.25, 0.5) == -0.5)
+        small_u = [{"label": "U1", "got": 5.0, "max": 6}, {"label": "U2", "got": 5.5, "max": 6},
+                   {"label": "U3", "got": 4.5, "max": 6}]
+        small_d = [{"unit": "U1", "amount": 1.0}, {"unit": "U2", "amount": 0.5},
+                   {"unit": "U3", "amount": 1.5}]
+        st = target_analysis(small_u, small_d, 5.5)
+        check("a half-point schedule keeps its granularity", st["quantum"] == 0.5)
+        check("and no charged finding rounds away to nothing", st["vanished"] == 0)
+        check("the miss is reported as residual, not absorbed",
+              abs(st["residual"] - 0.1667) < 0.01)
+        big = target_analysis([{"label": "U1", "got": 98, "max": 100},
+                               {"label": "U2", "got": 97, "max": 100}],
+                              [{"unit": "U1", "amount": 2.0}, {"unit": "U2", "amount": 3.0}], 95)
+        check("whole-point schedules are unaffected by the change",
+              big["quantum"] == 1.0 and abs(big["achieved"] - 95.0) < 0.001)
 
         bt = target_analysis([{"label": "U1", "got": 18, "max": 20}],
                              [{"unit": "U1", "amount": 2.0}], 92, basis=100)

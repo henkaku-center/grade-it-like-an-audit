@@ -16,6 +16,15 @@
   every judgment would be evidenced, internally consistent, and measured against a standard
   nobody chose. Where a handout exists the skills propose a rubric from it for approval; where
   it does not, they ask. Nothing is drafted or audited until the criteria are approved.
+- **Expected-average calibration works on small-basis rubrics.** Found by a live workspace
+  that graded out of 6 points with half-point prices. Three defects, all fixed: scaled prices
+  were rounded to whole points, which waived 2 of 3 findings outright; ties rounded
+  half-to-even, so a price landing exactly half-way **silently became free**; and the
+  tolerance was a fixed 1.0, which is 1% of a /100 rubric but 17% of a /6 one. The step is now
+  inferred from the schedule's own prices, ties round away from zero so a charged finding
+  stays charged and the miss surfaces as a reported residual instead, and the tolerance is 1%
+  of the basis. Whole-point /100 schedules are unaffected. `reconcile-deductions.py` self-test
+  60 → 66.
 - Demo timing corrected in the demo skill's own description and cost line: 12–18 minutes,
   measured twice in live sessions, replacing an unmeasured "10 minutes".
 

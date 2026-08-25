@@ -57,8 +57,15 @@ python3 "<this skill's directory>/scripts/reconcile-deductions.py" \
 
 It reports the cohort average (computed from what was **awarded**, not from what the parser
 extracted — and it says so loudly when those disagree), the gap, and the uniform tariff
-multiplier that would close it, with the residual left after discrete rounding. **It applies
-nothing.** A gap beyond tolerance becomes `Q0` in the ruling queue with three routes:
+multiplier that would close it, with the residual left after rounding. **It applies nothing.**
+
+Two things it gets right that are easy to get wrong on a small rubric. It rounds to **the
+schedule's own step**, inferred from the prices in front of it — a 6-point rubric priced in
+half-points stays in half-points instead of being rounded to whole points, which would waive
+most of its findings. And it breaks ties **away from zero**, so a scaled price landing exactly
+half-way keeps the finding charged: a residual is visible in the report, a finding that
+quietly stopped costing anything is not. The tolerance is 1% of the basis, not a fixed point,
+because 1.0 is 1% of a /100 rubric and 17% of a /6 one. A gap beyond tolerance becomes `Q0` in the ruling queue with three routes:
 
 - **Scale the schedule** — one multiplier, every family, re-derive every grade. Attribution
   survives: each deduction still names its issue and only the price moves, identically for
