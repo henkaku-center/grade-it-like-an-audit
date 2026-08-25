@@ -19,6 +19,24 @@ in full — especially the discrete-findings rule, the output format, and the pr
 feedback"; or "process logs are scored — here's the weight." Name any floors or caps. Deciding
 what counts after seeing the work is how bias enters.]
 
+## Strictness and expected outcome
+
+[Set once here; the run skill reads it back. `standard` and no target is the default — an
+indifferent adopter does not have to choose. See
+`skills/grade-audit-run/references/deduction-matrix.md` for what each field does.]
+
+- **Preset:** [lenient | standard | strict]
+- **Report threshold:** note and above  ← *leave this; no preset hides a finding*
+- **Charge threshold:** [blocker | minor | note] and above
+- **Price schedule (seed):** blocker −[N] · minor −[N] · note −[N]
+  *(a seed only — the deduction matrix's Ruling column overrides it per family)*
+- **Expected average:** [none | N/BASIS]
+- **Enforcement:** [ask each run | advisory only]
+
+**Fixed at every preset, never a setting:** if no specific issue can be named, the points are
+awarded. That is the attribution guarantee this whole method rests on. Lowering strictness
+demotes a finding to a zero-point note — it never hides it, and the subject still sees it.
+
 ## Criteria / rubric
 
 [The fixed point split or pass/fail bar, held constant across every unit. A table works well.]

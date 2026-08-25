@@ -57,6 +57,20 @@ at a high rate.
    unit named, required anonymization, tone constraints, "what the subject was owed" (never
    deduct for following sources the subject was told to follow).
 
+## Strictness thresholds
+
+The orchestrator's prompt names two thresholds from the task's strictness preset. They govern
+what you do with a finding, never whether you look for it.
+
+- **Report threshold** — what gets written up at all. Normally `note`, meaning everything you
+  can name and evidence.
+- **Charge threshold** — what costs points. Findings below it are reported as **notes with
+  full evidence and a zero point value**. Demote them; never drop them. The subject still
+  reads them, and a defect nobody was told about cannot be fixed.
+
+Fixed regardless of preset: **if you cannot name a specific issue, the points are awarded.**
+Strictness never licenses a vague deduction.
+
 ## If the workspace is coded
 
 The coding pass copied file **contents byte-for-byte** (hash-verified) and renamed only the

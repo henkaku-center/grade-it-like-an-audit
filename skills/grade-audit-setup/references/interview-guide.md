@@ -79,6 +79,34 @@ scoreable. · CR: "code quality" (vague) vs "no new lint violations, judged from
 CA: "control is effective" vs "retention config matches policy §3, judged from config
 export". · CO: "acceptable liability" vs "cap ≥ 12 months fees, judged from §9".
 
+## Q5b — Strictness and the expected outcome
+
+Ask AFTER the criteria exist — strictness is meaningless before there is a rubric to be
+strict about. Two questions, both skippable.
+
+**"How hard do you grade?"** Offer the three presets with one consequence each:
+
+- **lenient** — only blockers cost points; minors and notes are written up as feedback.
+- **standard** — blockers and minors cost points; notes are feedback. *(default)*
+- **strict** — everything named costs something.
+
+Say the part that stops this being a way to hide problems: **a lower preset never suppresses
+a finding.** It moves it from charged to noted; the subject still reads it in their letter.
+The only way to stop something being reported at all is to raise the report threshold
+deliberately, and the run will then tell you how many findings that suppressed.
+
+**"Do you have an expected average?"** Optional, default none. If they give one, ask whether
+to *enforce* it or treat it as *advisory*, and say what enforcing costs before they answer:
+the honest route re-prices every defect family by one uniform multiplier and re-derives every
+grade, so attribution survives; the exact route moves individual grades, which breaks the
+rule that every point removed names an issue. Either way the choice is offered again at the
+run that hits the gap — record the default here, not a commitment.
+
+Also say once: a cohort can genuinely be excellent or weak, and forcing an average then
+misreports them.
+
+Record both answers in the task CLAUDE.md's "Strictness and expected outcome" section.
+
 ## Q6 — Never-events (privacy and red lines)
 
 "What must never happen with this material? Think: leaves this machine, ends up in a

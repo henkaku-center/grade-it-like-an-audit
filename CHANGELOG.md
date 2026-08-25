@@ -31,6 +31,19 @@ First release of the plugin (the methodology and templates predate it).
 - **Anonymization can never be mistaken for a student's blank:** the coding pass records
   identity template fields already empty in the source, before grading, and the auditors and
   the run preflight are told to treat a blank as the submission's, never the tooling's.
+- **Strictness presets** (`lenient` / `standard` / `strict`): coherent bundles of charge
+  threshold, per-severity price, and waiver posture, set once at setup (interview Q5b) in the
+  task CLAUDE.md and read back at run time. `--show-preset NAME` prints any of them.
+  Deliberately *not* adjustable by preset: the report threshold stays at `note`, so a lower
+  setting demotes a finding to a zero-point note that still reaches the subject rather than
+  hiding it; and an unnamed issue is awarded at every setting.
+- **Expected-average calibration** (`--target-average N --basis N`): reports the awarded
+  cohort average, the gap, the uniform tariff multiplier that would close it, and the residual
+  after discrete rounding — and applies nothing. A gap beyond tolerance becomes `Q0` in the
+  ruling queue offering three routes (scale the schedule / adjust individual grades / advisory
+  only), each with its cost stated, including that adjusting grades breaks the discrete
+  attributable deduction rule. The average is computed from what was **awarded**, not from
+  what the parser extracted, and the two disagreeing is reported loudly rather than absorbed.
 - Eval suite: 3 plugin-level cases, trigger evals for the front-door and demo skills;
   runner early-access at release — see `evals/README.md` for exact verification status.
 - New documents: `LIMITS.md`, `DESIGN.md`, `COMPARISON.md`, data-handling reference,

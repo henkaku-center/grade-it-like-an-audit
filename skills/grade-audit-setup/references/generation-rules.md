@@ -35,6 +35,11 @@ a bracket unfilled — anything the interview didn't cover gets asked, not guess
   file). Q4 → sources of truth. Q7 → the authoritative-for-the-subject list, with the
   never-deduct sentence. Q6 → waivers/gotchas as applicable. Precedents section starts
   empty.
+- **Strictness section**: Q5b → the task CLAUDE.md's "Strictness and expected outcome"
+  block — preset, both thresholds, the seeded price schedule for that preset, the expected
+  average (or `none`), and the enforcement default. Leave the report threshold at "note and
+  above" unless the user explicitly asked to suppress a class, and if they did, record which
+  class and why.
 - **.gitignore**: whenever the material involves people (or the user chose it in Q6):
   `<task>/inputs/` and `<task>/working-notes/` at minimum, plus anything else Q6 named. If
   the coded-units pass was accepted, add the coded copy too (`<task>/inputs-coded/` or

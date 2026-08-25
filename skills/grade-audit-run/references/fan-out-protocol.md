@@ -22,6 +22,23 @@ For each unit, spawn one `unit-auditor` subagent whose prompt contains exactly:
 4. **What to return** — the agent definition already fixes the report format; do not add
    requirements that conflict with it.
 
+## Strictness thresholds in the prompt
+
+Every auditor prompt carries the two thresholds from the task CLAUDE.md's strictness block
+(default `standard` when the task file has none):
+
+- **report threshold** — normally `note`: everything the auditor can name and evidence.
+- **charge threshold** — `blocker`, `minor` or `note` and above, per the preset.
+
+State the rule verbatim in the prompt, because it is the difference between a lenient setting
+and a blind one:
+
+> Below the charge threshold, report the finding as a NOTE with its evidence and zero points.
+> Demote it; never drop it.
+
+And carry the fixed guarantee unchanged at every preset: if no specific issue can be named,
+the points are awarded.
+
 ## Path-isolation rules
 
 - NEVER pass a directory that contains multiple units' work (e.g. the whole `inputs/` or

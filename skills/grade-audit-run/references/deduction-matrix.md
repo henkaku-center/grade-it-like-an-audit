@@ -20,6 +20,56 @@ basis** — larger than every other cause combined, including missing precedents
 Instances still belong in the evidence; they justify the charge and they belong in the
 letter. They do not each carry a price.
 
+## Strictness: the preset seeds the schedule, the ruling overrides it
+
+The task CLAUDE.md carries a preset. It sets two thresholds and a starting price per severity
+tier:
+
+| preset | charge threshold | blocker / minor / note | waiver posture |
+|---|---|---|---|
+| `lenient` | blocker only | −1 / 0 / 0 | waive where a rule plausibly applies |
+| `standard` | minor and above | −2 / −1 / 0 | waive where a rule states it |
+| `strict` | note and above | −3 / −2 / −1 | waive only on an explicit written ruling |
+
+`python3 scripts/reconcile-deductions.py --show-preset strict` prints any of them.
+
+Two properties that are not negotiable by preset:
+
+- **The report threshold stays at `note`.** A lower preset moves a finding from *charged* to
+  *noted*; it never removes it from the letter. Strictness governs what a defect costs, not
+  whether the harness looked. If a user raises the report threshold to cut noise, the round
+  report states what that suppressed and how many.
+- **An unnamed issue is always awarded.** At every preset. That is the attribution guarantee.
+
+These are seeds. The moment a ruling prices a family, the ruling wins and the schedule row
+records it — that is the whole point of having a Ruling column.
+
+## Expected average — a calibration signal, not a constraint
+
+If the task sets an expected average, run the check after the matrix is priced:
+
+```
+python3 scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md \
+    --target-average 92 --basis 100 --emit-rulings working-notes/ruling-requests.md
+```
+
+It reports the cohort average (computed from what was **awarded**, not from what the parser
+extracted — and it says so loudly when those disagree), the gap, and the uniform tariff
+multiplier that would close it, with the residual left after discrete rounding. **It applies
+nothing.** A gap beyond tolerance becomes `Q0` in the ruling queue with three routes:
+
+- **Scale the schedule** — one multiplier, every family, re-derive every grade. Attribution
+  survives: each deduction still names its issue and only the price moves, identically for
+  everyone. This is calibration, not curving.
+- **Adjust individual grades** — hits the number exactly and breaks the discrete attributable
+  deduction rule, because points then move without a named issue behind them. It is offered,
+  with that cost stated, and the choice is recorded in the matrix.
+- **Advisory only** — record the gap as evidence the schedule may be miscalibrated.
+
+Say the quiet part when you present it: **a cohort can genuinely be excellent or weak, and
+forcing the average then misreports them.** The evidence in the units is the better guide to
+which is happening than the distance from a number set before anyone read the work.
+
 ## Building it
 
 ```

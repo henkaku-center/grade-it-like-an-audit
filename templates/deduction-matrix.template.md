@@ -15,6 +15,29 @@ grader and the human, never by the generator. Protocol:
 A row whose cells disagree is either a justified difference or an unfairness. It must be one
 of the two, in writing, in the Ruling column.
 
+## 1b. Price schedule
+
+Seeded from the task's strictness preset (`[lenient|standard|strict]`); every row a ruling
+touches is overridden by that ruling.
+
+| severity | seeded price | charged at this preset? |
+|---|---|---|
+| blocker | −[N] | yes |
+| minor | −[N] | [yes/no] |
+| note | −[N] | [yes/no] |
+
+Report threshold: note and above — nothing below the charge threshold is hidden, only demoted
+to a zero-point note that still reaches the subject.
+
+## 1c. Expected average
+
+| target | actual (awarded) | gap | decision |
+|---|---|---|---|
+| [N/BASIS or none] | [N] | [+/-N] | [scale schedule x[k] / adjust grades / advisory only / n/a] |
+
+If a multiplier was applied, record it here and in §3 as a numbered ruling — it re-prices
+every family, so it is a policy decision, not an adjustment.
+
 ## 2. Explicitly not deducted
 
 Record the decision, not just the silence — an unwritten non-deduction reads as an oversight

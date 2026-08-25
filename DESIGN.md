@@ -66,6 +66,19 @@ script (`skills/grade-audit-run/scripts/agreement.py`) computes κ/ρ/MAD. Compu
 asserted; and the script prints its own small-n caveat rather than letting a coefficient
 overclaim.
 
+**A strictness dial must not become a way to stop looking.** Adopters need to grade harder or
+softer than the templates imply — measured, the same harness produced 96–100 under one
+rulebook and 63–84 under another. The obvious design makes auditors less sensitive at lower
+settings, and it is wrong: it hides defects rather than pricing them, so the subject loses the
+feedback precisely where the grader had decided not to charge for it. So strictness is split
+in two. A **report threshold** governs what is written up and stays at `note` in every preset;
+a **charge threshold** governs what costs points and is the only thing a preset moves. Lenient
+means a minor becomes a zero-point note in the letter, not a minor nobody mentions. The same
+logic drives the expected-average feature: enforcing a target by scaling the whole price
+schedule keeps every deduction tied to its named issue, while adjusting individual grades does
+not — both are offered, only one is recommended, and the difference is stated where the choice
+is made rather than in a footnote.
+
 **Consistency is a structure, not a memory.** A blind auditor cannot police fairness across
 units — it cannot know unit B was charged −1 for the thing it just charged −3 — so asking it
 to be consistent asks for what its isolation forbids. The deduction matrix moves the charge

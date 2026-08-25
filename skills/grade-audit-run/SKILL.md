@@ -30,14 +30,18 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    (sections present, tables well-formed). Fix format only — never content — and note what
    you touched.
 3. **Fan out.** One `unit-auditor` subagent per unit, in parallel, each prompted with ONLY
-   its own unit's paths. Construction rules in `references/fan-out-protocol.md` — follow the
+   its own unit's paths **and the task's two strictness thresholds** (report / charge, from
+   the task CLAUDE.md's strictness block; default `standard` if absent). State the rule in
+   the prompt: below the charge threshold, report as a zero-point note with evidence — demote,
+   never drop. Construction rules in `references/fan-out-protocol.md` — follow the
    path-isolation rules exactly; they are the blindness guarantee.
 4. **Build the deduction matrix.** Blind auditors cannot police fairness across units, so
    consistency is made structural instead. Run
    `scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md --emit-matrix
    working-notes/deduction-matrix.md --emit-rulings working-notes/ruling-requests.md`.
    One row per defect family, one column per unit. **One charge per (family, unit) — never
-   per instance.** Protocol in `references/deduction-matrix.md`; that one rule is worth more
+   per instance.** Seed the price schedule from the task's preset
+   (`--show-preset <name>` prints it); a ruling on any family overrides the seed. Protocol in `references/deduction-matrix.md`; that one rule is worth more
    accuracy than everything else in this skill combined.
 5. **Lead consistency pass.** One `lead-consistency` subagent over the full set, the round's
    reports, AND the matrix. It arbitrates every flagged row it has authority to settle
@@ -45,6 +49,14 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    collapse instances), flags analogy-based extensions for reversal, applies the strictest
    verdict anywhere to every instance of a shared phrasing — and refuses the rest. It is
    read-only; you write its decisions into the matrix.
+5b. **Expected-average check (only if the task sets one).** After the matrix is priced, run
+   `reconcile-deductions.py … --target-average N --basis N`. It reports the awarded cohort
+   average, the gap, the uniform multiplier that would close it and the residual after
+   rounding — and applies nothing. A gap beyond tolerance becomes `Q0` in the ruling queue
+   with three routes (scale the schedule / adjust individual grades / advisory only). Present
+   them with their costs, including that adjusting grades breaks the discrete attributable
+   deduction rule, and that **a cohort can genuinely be excellent or weak, in which case
+   forcing the average misreports them**. The human chooses; you record it in the matrix.
 6. **Two things → human, together.** (a) The findings table (unit, severity, exact text,
    ground truth, proposed fix), saved as `working-notes/findings-round<N>.md`. (b) The
    **ruling requests** — the fairness questions the lead would not settle: same item priced

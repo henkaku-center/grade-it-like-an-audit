@@ -48,6 +48,10 @@ new error. A prior "clean" verdict is NOT evidence; assume it missed something a
    artifact/code, not the session narrative.
 6. CONSISTENCY — the outcome in the summary table = the per-component lines = the subject-facing
    breakdown. Arithmetic checks. No stray/removed-elsewhere language survives.
+6a. THRESHOLDS — charge threshold for this task is [blocker|minor|note] and above; report
+   threshold is note and above. A finding below the charge threshold is written up as a NOTE
+   with its evidence and zero points — demoted, never dropped. If no specific issue can be
+   named, award the points; that holds at every strictness setting.
 6b. TOOLING vs SUBJECT — if this workspace is coded, the coding pass copied file contents
    byte-for-byte and renamed only the folder. Never charge the subject for a blank field, a
    missing name or an empty section on the assumption the tooling removed it; a blank here was

@@ -44,7 +44,24 @@ is the human's judgment plus the evidence discipline — not the loop count.
    carrying the prior rounds' rulings matched the issued grades to **3.0**, while the same
    harness without them diverged by 11.4 and moved one outcome band — the measured argument
    for write-back.
-5. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
+5. **Strictness is a real axis, and the presets do not settle it for you.** The same harness
+   on the same submissions produced **96–100** under one rulebook and **63–84** under a
+   stripped-back one. The presets (`lenient`/`standard`/`strict`) make that axis explicit
+   rather than leaving it to whatever the templates implied, but they only *seed* prices — the
+   matrix's rulings still decide, and a preset cannot tell you which posture your course
+   should have. Two things the presets deliberately cannot do: **suppress a finding** (a lower
+   preset demotes it to a zero-point note that still reaches the subject; only an explicit
+   report-threshold change hides anything, and the round report then says how much), and
+   **license a vague deduction** (an unnamed issue is awarded at every setting).
+6. **An enforced average is a policy choice with a cost, and the harness will not make it for
+   you.** Scaling the price schedule by one uniform multiplier keeps attribution intact —
+   every deduction still names its issue, only the tariff moves. Adjusting individual grades
+   to hit a number does not, and the harness says so before offering it. Neither route can
+   tell whether a cohort is genuinely strong or the schedule is simply miscalibrated; that
+   judgment is the human's, and forcing an average onto a cohort that really is excellent (or
+   really is weak) misreports them. The residual after discrete rounding is reported, never
+   absorbed.
+7. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
    their prompts contain — there is no per-unit filesystem sandbox. Each auditor reports
    the files it read, and the lead pass checks those reports; but per the method's own
    lesson 4, a "files I read" line is itself a claim. The eval suite includes a
@@ -87,10 +104,23 @@ Kept honest with counts, updated as runs happen:
 - `agreement.py` verified against a hand-computed example (quadratic-weighted κ = 0.900
   reproduced exactly; degenerate inputs handled). CI re-runs this check on every push.
 - Script self-tests, all in CI, all fixtures with hand-computed answers:
-  `code-units.py` **42/42**, `reconcile-deductions.py` **24/24**, `compare-runs.py` **13/13**.
+  `code-units.py` **42/42**, `reconcile-deductions.py` **51/51**, `compare-runs.py` **13/13**.
+  The strictness work added hand-computed cases in both directions — a cohort of known average
+  with targets above and below it, the asserted multiplier and the residual left by discrete
+  rounding, the count of deductions that round away to notes, and the two degenerate cases
+  (nothing to scale; a target above the basis). Plus the property that matters most: the same
+  finding set at all three presets, with only the charges differing.
   Two of those suites exist because a feature shipped broken under a green self-test that did
   not exercise it — the matrix emitters raised a `NameError` on first real use. Coverage of
   new code is now part of adding it.
+- **Two defects found by running the new code rather than reading it (2026-08-25):** the
+  expected-average math was computing the cohort average from what the *parser extracted*
+  rather than what was *awarded* — on a real file whose components do not sum to its header
+  those differ, and the target would have been set against the wrong number; it now uses the
+  awarded scores and says so loudly when the two disagree. And the deduction matrix could not
+  parse `working-notes/<unit>/draft-evaluation.md` — the one-file-per-unit layout this
+  method's own workspaces produce — despite the documentation instructing exactly that
+  command. Both are covered by tests now.
 - **Validated against a real cohort's issued grades (2026-08-25), two arms.** Primed (the
   task's own precedents supplied): MAD **3.0 points on a /90 basis**, no outcome-band change.
   Unprimed (precedents withheld, policy and waiver kept): MAD **11.4**, one outcome-band

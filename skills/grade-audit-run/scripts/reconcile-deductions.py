@@ -39,9 +39,106 @@ COMPONENT = re.compile(r"^\s*[-*]\s+\*{0,2}(?P<name>[^:*]{1,60}?):?\s*\*{0,2}\s*
 # which is how the first version reported 9 points lost from a 99/100 unit.
 DEDUCT = re.compile(r"[(\[]\s*[-−–]\s*(?P<amt>\d+(?:\.\d+)?)\s*[)\]]")
 BOLD = re.compile(r"\*\*(?P<text>.+?)\*\*")
+# Severity tiers are the method's existing vocabulary (BLOCKER / MINOR / note); presets
+# attach thresholds and prices to them rather than inventing a taxonomy.
+TIERS = ["note", "minor", "blocker"]          # ascending severity
+
+# A preset is a coherent posture, not a mood. `report` is what gets written up at all;
+# `charge` is what costs points. Note that `report` is "note" in every preset ON PURPOSE:
+# lowering strictness DEMOTES a finding to a zero-point note, it never hides it. The letter
+# still carries it, the student still learns from it, it simply does not cost marks.
+PRESETS = {
+    "lenient":  {"report": "note", "charge": "blocker",
+                 "price": {"blocker": 1, "minor": 0, "note": 0},
+                 "waiver": "waive where a rule plausibly applies"},
+    "standard": {"report": "note", "charge": "minor",
+                 "price": {"blocker": 2, "minor": 1, "note": 0},
+                 "waiver": "waive where a rule states it"},
+    "strict":   {"report": "note", "charge": "note",
+                 "price": {"blocker": 3, "minor": 2, "note": 1},
+                 "waiver": "waive only on an explicit written ruling"},
+}
+
 STOP = {"the", "a", "an", "and", "or", "but", "for", "of", "to", "in", "on", "is", "was",
         "it", "its", "this", "that", "with", "as", "at", "by", "from", "not", "no", "one",
         "two", "task", "point", "points", "deduction", "deducted", "added", "sweep"}
+
+
+def apply_preset(findings, preset):
+    """Price a set of findings under a preset. Returns one record per finding — the SAME
+    finding set at every preset, which is the point: strictness changes `charged` and
+    `amount`, never whether the finding exists."""
+    if preset not in PRESETS:
+        die(f"unknown preset '{preset}' (choose from: {', '.join(PRESETS)})")
+    cfg = PRESETS[preset]
+    charge_at = TIERS.index(cfg["charge"])
+    report_at = TIERS.index(cfg["report"])
+    out = []
+    for f in findings:
+        tier = str(f.get("severity", "minor")).strip().lower()
+        if tier not in TIERS:
+            tier = "minor"
+        rank = TIERS.index(tier)
+        charged = rank >= charge_at
+        out.append({**f, "severity": tier,
+                    "reported": rank >= report_at,
+                    "charged": charged,
+                    "amount": cfg["price"][tier] if charged else 0})
+    return out
+
+
+def target_analysis(units, deductions, target, basis=None):
+    """What uniform tariff multiplier would bring the cohort average to `target`?
+
+    Scaling the schedule is the only enforcement route that keeps attribution intact: every
+    deduction still names its issue, and only the price moves — identically for everyone.
+    Prices are discrete, so the target is often unreachable exactly; the residual is reported,
+    never absorbed.
+    """
+    if not units:
+        return {"ok": False, "why": "no units parsed"}
+    maxes = [u["max"] for u in units]
+    mean_max = sum(maxes) / len(maxes)
+    if basis:
+        mean_max = float(basis)
+    lost = {u["label"]: 0.0 for u in units}
+    for d in deductions:
+        if d["unit"] in lost:
+            lost[d["unit"]] += d["amount"]
+    mean_lost = sum(lost.values()) / len(lost)
+    # `actual` is what was actually AWARDED (the units' own scores), not what the extractor
+    # managed to find. Those differ whenever a document's components do not sum to its
+    # header, and building the target math on the extraction would silently mis-state the
+    # cohort. The multiplier still has to scale the extracted set, so when the two disagree
+    # the multiplier is approximate and the caller is told so rather than left to assume.
+    actual = sum(u["got"] for u in units) / len(units)
+    extracted_implies = mean_max - mean_lost
+    reconciles = abs(actual - extracted_implies) < 0.01
+    res = {"ok": True, "units": len(units), "basis": mean_max, "actual": actual,
+           "target": float(target), "gap": float(target) - actual, "mean_lost": mean_lost,
+           "reconciles": reconciles, "extracted_implies": extracted_implies}
+    if mean_lost <= 0:
+        res.update({"ok": False, "why": "no deductions to scale — a target cannot be reached "
+                                        "by re-pricing when nothing was charged"})
+        return res
+    if float(target) > mean_max:
+        res.update({"ok": False, "why": f"target {target} exceeds the basis {mean_max:g} — "
+                                        "unreachable without awarding points for nothing"})
+        return res
+    k = (mean_max - float(target)) / mean_lost
+    # apply the multiplier with discrete rounding, then measure what that actually achieves
+    rounded, vanished = {u["label"]: 0.0 for u in units}, 0
+    for d in deductions:
+        if d["unit"] not in rounded:
+            continue
+        new = round(d["amount"] * k)
+        if d["amount"] > 0 and new == 0:
+            vanished += 1
+        rounded[d["unit"]] += new
+    achieved = mean_max - sum(rounded.values()) / len(rounded)
+    res.update({"multiplier": k, "achieved": achieved,
+                "residual": float(target) - achieved, "vanished": vanished})
+    return res
 
 
 def issue_name(label):
@@ -116,7 +213,50 @@ def parse(path):
             deductions.append({"unit": units[cur]["label"], "component": name,
                                "amount": mx - got, "label": label.strip(),
                                "norm": normalize(issue_name(label)), "inferred": True})
+    if not units:
+        return parse_file_as_unit(path, text)
     return units, deductions, names
+
+
+def parse_file_as_unit(path, text):
+    """One file per unit — the layout this method's own workspaces use
+    (`working-notes/<unit>/draft-evaluation.md`). There is no `## Name — 96/100` heading to
+    find because the unit is the directory, so the label comes from the path and the unit
+    total is the sum of its component lines."""
+    p = Path(path)
+    label = p.parent.name if p.parent.name not in ("", ".", "/") else p.stem
+    got = mx = 0
+    deductions = []
+    for raw in text.splitlines():
+        comp = COMPONENT.match(raw)
+        if not comp:
+            continue
+        g, m = int(comp.group("got")), int(comp.group("max"))
+        got += g
+        mx += m
+        if g >= m:
+            continue
+        body = raw[comp.end():]
+        marked = [float(d.group("amt")) for d in DEDUCT.finditer(body)
+                  if float(d.group("amt")) > 0]
+        labels = [b.group("text").strip() for b in BOLD.finditer(body)]
+        labels = [l for l in labels if len(l) > 3] or labels
+        name = comp.group("name").strip()
+        if marked and abs(sum(marked) - (m - g)) < 0.001:
+            for i, amt in enumerate(marked):
+                lab = labels[i] if i < len(labels) else (labels[0] if labels else body.strip()[:160])
+                deductions.append({"unit": label, "component": name, "amount": amt,
+                                   "label": lab, "norm": normalize(issue_name(lab)),
+                                   "inferred": False})
+        else:
+            lab = labels[0] if labels else body.strip()[:160]
+            deductions.append({"unit": label, "component": name, "amount": m - g,
+                               "label": lab, "norm": normalize(issue_name(lab)),
+                               "inferred": True})
+    if mx == 0:
+        return [], [], []
+    return ([{"label": label, "got": got, "max": mx, "source": p.parent.name}],
+            deductions, [label])
 
 
 def redact(text, names):
@@ -153,9 +293,33 @@ def main():
                     help="write the family x unit deduction matrix (the cross-unit artifact)")
     ap.add_argument("--emit-rulings", metavar="PATH",
                     help="write the ruling-request queue: what the lead cannot decide alone")
+    ap.add_argument("--target-average", type=float, metavar="N",
+                    help="expected cohort average; reports the gap and the uniform tariff "
+                         "multiplier that would close it. Reports; never decides.")
+    ap.add_argument("--basis", type=float, metavar="N",
+                    help="score basis for the target (default: the units' own max)")
+    ap.add_argument("--tolerance", type=float, default=1.0, metavar="N",
+                    help="gap below which the target is treated as met (default 1.0)")
+    ap.add_argument("--show-preset", metavar="NAME",
+                    help="print a strictness preset's schedule and exit")
     ap.add_argument("--self-test", action="store_true", help="fixture check; exits nonzero on failure")
     if "--self-test" in sys.argv[1:]:
         return self_test()
+    if "--show-preset" in sys.argv[1:]:
+        name = sys.argv[sys.argv.index("--show-preset") + 1]
+        if name not in PRESETS:
+            die(f"unknown preset '{name}' (choose from: {', '.join(PRESETS)})")
+        c = PRESETS[name]
+        print(f"preset: {name}")
+        print(f"  report threshold : {c['report']} and above  (nothing below this is hidden — "
+              f"it is demoted to a zero-point note)")
+        print(f"  charge threshold : {c['charge']} and above")
+        print(f"  prices           : blocker −{c['price']['blocker']}  "
+              f"minor −{c['price']['minor']}  note −{c['price']['note']}")
+        print(f"  waiver posture   : {c['waiver']}")
+        print("  fixed at every preset: if no specific issue can be named, the points are "
+              "awarded. That is the attribution guarantee, not a setting.")
+        return 0
     args = ap.parse_args()
 
     all_units, all_ded, all_names = [], [], []
@@ -229,11 +393,42 @@ def main():
             print(f"      {m['unit']} -{m['amount']:g}  {redact(m['label'], all_names)[:110]}")
     print()
 
+    if args.target_average is not None:
+        ta = target_analysis(all_units, all_ded, args.target_average, args.basis)
+        print("=== Expected average ===")
+        if not ta.get("ok"):
+            print(f"  actual {ta.get('actual', float('nan')):.2f} vs target "
+                  f"{args.target_average:g} — cannot re-price: {ta['why']}")
+        else:
+            print(f"  units {ta['units']}  ·  basis {ta['basis']:g}  ·  "
+                  f"actual {ta['actual']:.2f}  ·  target {ta['target']:g}  ·  "
+                  f"gap {ta['gap']:+.2f}")
+            if not ta["reconciles"]:
+                print(f"  CAUTION: the extracted deductions imply "
+                      f"{ta['extracted_implies']:.2f}, not the awarded {ta['actual']:.2f} — "
+                      f"the extraction is incomplete, so the multiplier below is approximate. "
+                      f"Fix the parse or price by hand.")
+            if abs(ta["gap"]) <= args.tolerance:
+                print(f"  within tolerance ({args.tolerance:g}) — no re-pricing indicated.")
+            else:
+                print(f"  uniform tariff multiplier that would close it: "
+                      f"x{ta['multiplier']:.3f}")
+                print(f"  after discrete rounding it achieves {ta['achieved']:.2f} "
+                      f"(residual {ta['residual']:+.2f})")
+                if ta["vanished"]:
+                    print(f"  WARNING: {ta['vanished']} deduction(s) would round to zero — "
+                          f"they become notes, so say so in the letters.")
+                print("  THIS SCRIPT DOES NOT APPLY IT. The enforcement choice is the "
+                      "human's; see the ruling queue.")
+        print()
     if args.emit_matrix:
         write_matrix(args.emit_matrix, all_units, clusters, all_names)
         print(f"matrix written: {args.emit_matrix}")
     if args.emit_rulings:
-        n = write_rulings(args.emit_rulings, all_units, clusters, all_names)
+        n = write_rulings(args.emit_rulings, all_units, clusters, all_names,
+                          target_analysis(all_units, all_ded, args.target_average, args.basis)
+                          if args.target_average is not None else None,
+                          args.tolerance)
         print(f"ruling requests written: {args.emit_rulings} ({n} question(s) for the human)")
     print("=== 3. Per-unit deduction inventory ===")
     print(f"  {'unit':6s} {'score':>9s} {'deductions':>11s} {'points lost':>12s}")
@@ -290,7 +485,7 @@ def write_matrix(path, units, clusters, names):
     Path(path).write_text("\n".join(L), encoding="utf-8")
 
 
-def write_rulings(path, units, clusters, names):
+def write_rulings(path, units, clusters, names, target=None, tolerance=1.0):
     """The questions for the human. Two kinds the lead must never settle silently: the same
     family priced differently across units, and a family charged in some units but not
     others. Both are fairness questions, and both are cheap to answer and expensive to guess."""
@@ -314,6 +509,29 @@ def write_rulings(path, units, clusters, names):
          "The lead pass produced these because deciding them alone would set policy without",
          "authority. Each one is a fairness question across units. Answer once; the answer",
          "becomes a numbered ruling in the matrix and a write-back candidate.", ""]
+    if target and target.get("ok") and abs(target["gap"]) > tolerance:
+        L += ["## Q0 — EXPECTED AVERAGE NOT MET", "",
+              f"Cohort average is **{target['actual']:.2f}** against a target of "
+              f"**{target['target']:g}** (gap {target['gap']:+.2f}, basis "
+              f"{target['basis']:g}).", "",
+              "Three ways to respond. This is your decision, not the harness's:", "",
+              f"- [ ] **Scale the schedule** — multiply every family's price by "
+              f"**x{target['multiplier']:.3f}**, re-derive every grade. Achieves "
+              f"{target['achieved']:.2f} after rounding (residual "
+              f"{target['residual']:+.2f})."
+              + (f" **{target['vanished']} deduction(s) would round to zero** and become "
+                 f"notes." if target["vanished"] else "")
+              + " Attribution survives: each deduction still names its issue, only the price "
+                "moves, identically for everyone.",
+              "- [ ] **Adjust individual grades** to hit the number exactly. This **breaks "
+              "the discrete attributable deduction rule** — points would move without a "
+              "named issue behind them. Available, but the cost is real and it should be "
+              "recorded in the matrix.",
+              "- [ ] **Advisory only** — record the gap as evidence the schedule may be "
+              "miscalibrated and change nothing.", "",
+              "Before choosing: a cohort can genuinely be excellent or weak. Forcing the "
+              "average then misreports them, and the evidence in these units is the better "
+              "guide to which is happening.", ""]
     if not qs:
         L.append("_No cross-unit discrepancies found. Nothing to arbitrate this round._")
     for i, (kind, fam, prices, ask) in enumerate(qs, 1):
@@ -425,6 +643,92 @@ def self_test():
         m3 = Path(tmp) / "m3.md"
         write_matrix(m3, u3, c3, n3)
         check("and the matrix flags its differing price", "PRICE DIFFERS" in m3.read_text())
+
+        # one-file-per-unit layout: what this method's own workspaces actually produce
+        wn = Path(tmp) / "working-notes" / "student-a"
+        wn.mkdir(parents=True)
+        (wn / "draft-evaluation.md").write_text(
+            "# Draft evaluation\n\n"
+            "- **Data cleaning: 5/5** — crisp.\n"
+            "- **Analysis correctness: 4/5** — **Missing degrees of freedom (-1).**\n"
+            "- **Figures: 5/5** — all captioned.\n", encoding="utf-8")
+        fu, fd, fn = parse(wn / "draft-evaluation.md")
+        check("a per-unit file parses without a `## Name — NN/NN` heading", len(fu) == 1)
+        check("the unit label comes from its directory", fu[0]["label"] == "student-a")
+        check("the unit total is the sum of its components",
+              fu[0]["got"] == 14 and fu[0]["max"] == 15)
+        check("its deduction is found and attributed to that unit",
+              len(fd) == 1 and fd[0]["amount"] == 1 and fd[0]["unit"] == "student-a")
+        check("full-credit component lines produce no deduction",
+              all(d["component"] != "Data cleaning" for d in fd))
+
+        # --- strictness presets -------------------------------------------------------
+        # The load-bearing property: the SAME finding set at every preset. Strictness must
+        # change what a defect costs, never whether it was seen.
+        synth = [{"severity": "blocker", "issue": "a"}, {"severity": "minor", "issue": "b"},
+                 {"severity": "note", "issue": "c"}]
+        priced = {name: apply_preset(synth, name) for name in ("lenient", "standard", "strict")}
+        totals = {k: sum(x["amount"] for x in v) for k, v in priced.items()}
+        check("every preset yields the identical finding set",
+              all(len(v) == 3 for v in priced.values())
+              and all([x["issue"] for x in v] == ["a", "b", "c"] for v in priced.values()))
+        check("no preset hides a finding from the report",
+              all(all(x["reported"] for x in v) for v in priced.values()))
+        check("preset totals are ordered lenient < standard < strict",
+              totals["lenient"] < totals["standard"] < totals["strict"])
+        check("hand-computed preset totals", (totals["lenient"], totals["standard"],
+                                              totals["strict"]) == (1, 3, 6))
+        check("lenient demotes a minor to a zero-point note, it does not drop it",
+              [x for x in priced["lenient"] if x["severity"] == "minor"][0]["amount"] == 0
+              and [x for x in priced["lenient"] if x["severity"] == "minor"][0]["reported"])
+        check("an unrecognised severity defaults to minor, never to free",
+              apply_preset([{"severity": "wat", "issue": "z"}], "strict")[0]["amount"] == 2)
+
+        # --- expected-average calibration ----------------------------------------------
+        # fixture: Ada 98/100 (lost 2), Grace 97/100 (lost 3) -> mean_lost 2.5, actual 97.5
+        ta = target_analysis(units, ded, 95)
+        check("actual cohort average computed", abs(ta["actual"] - 97.5) < 0.001)
+        check("multiplier is hand-computable: (100-95)/2.5 = 2.0",
+              abs(ta["multiplier"] - 2.0) < 0.001)
+        check("scaling by that multiplier lands exactly on target",
+              abs(ta["achieved"] - 95.0) < 0.001 and abs(ta["residual"]) < 0.001)
+        check("nothing vanishes when scaling up", ta["vanished"] == 0)
+
+        up = target_analysis(units, ded, 99)
+        check("raising the target shrinks the tariff: (100-99)/2.5 = 0.4",
+              abs(up["multiplier"] - 0.4) < 0.001)
+        check("discrete rounding leaves a reported residual, not a fudge",
+              abs(up["achieved"] - 99.5) < 0.001 and abs(up["residual"] + 0.5) < 0.001)
+        check("deductions that round to zero are counted and surfaced", up["vanished"] == 3)
+
+        check("actual is what was awarded, not what the extractor found",
+              abs(ta["actual"] - 97.5) < 0.001 and ta["reconciles"] is True)
+        skew = [dict(d) for d in ded][:-1]          # drop a deduction: extraction now short
+        bad = target_analysis(units, skew, 95)
+        check("an incomplete extraction is flagged, not silently used",
+              bad["reconciles"] is False
+              and abs(bad["actual"] - 97.5) < 0.001
+              and bad["extracted_implies"] > bad["actual"])
+        check("a target above the basis is refused, not approximated",
+              target_analysis(units, ded, 105)["ok"] is False)
+        check("with no deductions there is nothing to scale",
+              target_analysis(units, [], 90)["ok"] is False)
+
+        rq2 = Path(tmp) / "rulings-target.jsonl.md"
+        write_rulings(rq2, units, cluster(ded, 0.62), names, target_analysis(units, ded, 95), 1.0)
+        rt2 = rq2.read_text()
+        check("a missed target becomes Q0 in the ruling queue", "EXPECTED AVERAGE NOT MET" in rt2)
+        check("Q0 offers all three enforcement routes",
+              "Scale the schedule" in rt2 and "Adjust individual grades" in rt2
+              and "Advisory only" in rt2)
+        check("Q0 states the cost of the attribution-breaking route",
+              "breaks the discrete attributable deduction rule" in rt2)
+        check("Q0 warns that a cohort may genuinely differ from the target",
+              "genuinely be excellent or weak" in rt2)
+        rq3 = Path(tmp) / "rulings-ontarget.md"
+        write_rulings(rq3, units, cluster(ded, 0.62), names, target_analysis(units, ded, 97), 1.0)
+        check("a target within tolerance raises no question",
+              "EXPECTED AVERAGE NOT MET" not in rq3.read_text())
 
     print(f"self-test: {checks - len(failures)}/{checks} checks passed")
     for f in failures:
