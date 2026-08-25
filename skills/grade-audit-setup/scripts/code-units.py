@@ -558,6 +558,17 @@ def main():
                     help="also search terms under 3 chars / common words")
     ap.add_argument("--report", help="write the scan report here (default: <out>/scan-report.md)")
     ap.add_argument("--self-test", action="store_true", help="run the built-in fixture check")
+    ap.add_argument("--personalize", metavar="LETTERS_DIR",
+                    help="put real names back into coded letters. Local only: reads the map, "
+                         "writes files, sends nothing. Needs --map and --out; dry run unless "
+                         "--apply.")
+    ap.add_argument("--map", metavar="MAP.json", help="the run's map file, for --personalize")
+    ap.add_argument("--code-phrase", metavar="TEXT",
+                    help="replace body references to the unit code with this phrase (e.g. "
+                         "\"your submission\"). Off by default: a code in the body refers to "
+                         "the work, not the person, and the right wording is yours to choose.")
+    ap.add_argument("--name-field", default="name",
+                    help="roster column holding the name to substitute (default: name)")
     ap.add_argument("--decode", metavar="MAP.json",
                     help="print the code -> identity table from a run's map file. This is how "
                          "you get the names back at delivery; run it OUTSIDE the grading "
@@ -566,6 +577,10 @@ def main():
         return self_test()
     if "--decode" in sys.argv[1:]:
         return decode(sys.argv[sys.argv.index("--decode") + 1])
+    if "--personalize" in sys.argv[1:]:
+        a = ap.parse_args()
+        return personalize(a.personalize, a.map, a.out, a.name_field, a.apply,
+                           a.code_phrase)
     args = ap.parse_args()
 
     if not args.inputs:
@@ -709,6 +724,124 @@ def main():
               "above, then re-run with --apply, or --scan-only --keys DIR to record the "
               "matched strings without copying anything. ---")
     return 0
+
+
+# Placeholders a coded letter might carry where a name belongs.
+GREETING = re.compile(r"\[\s*(student|name|student[ _-]?name)\s*\]|\{\{\s*(student|name)\s*\}\}",
+                      re.I)
+
+
+def personalize(letters_dir, mapfile, out_dir, name_field, apply, code_phrase=None):
+    """Put real names back into coded letters, entirely on this machine.
+
+    Reads local files, writes local files, sends nothing — there is no network code anywhere
+    in this script. Refuses rather than guesses: the failure that matters here is a letter
+    reaching the wrong student, and that is not recoverable by apologising.
+    """
+    src = Path(letters_dir).resolve()
+    if not src.is_dir():
+        die(f"--personalize {src} is not a directory")
+    if not mapfile:
+        die("--personalize needs --map <run>.map.json")
+    if not out_dir:
+        die("--personalize needs --out (a directory that does not already hold letters)")
+    mp = Path(mapfile).resolve()
+    if not mp.exists():
+        die(f"no map file at {mp}")
+    out = Path(out_dir).resolve()
+    if out == src or src in out.parents or out in src.parents:
+        die(f"--out {out} overlaps the coded letters at {src}. Write the named copies "
+            f"somewhere separate; they carry identities and the coded ones must stay clean.")
+
+    data = json.loads(mp.read_text(encoding="utf-8"))
+    units = data.get("units", [])
+    names = {}
+    for u in units:
+        ident = u.get("identity", {})
+        who = ident.get(name_field) or ident.get(name_field.title()) or u.get("path")
+        names[u["code"]] = str(who).strip()
+    if not names:
+        die(f"{mp} records no units")
+
+    letters = sorted(f for f in src.rglob("*") if f.is_file() and f.suffix.lower()
+                     in (".md", ".txt", ".html"))
+    if not letters:
+        die(f"no .md/.txt/.html letters found under {src}")
+
+    plan, problems = [], []
+    for f in letters:
+        hay = f"{f.name} {f.parent.name}"
+        owners = [c for c in names if term_regex(c).search(hay)]
+        if not owners:
+            problems.append((f, "matches no unit code in its name or folder"))
+            continue
+        if len(owners) > 1:
+            problems.append((f, f"matches more than one unit ({', '.join(sorted(owners))})"))
+            continue
+        me = owners[0]
+        text = f.read_text(encoding="utf-8", errors="replace")
+        intruders = sorted(c for c in names if c != me and term_regex(c).search(text))
+        if intruders:
+            problems.append((f, f"names another unit inside the letter ({', '.join(intruders)}) "
+                                f"— that would put one student's code in another's letter"))
+            continue
+        # A unit code in the BODY refers to the work, not the person: substituting a name
+        # there turns "your work on unit-a" into "your work on Grace Hopper". Only greeting
+        # placeholders become the name; body references are reported for the human to judge.
+        greetings = len(GREETING.findall(text))
+        body_codes = [line_of(text, m.start())
+                      for m in term_regex(me).finditer(text)]
+        plan.append((f, me, names[me], greetings, body_codes))
+
+    print(f"personalize — {len(letters)} letter(s) under {src}")
+    print(f"map: {mp}   ·   name field: {name_field}")
+    print()
+    for f, code, who, greetings, body_codes in plan:
+        note = f"{greetings} greeting(s) → the name"
+        if body_codes:
+            note += f"; {len(body_codes)} body reference(s) to `{code}` left as-is " \
+                    f"(line{'s' if len(body_codes) > 1 else ''} " \
+                    f"{', '.join(str(n) for n in body_codes[:6])})"
+        print(f"  {f.relative_to(src)}  →  {code} = {who}   [{note}]")
+    for f, why in problems:
+        print(f"  REFUSED  {f.relative_to(src)} — {why}")
+    print()
+    if problems:
+        print(f"** {len(problems)} letter(s) refused. Nothing is written while any letter is")
+        print("   ambiguous: a letter delivered to the wrong student is not a recoverable")
+        print("   error, and a near-miss here is indistinguishable from a correct run.")
+        return 1
+    leftover = sum(len(bc) for _, _, _, _, bc in plan)
+    if leftover and not code_phrase:
+        print(f"note: {leftover} body reference(s) to a unit code will remain. A student "
+              f"reading \"your work on unit-a\" will find that odd — edit the drafts, or pass")
+        print("      --code-phrase \"your submission\" to replace them.")
+        print()
+    if not apply:
+        print("--- DRY RUN. Nothing written. Re-run with --apply once the mapping above is "
+              "right. ---")
+        return 0
+
+    out.mkdir(parents=True, exist_ok=True)
+    written = 0
+    for f, code, who, _, _bc in plan:
+        text = f.read_text(encoding="utf-8", errors="replace")
+        text = GREETING.sub(who, text)
+        if code_phrase:
+            text = term_regex(code).sub(code_phrase, text)
+        target = out / f.relative_to(src).parent / f.name.replace(code, _slug(who))
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+        written += 1
+    print(f"wrote {written} personalized letter(s) to {out}")
+    print("These carry real names: keep them out of version control, and check one against")
+    print("the map by hand before you send the batch. Nothing left this machine — this script")
+    print("has no network code and sent nothing.")
+    return 0
+
+
+def _slug(name):
+    return re.sub(r"[^A-Za-z0-9]+", "-", name).strip("-").lower() or "unit"
 
 
 def decode(mapfile):
@@ -870,6 +1003,61 @@ def self_test():
         check("--decode prints the code -> identity table", drc == 0
               and "Quilla Brandsmith" in dout and "unit-" in dout)
         check("--decode warns before a batch send", "mis-sent grade" in dout)
+
+        # --- putting the names back, locally ---------------------------------------------
+        letters = Path(tmp) / "letters"; letters.mkdir()
+        (letters / "unit-a.md").write_text(
+            "Dear [student],\n\nYour work on unit-a was careful.\n", encoding="utf-8")
+        named = Path(tmp) / "named"
+        code_a = json.loads(keyfile.read_text())["units"][0]["code"]
+        (letters / "unit-a.md").rename(letters / f"{code_a}.md")
+        (letters / f"{code_a}.md").write_text(
+            f"Dear [student],\n\nYour work on {code_a} was careful.\n", encoding="utf-8")
+        old_argv = sys.argv
+
+        def pers(extra=()):
+            nonlocal_argv = ["code-units.py", "--personalize", str(letters),
+                             "--map", str(keyfile), "--out", str(named)] + list(extra)
+            sys.argv = nonlocal_argv
+            try:
+                with contextlib.redirect_stdout(io.StringIO()) as b:
+                    rc = main()
+                return rc, b.getvalue()
+            finally:
+                sys.argv = old_argv
+
+        rc, o = pers()
+        check("personalize dry-runs by default and writes nothing",
+              rc == 0 and "DRY RUN" in o and not named.exists())
+        check("it separates greetings from body references",
+              "greeting(s)" in o and "body reference(s)" in o)
+        rc, o = pers(["--apply"])
+        wrote = list(named.rglob("*.md"))
+        check("apply writes one named letter", rc == 0 and len(wrote) == 1)
+        body = wrote[0].read_text()
+        check("the greeting carries the real name", "Quilla Brandsmith" in body)
+        check("the body's unit reference is NOT turned into the name",
+              body.count("Quilla Brandsmith") == 1 and code_a in body)
+        check("the filename is de-coded too", "quilla" in wrote[0].name.lower())
+
+        # the refusal that matters: a letter naming another unit
+        bad = Path(tmp) / "bad"; bad.mkdir()
+        other = json.loads(keyfile.read_text())["units"]
+        (bad / f"{code_a}.md").write_text(
+            f"Dear [student],\n\nUnlike unit-zz, your proof held.\n", encoding="utf-8")
+        (bad / "no-code-here.md").write_text("Dear [student],\n", encoding="utf-8")
+        badout = Path(tmp) / "badout"
+        sys.argv = ["code-units.py", "--personalize", str(bad), "--map", str(keyfile),
+                    "--out", str(badout), "--apply"]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()) as b:
+                rcb = main()
+            ob = b.getvalue()
+        finally:
+            sys.argv = old_argv
+        check("a letter matching no unit is refused", "matches no unit code" in ob)
+        check("refusal is non-zero and writes nothing",
+              rcb == 1 and not badout.exists())
         check("detail log holds the matched strings",
               "Quilla Brandsmith" in next(keys.glob("*.detail.jsonl")).read_text())
 

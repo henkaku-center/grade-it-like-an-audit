@@ -107,6 +107,38 @@ Two things that keep this simple, and are worth not undoing:
 - **The map is the only copy.** Nothing else records the link, by design. Back it up with the
   same care you would give a gradebook, and delete it when the grades are final and appealed.
 
+### Putting the names back into the letters — locally
+
+`--decode` tells you who each unit is. `--personalize` does the delivery step itself, on this
+machine:
+
+```
+python3 code-units.py --personalize working-notes/letters/ \
+        --map ~/.grade-audit-keys/f26-mp1/<run>.map.json \
+        --out ~/letters-to-send/ --code-phrase "your submission"
+```
+
+Dry run first, always — it prints which letter maps to which person before writing anything.
+It reads local files and writes local files; there is no network code in any script this
+plugin ships, and you can check that yourself with a grep for `urllib`, `requests`, `socket`
+and `http`.
+
+What it does and deliberately does not do:
+
+- **Greeting placeholders become the name.** `Dear [student],` → `Dear Ada Lovelace,`.
+- **Unit codes in the body are left alone by default**, and reported with line numbers. A code
+  in the body refers to the *work* — substituting a name turns "your work on unit-a" into "your
+  work on Ada Lovelace". Pass `--code-phrase "your submission"` if you want them replaced, and
+  choose the wording yourself.
+- **It refuses rather than guesses.** A letter whose name matches no unit, or more than one, or
+  which mentions a *different* unit's code inside it, stops the whole run before anything is
+  written. That last one would put one student's code in another student's letter. Nothing is
+  written while any letter is ambiguous, because a near-miss is indistinguishable from a
+  correct run until a student replies.
+- **Output goes somewhere separate** from the coded letters, and it refuses to overwrite them.
+  Those files now carry identities: keep them out of version control, and hand-check one
+  against the map before sending the batch.
+
 ### Keep the key out of reach — and enforce it
 
 The map goes in a directory the script refuses to place inside the workspace — checked

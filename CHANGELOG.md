@@ -16,6 +16,18 @@
   every judgment would be evidenced, internally consistent, and measured against a standard
   nobody chose. Where a handout exists the skills propose a rubric from it for approval; where
   it does not, they ask. Nothing is drafted or audited until the criteria are approved.
+- **`--personalize` puts the real names back into the letters, locally.** Reads the coded
+  letters and the map, writes named copies, sends nothing — no script this plugin ships
+  imports `socket`, `http`, `urllib` or `requests`, and that is checkable with one grep.
+  Greeting placeholders become the name; **unit codes in the body are left alone by default**
+  and reported with line numbers, because a code in the body refers to the work and
+  substituting a name turns "your work on unit-a" into "your work on Ada Lovelace"
+  (`--code-phrase "your submission"` replaces them, with the wording your choice). It
+  **refuses rather than guesses**: a letter matching no unit, matching two, or naming a
+  *different* unit inside it stops the run before anything is written and exits non-zero —
+  that last case would put one student's code in another's letter, and a near-miss there is
+  indistinguishable from a correct run until a student replies. Output must go somewhere other
+  than the coded letters, which it enforces.
 - **Getting the names back is now a documented, one-command step.** The tooling could code a
   student to `unit-a` but nothing said how to go back, and the 0.2.0 fix for identity-bearing
   matrix columns had quietly created a *second* coding layer: `unit-a` was relabelled to `U1`

@@ -96,6 +96,10 @@ system does Y, the student who did X is correct for the purposes of this grade.
 - **Coded units:** [yes / no]; `--keys` directory: [absolute path, outside this workspace]
 - **Deny rule added to `.claude/settings.json`:** [yes / no]
 
+**Delivery:** `code-units.py --personalize <letters> --map <keys>/<run>.map.json --out
+<somewhere-else>` puts the real names into the greetings, locally, refusing any letter it
+cannot map unambiguously. Dry run first.
+
 **Getting names back at delivery:** letters are addressed to unit codes; the map says who
 each is. Run `python3 <plugin>/skills/grade-audit-setup/scripts/code-units.py --decode
 <keys>/<run>.map.json` outside the grading session, and hand-check one row before sending the
