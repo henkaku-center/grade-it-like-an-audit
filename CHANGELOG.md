@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 — 2026-08-25
+
+- **A default workspace, so `CLAUDE.md` is not the user's problem.**
+  `templates/quickstarts/student-grading.CLAUDE.task.md` is a complete, defensible grading
+  workspace — layout, never-events, the discrete-attributable-deduction rule, strictness
+  preset, sources of truth, what-the-subject-was-owed, data-handling slots and seeded
+  precedents. The run skill's preflight no longer stops when no task file exists; it supplies
+  this one, fills in what it can see, and shows it. The front door offers "just start" ahead
+  of the demo and the interview, and the setup skill gains a fast path for people who do not
+  want ten questions. Grading was the one flagship case with no ready-made task file, while
+  code-review, compliance-audit and contract-review all had one.
+  **The rubric is the deliberate exception** — the plugin will not guess criteria. Grading
+  against an invented rubric is the one failure the rest of the machinery cannot catch, since
+  every judgment would be evidenced, internally consistent, and measured against a standard
+  nobody chose. Where a handout exists the skills propose a rubric from it for approval; where
+  it does not, they ask. Nothing is drafted or audited until the criteria are approved.
+- Demo timing corrected in the demo skill's own description and cost line: 12–18 minutes,
+  measured twice in live sessions, replacing an unmeasured "10 minutes".
+
 ## 0.2.1 — 2026-08-25
 
 One correction, found by running 0.2.0 against real student submissions within the hour.

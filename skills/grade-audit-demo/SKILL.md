@@ -1,6 +1,6 @@
 ---
 name: grade-audit-demo
-description: Run the 10-minute grade-it-like-an-audit demo on bundled synthetic data with planted defects. Use when the user wants to see, try, or evaluate audit-style grading before trusting it — "show me how this works", "run the demo", "prove it catches mistakes" — or is new to the plugin or skeptical of AI grading. Uses no real data.
+description: Run the 12-to-18-minute grade-it-like-an-audit demo on bundled synthetic data with planted defects. Use when the user wants to see, try, or evaluate audit-style grading before trusting it — "show me how this works", "run the demo", "prove it catches mistakes" — or is new to the plugin or skeptical of AI grading. Uses no real data.
 ---
 
 # grade-audit-demo — watch the harness catch planted defects
@@ -26,7 +26,7 @@ user watches the real machinery work before it touches anything real.
 
 Follow `references/demo-script.md` beat by beat:
 
-0. Set the stage — what will run, what it costs (3 auditors + 1 lead pass, ~10 minutes),
+0. Set the stage — what will run, what it costs (3 auditors + 1 lead pass, 12-18 minutes — measured twice),
    and the one pre-announced fact: seven planted, one uncatchable.
 1. Copy `assets/demo-workspace/` to a fresh directory and fan out — one blind auditor per
    student; Student C is framed as a re-audit (its revision note documents a prior fix).

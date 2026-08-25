@@ -16,10 +16,23 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 
 ## Protocol for an audit round
 
-1. **Preflight.** Read the root and task `CLAUDE.md`. Confirm: units are drafted; each unit
-   has an evidence ledger; the criteria were audited at setup (each criterion names the
-   artifact that evidences it). Anything missing → stop and tell the user what to produce
-   first; do not audit undrafted work. Determine the round number from
+1. **Preflight.** Read the root and task `CLAUDE.md`.
+
+   **No task `CLAUDE.md`? Do not stop dead — supply one.** Copy
+   `templates/quickstarts/student-grading.CLAUDE.task.md` into the workspace, fill in what
+   you can see (assignment name from the folder, unit names from `inputs/`), and show it to
+   the user. It is a complete, defensible default for everything except one section.
+
+   **The one thing you must never default is the rubric.** Grading against invented criteria
+   is the single failure the rest of this machinery cannot catch: every judgment will be
+   evidenced, internally consistent, and measured against a standard nobody chose. If the
+   workspace holds an assignment handout or rubric, read it and *propose* a rubric for
+   approval; otherwise ask. **Do not draft or audit anything until the user has approved the
+   criteria.**
+
+   Then confirm: units are drafted; each unit has an evidence ledger; the criteria audit was
+   done (each criterion names the artifact that evidences it). Undrafted work → say what to
+   produce first; do not audit it. Determine the round number from
    `working-notes/*/audit-round*` files — all state lives in inspectable files, never in
    your memory of the session. **If the inputs are coded units**, confirm the coding pass's
    byte-identity line (`N/N copied files hash-match their source`) in its scan report before

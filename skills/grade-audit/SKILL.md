@@ -23,7 +23,7 @@ task directories):
 
 | State | Detection | Response |
 |---|---|---|
-| No workspace | nothing found | First-timer path: offer the demo (10 min, synthetic data, watch it catch planted defects) or setup. Skeptic-friendly framing: demo first, or `check-mine` if they'd rather have their OWN evaluations fact-checked before the AI drafts anything. |
+| No workspace | nothing found | Three ways in, offered in this order: **(a) just start** — if `inputs/` already holds submissions, drop in `templates/quickstarts/student-grading.CLAUDE.task.md`, propose a rubric from any handout you find, and grade once they approve it; **(b) the demo** (12–18 min, synthetic, watch it catch planted defects); **(c) the full setup interview** when they want every default chosen deliberately. Skeptic-friendly framing: demo first, or `check-mine` if they'd rather have their OWN evaluations fact-checked before the AI drafts anything. |
 | Workspace, no drafts | task dirs exist, `working-notes/` empty or ledger-less | Explain drafting with an evidence ledger (claim + source, logged as you write — the map auditors use to check each claim against its source). Offer to draft with them, or calibration first if they have self-graded units. |
 | Drafts, no audit yet | draft evaluations exist, no `audit-round*` files | Offer to run round 1. State the cost first: one auditor subagent per unit, plus a consistency pass; budget 3–5 rounds (the recorded runs took 5, and 9 with an early stop). Point them at LIMITS.md (plugin root) before their first real run. |
 | Mid-loop | `audit-round*` files exist | Status report, then offer the next round (or the bounding check, if the metrics say the loop may be measuring itself — see grade-audit-run's convergence reference). |

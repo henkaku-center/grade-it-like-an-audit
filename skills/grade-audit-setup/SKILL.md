@@ -45,6 +45,20 @@ call that is theirs.
    (`/grade-audit calibrate`) is the right next step for anyone who wants the harness
    measured against their own grading before it drafts anything that counts.
 
+## The fast path — when they don't want an interview
+
+If submissions already exist and the user wants to grade now, do not make them answer ten
+questions. Copy `templates/quickstarts/student-grading.CLAUDE.task.md`, fill in what is
+visible from the workspace, and hand it over. Every default in it is defensible.
+
+Then get the one thing that cannot be defaulted: **the rubric**. If a handout or rubric file
+is present, read it and propose a rubric table for approval, naming the artifact that
+evidences each row — that is the criteria audit, done inline. If not, ask for it.
+
+Say what they are trading: the interview also settles institutional coverage, coded units,
+strictness and never-events deliberately rather than by default. Offer it as the next step,
+not a prerequisite.
+
 ## Standing rules
 
 - One question per message. No jargon in questions; jargon only in explanations, defined
