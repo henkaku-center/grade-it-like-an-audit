@@ -16,6 +16,16 @@
   every judgment would be evidenced, internally consistent, and measured against a standard
   nobody chose. Where a handout exists the skills propose a rubric from it for approval; where
   it does not, they ask. Nothing is drafted or audited until the criteria are approved.
+- **Getting the names back is now a documented, one-command step.** The tooling could code a
+  student to `unit-a` but nothing said how to go back, and the 0.2.0 fix for identity-bearing
+  matrix columns had quietly created a *second* coding layer: `unit-a` was relabelled to `U1`
+  for written artifacts, with that legend printed only to a terminal. An instructor could end
+  up holding a matrix saying `U1`, a letter saying `unit-a`, and no saved link between them.
+  Now: already-coded workspaces are never re-coded, so there is one hop and the map file is
+  the only lookup ever needed; `code-units.py --decode <run>.map.json` prints the
+  code → identity table (run outside the grading session, which is denied read access to the
+  map by design) and warns to hand-check a row before a batch send; and the round trip is
+  written into the data-handling reference and both task templates.
 - **Expected-average calibration works on small-basis rubrics.** Found by a live workspace
   that graded out of 6 points with half-point prices. Three defects, all fixed: scaled prices
   were rounded to whole points, which waived 2 of 3 findings outright; ties rounded

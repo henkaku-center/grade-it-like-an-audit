@@ -558,8 +558,14 @@ def main():
                     help="also search terms under 3 chars / common words")
     ap.add_argument("--report", help="write the scan report here (default: <out>/scan-report.md)")
     ap.add_argument("--self-test", action="store_true", help="run the built-in fixture check")
+    ap.add_argument("--decode", metavar="MAP.json",
+                    help="print the code -> identity table from a run's map file. This is how "
+                         "you get the names back at delivery; run it OUTSIDE the grading "
+                         "session, since that session is denied read access to the map.")
     if "--self-test" in sys.argv[1:]:
         return self_test()
+    if "--decode" in sys.argv[1:]:
+        return decode(sys.argv[sys.argv.index("--decode") + 1])
     args = ap.parse_args()
 
     if not args.inputs:
@@ -689,6 +695,10 @@ def main():
         print(f"\nPrivate detail log (real matched strings): {keys}/{run_id}.detail.jsonl")
     if args.apply:
         print(f"Map: {keys}/{run_id}.map.json")
+        print(f"At delivery, get the names back with:\n"
+              f"  python3 {Path(__file__).name} --decode {keys}/{run_id}.map.json\n"
+              f"Run that OUTSIDE the grading session — that session is denied read access to "
+              f"the map, which is the point.")
         print(deny_rule_snippet(keys))
         if verified != copied:
             print(f"!! byte-identity failed on {copied - verified} file(s). Do not grade "
@@ -698,6 +708,30 @@ def main():
         print("\n--- DRY RUN. Nothing written — not even the private detail log. Review the "
               "above, then re-run with --apply, or --scan-only --keys DIR to record the "
               "matched strings without copying anything. ---")
+    return 0
+
+
+def decode(mapfile):
+    """Print the code -> identity table. The round trip the instructor actually needs: the
+    letters are addressed to unit codes, and this is what says who each one belongs to."""
+    path = Path(mapfile)
+    if not path.exists():
+        die(f"no map file at {path}")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    units = data.get("units", [])
+    if not units:
+        die(f"{path} records no units")
+    width = max(len(u["code"]) for u in units)
+    print(f"run {data.get('run', '?')} — {len(units)} unit(s)")
+    print(f"coded from : {data.get('inputs', '?')}")
+    print()
+    for u in sorted(units, key=lambda x: x["code"]):
+        ident = u.get("identity", {})
+        who = " · ".join(f"{k}={v}" for k, v in ident.items() if k.lower() != "path")
+        print(f"  {u['code']:<{width}}  {u.get('path', '')}" + (f"    {who}" if who else ""))
+    print()
+    print("Send each unit's letter to the person on its row. Check one by hand before sending")
+    print("the batch — a mis-sent grade is not a recoverable error.")
     return 0
 
 
@@ -824,6 +858,18 @@ def self_test():
         keyfile = next(keys.glob("*.map.json"))
         check("map is 0600", oct(keyfile.stat().st_mode)[-3:] == "600")
         check("map still carries the real identity", "Quilla Brandsmith" in keyfile.read_text())
+        # the round trip the instructor needs at delivery
+        old_argv = sys.argv
+        sys.argv = ["code-units.py", "--decode", str(keyfile)]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()) as buf:
+                drc = main()
+            dout = buf.getvalue()
+        finally:
+            sys.argv = old_argv
+        check("--decode prints the code -> identity table", drc == 0
+              and "Quilla Brandsmith" in dout and "unit-" in dout)
+        check("--decode warns before a batch send", "mis-sent grade" in dout)
         check("detail log holds the matched strings",
               "Quilla Brandsmith" in next(keys.glob("*.detail.jsonl")).read_text())
 

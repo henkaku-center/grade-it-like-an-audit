@@ -179,11 +179,23 @@ def target_analysis(units, deductions, target, basis=None, quantum=None):
     return res
 
 
+ALREADY_CODED = re.compile(r"^(unit-[a-z]+|U\d+)$", re.I)
+
+
 def code_unit_labels(units, deductions):
-    """Column headers must never be identities. In the one-file-per-unit layout a unit's label
-    is its directory name, which in a real workspace is a person's name — and it was being
-    printed straight into the matrix. Relabel to U1..Un for every written artifact; the legend
-    goes to the operator's terminal, never into a file the grading session reads."""
+    """Column headers must never be identities — but do not invent a SECOND code for labels
+    that are already coded.
+
+    In the one-file-per-unit layout a unit's label is its directory name, which in a real
+    workspace is a person's name. Those must be relabelled. But when the workspace was built
+    by `code-units.py` the directories are already `unit-a`, `unit-b`, … — non-identifying,
+    and durably mapped back to people in that pass's `map.json`. Renaming those to `U1..Un`
+    adds a second hop whose legend lives only in a terminal, so the instructor holds a matrix
+    saying `U1`, a letter saying `unit-a`, and no saved link between them. Leave coded labels
+    alone.
+    """
+    if all(ALREADY_CODED.match(u["label"] or "") for u in units):
+        return {}                                  # already non-identifying; one hop is enough
     legend = {}
     for i, u in enumerate(units, 1):
         coded = f"U{i}"
@@ -392,10 +404,13 @@ def main():
         print("no unit sections found (expected `## <label> — NN/NN`)")
         return 1
     legend = code_unit_labels(all_units, all_ded)
-    if any(v != k for k, v in legend.items()):
-        print("unit legend (this terminal only — never written to a file):")
+    if legend:
+        print("These units were NOT already coded, so they were relabelled for the written")
+        print("artifacts. Keep this legend — nothing else records it:")
         for coded, orig in legend.items():
             print(f"  {coded} = {orig}")
+        print("  (Grading coded units instead — see the setup skill's coded-units pass — "
+              "avoids this second mapping entirely.)")
         print()
 
     print(f"units parsed        : {len(all_units)}")
@@ -761,6 +776,10 @@ def self_test():
         bu, bd, bn = parse(bold / "draft-evaluation.md")
         check("a bolded component line does not swallow the issue label",
               len(bd) == 1 and issue_name(bd[0]["label"]) == "Missing degrees of freedom")
+        already = [{"label": "unit-a", "got": 5, "max": 6}, {"label": "unit-b", "got": 6, "max": 6}]
+        check("a workspace that is already coded is NOT coded a second time",
+              code_unit_labels(already, []) == {}
+              and [u["label"] for u in already] == ["unit-a", "unit-b"])
         bl = code_unit_labels(bu, bd)
         check("unit labels are coded, never the directory name",
               bu[0]["label"] == "U1" and bl["U1"] == "alpha")

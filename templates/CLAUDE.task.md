@@ -55,6 +55,8 @@ These hold without being asked for, and the auditors enforce them:
 - **Institutional coverage (Q6a):** [what covers this use, in the user's own words] — recorded [date]
 - **Coded units (Q6b):** [yes / no]; `--keys` directory: [absolute path, outside this workspace]
 - **Deny rule added to `.claude/settings.json`:** [yes / no]
+- **Names back at delivery:** `code-units.py --decode <keys>/<run>.map.json`, run outside the
+  grading session; hand-check one row before sending the batch.
 
 ## Criteria / rubric
 

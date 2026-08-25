@@ -83,6 +83,30 @@ LMS field and out of the file.
   own information. Codes here are random, shuffled, and fresh per run — a code reused across
   assignments is a linkable profile.
 
+### Getting the names back at delivery
+
+This is the step people forget to plan for, so plan for it here. Your letters are addressed
+to `unit-a`, `unit-b`, …; the map says who those are. One command, run **outside** the
+grading session (that session is denied read access to the map, which is the whole point):
+
+```
+python3 code-units.py --decode ~/.grade-audit-keys/f26-mp1/<run>.map.json
+```
+
+It prints one row per unit — code, source folder, and whatever identity columns your roster
+carried — and reminds you to hand-check one before sending the batch. A mis-sent grade is not
+a recoverable error.
+
+Two things that keep this simple, and are worth not undoing:
+
+- **One hop, not two.** The audit tooling deliberately does not re-code units that are already
+  coded. A workspace built by this pass keeps `unit-a` all the way through to the letter, so
+  the map file is the only lookup you ever need. (If you grade uncoded folders, the matrix
+  relabels them for its own output and prints that legend once, to the terminal — keep it, or
+  better, code the units and avoid the second mapping.)
+- **The map is the only copy.** Nothing else records the link, by design. Back it up with the
+  same care you would give a gradebook, and delete it when the grades are final and appealed.
+
 ### Keep the key out of reach — and enforce it
 
 The map goes in a directory the script refuses to place inside the workspace — checked

@@ -96,6 +96,11 @@ system does Y, the student who did X is correct for the purposes of this grade.
 - **Coded units:** [yes / no]; `--keys` directory: [absolute path, outside this workspace]
 - **Deny rule added to `.claude/settings.json`:** [yes / no]
 
+**Getting names back at delivery:** letters are addressed to unit codes; the map says who
+each is. Run `python3 <plugin>/skills/grade-audit-setup/scripts/code-units.py --decode
+<keys>/<run>.map.json` outside the grading session, and hand-check one row before sending the
+batch.
+
 `inputs/` and `working-notes/` are gitignored by default. See the plugin's data-handling
 reference before real student work enters this workflow.
 
