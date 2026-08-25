@@ -6,7 +6,7 @@ hosts the marketplace, the plugin, and the GitHub Pages guide.
 the mirror is a step in this checklist, never a place to edit.
 
 (Initial publication note: the plugin arrived as the `claude-code-plugin` pull request
-on this repo, reviewed cold by the co-author — the human-outside-the-loop pass the
+on this repo, reviewed cold by Ira Winder — the human-outside-the-loop pass the
 method requires. Merging that PR was the publication step.)
 
 1. `python3 scripts/validate-structure.py` and `claude plugin validate --strict .` — green.

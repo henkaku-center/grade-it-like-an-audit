@@ -300,12 +300,15 @@ project's context.)
 
 ## Authors
 
-Built by [Joseph Austerweil](https://github.com/josephausterweil)
-([@josephausterweil](https://github.com/josephausterweil)) and
-[Ira Winder](https://github.com/irawinder) ([@irawinder](https://github.com/irawinder)) —
-the methodology and templates field-hardened together on real runs; the plugin packaging
-(skills, agents, demo, evals, and the 2026-08 documentation) authored with Claude Code,
-generated from that shared methodology.
+Built and maintained by [Joseph Austerweil](https://github.com/josephausterweil)
+([@josephausterweil](https://github.com/josephausterweil)), with Claude Code.
+
+**Origin:** the approach started in the grading-workspace `CLAUDE.md` that
+[Ira Winder](https://github.com/irawinder) ([@irawinder](https://github.com/irawinder))
+wrote for the APS I course
+([henkaku-center/aps-i-eval-2026](https://github.com/henkaku-center/aps-i-eval-2026)).
+Everything since — the methodology writeup, templates, skills, agents, demo, evals, and
+documentation — is Joseph's, who has carried it forward from there.
 
 ## License
 

@@ -4,12 +4,11 @@ The methodology (METHODOLOGY.md) says what the method is. This file records the
 engineering decisions that turned it into a plugin, so a reader can audit the design the
 way the design audits everything else.
 
-Provenance: the methodology and templates are joint work by Joseph Austerweil and Ira
-Winder, hardened on real runs, and the plugin carries the same joint credit. The
-conversion itself (skills, agents, demo, evals, 2026-08 docs) was built with Claude
-Code; the design decisions below draw on the shared methodology but predate the
-co-author's cold read — anything wrong in the packaging is on this layer, not on the
-method.
+Provenance: the approach originated in Ira Winder's grading-workspace `CLAUDE.md` for
+the APS I course (`henkaku-center/aps-i-eval-2026`); Joseph Austerweil developed it from
+there into this methodology and plugin and maintains it. The conversion itself (skills,
+agents, demo, evals, 2026-08 docs) was built with Claude Code — anything wrong in the
+packaging is on this layer, not on the origin.
 
 ## Decisions
 
