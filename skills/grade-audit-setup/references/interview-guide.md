@@ -109,8 +109,19 @@ Record both answers in the task CLAUDE.md's "Strictness and expected outcome" se
 
 ## Q6 — Never-events (privacy and red lines)
 
-"What must never happen with this material? Think: leaves this machine, ends up in a
-public repo, gets quoted somewhere, names a person."
+**State the defaults first, then ask what to add.** Two never-events are not the user's to
+invent, and asking for them invites a workspace that lacks them. Say them as already applied:
+
+- **No subject is ever named in another subject's feedback** — no names, no quotes, no
+  "unlike another submission", no rankings, no cohort comparisons that identify anyone.
+- **An outcome is visible only in that subject's own delivery** — never in another's letter,
+  never in a shared file, never in a class-wide message.
+
+These are already enforced: the auditors carry them as a POLICY check, and the
+lead-consistency pass verifies them across the whole set. Then ask:
+
+"Those two are already in place. What *else* must never happen with this material? Think:
+leaves this machine, ends up in a public repo, gets quoted somewhere."
 
 Why: generates the `.gitignore` (inputs and working notes ignored by default whenever the
 material involves people), the anonymization rules in the output format, and the

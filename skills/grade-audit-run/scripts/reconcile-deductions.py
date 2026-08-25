@@ -39,6 +39,9 @@ COMPONENT = re.compile(r"^\s*[-*]\s+\*{0,2}(?P<name>[^:*]{1,60}?):?\s*\*{0,2}\s*
 # which is how the first version reported 9 points lost from a 99/100 unit.
 DEDUCT = re.compile(r"[(\[]\s*[-−–]\s*(?P<amt>\d+(?:\.\d+)?)\s*[)\]]")
 BOLD = re.compile(r"\*\*(?P<text>.+?)\*\*")
+# What remains of a component line after the score, with the component's own closing `**` and
+# the em-dash separator removed — otherwise BOLD pairs the wrong asterisks.
+LEAD = re.compile(r"^\s*\*{0,2}\s*[—–-]?\s*")
 # Severity tiers are the method's existing vocabulary (BLOCKER / MINOR / note); presets
 # attach thresholds and prices to them rather than inventing a taxonomy.
 TIERS = ["note", "minor", "blocker"]          # ascending severity
@@ -111,7 +114,12 @@ def target_analysis(units, deductions, target, basis=None):
     # header, and building the target math on the extraction would silently mis-state the
     # cohort. The multiplier still has to scale the extracted set, so when the two disagree
     # the multiplier is approximate and the caller is told so rather than left to assume.
-    actual = sum(u["got"] for u in units) / len(units)
+    if basis:
+        # normalise to the requested basis instead of mixing scales
+        actual = sum(u["got"] / u["max"] for u in units) / len(units) * mean_max
+        mean_lost = sum(lost[u["label"]] / u["max"] for u in units) / len(units) * mean_max
+    else:
+        actual = sum(u["got"] for u in units) / len(units)
     extracted_implies = mean_max - mean_lost
     reconciles = abs(actual - extracted_implies) < 0.01
     res = {"ok": True, "units": len(units), "basis": mean_max, "actual": actual,
@@ -139,6 +147,27 @@ def target_analysis(units, deductions, target, basis=None):
     res.update({"multiplier": k, "achieved": achieved,
                 "residual": float(target) - achieved, "vanished": vanished})
     return res
+
+
+def code_unit_labels(units, deductions):
+    """Column headers must never be identities. In the one-file-per-unit layout a unit's label
+    is its directory name, which in a real workspace is a person's name — and it was being
+    printed straight into the matrix. Relabel to U1..Un for every written artifact; the legend
+    goes to the operator's terminal, never into a file the grading session reads."""
+    legend = {}
+    for i, u in enumerate(units, 1):
+        coded = f"U{i}"
+        legend[coded] = u["label"]
+        u["label"] = coded
+    back = {v: k for k, v in legend.items()}
+    for d in deductions:
+        d["unit"] = back.get(d["unit"], d["unit"])
+    return legend
+
+
+def die(msg):
+    print(f"error: {msg}", file=sys.stderr)
+    sys.exit(2)
 
 
 def issue_name(label):
@@ -195,7 +224,7 @@ def parse(path):
         name = comp.group("name").strip()
         if got >= mx:
             continue
-        body = raw[comp.end():]
+        body = LEAD.sub("", raw[comp.end():])
         marked = [float(d.group("amt")) for d in DEDUCT.finditer(body) if float(d.group("amt")) > 0]
         labels = [b.group("text").strip() for b in BOLD.finditer(body)]
         labels = [l for l in labels if len(l) > 3] or labels
@@ -209,7 +238,7 @@ def parse(path):
         else:
             # the markers do not add up to this line's own loss — trust the score, not the
             # prose, and say the label is inferred
-            label = labels[0] if labels else body.strip()[:160]
+            label = labels[0] if labels else f"(unnamed issue in {name})"
             deductions.append({"unit": units[cur]["label"], "component": name,
                                "amount": mx - got, "label": label.strip(),
                                "norm": normalize(issue_name(label)), "inferred": True})
@@ -236,7 +265,7 @@ def parse_file_as_unit(path, text):
         mx += m
         if g >= m:
             continue
-        body = raw[comp.end():]
+        body = LEAD.sub("", raw[comp.end():])
         marked = [float(d.group("amt")) for d in DEDUCT.finditer(body)
                   if float(d.group("amt")) > 0]
         labels = [b.group("text").strip() for b in BOLD.finditer(body)]
@@ -249,7 +278,7 @@ def parse_file_as_unit(path, text):
                                    "label": lab, "norm": normalize(issue_name(lab)),
                                    "inferred": False})
         else:
-            lab = labels[0] if labels else body.strip()[:160]
+            lab = labels[0] if labels else f"(unnamed issue in {name})"
             deductions.append({"unit": label, "component": name, "amount": m - g,
                                "label": lab, "norm": normalize(issue_name(lab)),
                                "inferred": True})
@@ -331,6 +360,12 @@ def main():
     if not all_units:
         print("no unit sections found (expected `## <label> — NN/NN`)")
         return 1
+    legend = code_unit_labels(all_units, all_ded)
+    if any(v != k for k, v in legend.items()):
+        print("unit legend (this terminal only — never written to a file):")
+        for coded, orig in legend.items():
+            print(f"  {coded} = {orig}")
+        print()
 
     print(f"units parsed        : {len(all_units)}")
     print(f"deductions extracted: {len(all_ded)}")
@@ -342,6 +377,12 @@ def main():
     if inferred:
         print(f"labels inferred from the score (not itemized in the line): {inferred} "
               f"of {len(all_ded)} — those clusters are weaker evidence.")
+    unnamed = len([d for d in all_ded if d["label"].startswith("(unnamed issue in ")])
+    if unnamed:
+        print(f"** {unnamed} of {len(all_ded)} deduction(s) NAME NO ISSUE. The method's central "
+              f"rule is that every point removed is tied to a specific named issue; a "
+              f"deduction that names none cannot be clustered, cannot be compared across "
+              f"units, and cannot be defended to the subject. Fix the drafts, not the matrix.")
 
     # A parser that silently mis-reads the corpus is worse than no parser. Reconcile what
     # was extracted against what each unit's own header says it lost.
@@ -471,7 +512,9 @@ def write_matrix(path, units, clusters, names):
             else:
                 cells.append(f"−{sum(amts):g} ({len(amts)} inst.)")
         flag = ""
-        charged = {m["unit"]: m["amount"] for m in c["members"]}
+        charged = {}
+        for m in c["members"]:
+            charged[m["unit"]] = charged.get(m["unit"], 0) + m["amount"]
         if len(set(charged.values())) > 1:
             flag = " **← PRICE DIFFERS — arbitrate**"
         elif len(charged) < len(labels):
@@ -661,6 +704,56 @@ def self_test():
               len(fd) == 1 and fd[0]["amount"] == 1 and fd[0]["unit"] == "student-a")
         check("full-credit component lines produce no deduction",
               all(d["component"] != "Data cleaning" for d in fd))
+
+        # a deduction that names no issue must say so, not borrow a sentence of prose
+        unnamed_ws = Path(tmp) / "unnamed" / "alpha"
+        unnamed_ws.mkdir(parents=True)
+        (unnamed_ws / "draft-evaluation.md").write_text(
+            "- **Write-up clarity: 4/5** — methods and results were thoughtful but the "
+            "confounding discussion drifted.\n", encoding="utf-8")
+        uu, ud, un = parse(unnamed_ws / "draft-evaluation.md")
+        check("an unnamed deduction is labelled as unnamed, not given a prose fragment",
+              len(ud) == 1 and ud[0]["label"] == "(unnamed issue in Write-up clarity)")
+        check("and it names the component so the row is still meaningful",
+              "Write-up clarity" in ud[0]["label"])
+
+        # regressions for the defects the release dogfood found
+        check("die() exists, so a bad preset is a message not a NameError",
+              callable(globals().get("die")))
+        bold = Path(tmp) / "bold" / "alpha"
+        bold.mkdir(parents=True)
+        (bold / "draft-evaluation.md").write_text(
+            "- **Data cleaning: 5/5** — fine.\n"
+            "- **Analysis correctness: 4/5** — **Missing degrees of freedom (-1).**\n",
+            encoding="utf-8")
+        bu, bd, bn = parse(bold / "draft-evaluation.md")
+        check("a bolded component line does not swallow the issue label",
+              len(bd) == 1 and issue_name(bd[0]["label"]) == "Missing degrees of freedom")
+        bl = code_unit_labels(bu, bd)
+        check("unit labels are coded, never the directory name",
+              bu[0]["label"] == "U1" and bl["U1"] == "alpha")
+        check("deductions follow the relabel", bd[0]["unit"] == "U1")
+        mb = Path(tmp) / "bold-matrix.md"
+        write_matrix(mb, bu, cluster(bd, 0.62), bn)
+        check("and the written matrix carries no directory name",
+              "alpha" not in mb.read_text() and "| U1 |" in mb.read_text())
+
+        multi = [{"unit": "U1", "component": "A", "amount": 1.0, "label": "Missing df",
+                  "norm": normalize("Missing df")},
+                 {"unit": "U1", "component": "B", "amount": 2.0, "label": "Missing df",
+                  "norm": normalize("Missing df")},
+                 {"unit": "U2", "component": "A", "amount": 2.0, "label": "Missing df",
+                  "norm": normalize("Missing df")}]
+        mu = [{"label": "U1", "got": 7, "max": 10}, {"label": "U2", "got": 8, "max": 10}]
+        mm = Path(tmp) / "multi.md"
+        write_matrix(mm, mu, cluster(multi, 0.62), [])
+        check("a price difference is flagged even when one unit has two instances",
+              "PRICE DIFFERS" in mm.read_text())
+
+        bt = target_analysis([{"label": "U1", "got": 18, "max": 20}],
+                             [{"unit": "U1", "amount": 2.0}], 92, basis=100)
+        check("--basis rescales the actual average, not just the maximum",
+              abs(bt["actual"] - 90.0) < 0.001 and abs(bt["gap"] - 2.0) < 0.001)
 
         # --- strictness presets -------------------------------------------------------
         # The load-bearing property: the SAME finding set at every preset. Strictness must

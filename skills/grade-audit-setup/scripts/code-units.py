@@ -78,9 +78,10 @@ FENCED = re.compile(r"```.*?```|~~~.*?~~~|`[^`\n]+`", re.S)
 
 # Identity-shaped template fields that are ALREADY empty in the source. Recorded before any
 # grading happens, so nobody can later mistake a student's blank for something this tool did.
-BLANK_FIELD = re.compile(
+IDENTITY_FIELD = re.compile(
     r"^[\s>*_-]*\**\s*(student\s*name|name|author|date|submitted\s*by)\s*\**\s*[::]"
-    r"\s*\**\s*(_{3,}|\.{3,}|-{3,}|\[\s*\]|)\s*\**\s*$", re.I | re.M)
+    r"\s*\**\s*(?P<value>.*?)\s*\**\s*$", re.I | re.M)
+BLANK_VALUE = re.compile(r"^(_{3,}|\.{3,}|-{3,}|\[\s*\]|)$")
 
 COMMON_WORDS = {
     "al", "an", "art", "bill", "bob", "case", "chance", "dan", "drew", "grace", "green",
@@ -221,6 +222,10 @@ def load_roster(path, allow_short):
             "path": (row.get(path_col) or "").strip() if path_col else "",
             "role": slug_role((row.get(role_col) or "") if role_col else ""),
             "terms": sorted(filter_terms(terms, allow_short, skipped), key=len, reverse=True),
+            # unfiltered: what the roster actually knows. Used for redacting output, because a
+            # name dropped from the SEARCH set as too short or too common still must not be
+            # printed into a report the grading session reads.
+            "identity_terms": sorted(terms, key=len, reverse=True),
             "identity": {k: v for k, v in row.items() if k and v},
         })
     return people, sorted(set(skipped))
@@ -235,9 +240,11 @@ def roster_from_dirs(inputs, excludes, allow_short):
         name = child.name
         if name.startswith(".") or any(fnmatch.fnmatch(name, pat) for pat in excludes):
             continue
-        terms = filter_terms(terms_from_path_name(name), allow_short, skipped)
+        raw = terms_from_path_name(name)
         people.append({"path": name, "role": "student",
-                       "terms": sorted(terms, key=len, reverse=True),
+                       "terms": sorted(filter_terms(raw, allow_short, skipped),
+                                       key=len, reverse=True),
+                       "identity_terms": sorted(raw, key=len, reverse=True),
                        "identity": {"path": name}})
     return people, sorted(set(skipped))
 
@@ -274,11 +281,18 @@ def line_of(text, pos):
 
 
 def blank_identity_fields(text, relpath, attest):
-    """Record identity fields left empty by the author, in the source, before coding."""
-    for m in BLANK_FIELD.finditer(text):
+    """Record identity template fields found in the source, blank or filled, before coding.
+
+    Both states matter: the blanks are what a grader might otherwise blame on this tool, and
+    the filled ones are the control that proves the tool did not blank anything. A unit with
+    no such field at all is a third state and must not be counted as either."""
+    for m in IDENTITY_FIELD.finditer(text):
+        blank = bool(BLANK_VALUE.match(m.group("value") or ""))
         attest.append({"file": relpath, "line": line_of(text, m.start()),
                        "field": m.group(1).strip().lower(),
-                       "state": "empty in the source, before this tool touched anything"})
+                       "blank": blank,
+                       "state": ("empty in the source, before this tool touched anything"
+                                 if blank else "filled in by the author")})
 
 
 def scan_text(text, relpath, plan, is_code, findings):
@@ -485,20 +499,34 @@ def render_report(run_id, mode, units, per_unit, findings, path_leaks, skipped_t
           "coded unit was blank in the submission. **Never attribute one to this tool** — and",
           "if you believe content was altered, that is a tooling finding, not a subject",
           "defect.", ""]
-    if attest:
-        byu = Counter(a["file"].split("/")[0] for a in attest)
+    blanks = [a for a in attest if a.get("blank")]
+    filled = [a for a in attest if not a.get("blank")]
+    with_field = {a["file"].split("/")[0] for a in attest}
+    scanned_units = {c for c in per_unit if per_unit[c]["text"] > 0}
+    no_field = sorted(scanned_units - with_field)
+    unscanned = sorted(c for c in per_unit if per_unit[c]["text"] == 0)
+    if blanks:
+        byu = sorted({a["file"].split("/")[0] for a in blanks})
         L += [f"Identity fields already empty in the source, recorded before grading "
-              f"({len(attest)} in {len(byu)} of {len(units)} units):", "",
+              f"({len(blanks)} in {len(byu)} unit(s)):", "",
               "| unit | field | location |", "| --- | --- | --- |"]
-        for a in attest[:40]:
+        for a in blanks[:40]:
             L.append(f"| {a['file'].split('/')[0]} | {a['field']} | "
                      f"`{sanitize(a['file'], all_terms)}:{a['line']}` |")
-        if len(attest) > 40:
-            L.append(f"| …and {len(attest) - 40} more | | |")
-        L += ["", "Units not listed here had those fields filled in — which is the control: if",
-              "this tool blanked fields, every unit would appear above, not some.", ""]
+        if len(blanks) > 40:
+            L.append(f"| …and {len(blanks) - 40} more | | |")
+        L.append("")
     else:
-        L += ["No identity template fields were empty in the source.", ""]
+        L += ["No identity template field was empty in the source.", ""]
+    L += ["The control, stated exactly — three states, not two:", "",
+          f"- **{len({a['file'].split('/')[0] for a in filled})} unit(s)** had such a field and "
+          f"it was **filled in**. If this tool blanked fields, these would be blank too.",
+          f"- **{len(no_field)} scanned unit(s)** contain no such field at all"
+          + (f" ({', '.join(no_field)})" if no_field else "")
+          + " — neither blank nor filled; nothing can be inferred about them.",
+          f"- **{len(unscanned)} unit(s)** had nothing scannable"
+          + (f" ({', '.join(unscanned)})" if unscanned else "")
+          + " — not inspected, so not evidence either way.", ""]
     L += ["", RESIDUAL_RISK]
     return "\n".join(L)
 
@@ -545,14 +573,17 @@ def main():
     if args.apply and keys is None:
         die("--apply requires --keys: the map has to go somewhere outside the workspace")
     if keys:
-        cwd = Path.cwd().resolve()
         for label, target in (("--out", out), ("--inputs", inputs)):
             if target and (keys == target or keys in target.parents or target in keys.parents):
                 die(f"--keys {keys} overlaps {label} {target}. The map must not live with "
                     f"the material.")
-        if keys == cwd or cwd in keys.parents:
-            die(f"--keys {keys} is inside the workspace ({cwd}). Put it where the grading "
-                f"session cannot read it — that is the point of the map.")
+        # The workspace is the tree the grading session works in — the common ancestor of the
+        # material and the coded copy — not whatever directory you happened to run from.
+        workspace = (Path(os.path.commonpath([str(inputs), str(out)])) if out
+                     else inputs.parent)
+        if keys == workspace or workspace in keys.parents:
+            die(f"--keys {keys} is inside the workspace ({workspace}). Put it where the "
+                f"grading session cannot reach it — that is the point of the map.")
     if args.apply and out.exists() and any(out.iterdir()):
         die(f"--out {out} exists and is not empty; refusing to write into it")
 
@@ -575,7 +606,10 @@ def main():
             continue
         code = person["code"]
         plan = build_plan(person, people)
-        all_terms = [t for e in plan for t in e["terms"]]
+        # the path-leak check uses the unfiltered set too, so the report cannot claim
+        # "no coded path carries an identifier" while listing one
+        all_terms = sorted({t for p in people for t in p.get("identity_terms", p["terms"])},
+                           key=len, reverse=True)
         u = per_unit[code] = {"files": 0, "text": 0, "binary": [], "git": False}
         files = [src] if src.is_file() else sorted(p for p in src.rglob("*") if p.is_file())
         for f in files:
@@ -613,12 +647,13 @@ def main():
 
     run_id = f"{datetime.now().strftime('%Y-%m-%dT%H-%M-%S')}-{secrets.token_hex(3)}"
     mode = "APPLIED" if args.apply else ("SCAN ONLY" if args.scan_only else "DRY RUN")
-    every_term = sorted({t for p in people for t in p["terms"]}, key=len, reverse=True)
+    every_term = sorted({t for p in people for t in p.get("identity_terms", p["terms"])},
+                        key=len, reverse=True)
     report = render_report(run_id, mode, units, per_unit, findings, sorted(set(path_leaks)),
                            skipped_terms, missing,
                            (verified, copied) if args.apply else None, every_term, attest)
 
-    if keys:
+    if keys and (args.apply or args.scan_only):
         keys.mkdir(parents=True, exist_ok=True)
         os.chmod(keys, 0o700)
         if args.apply:
@@ -628,6 +663,7 @@ def main():
                  "units": [{"code": p["code"], "path": p["path"], "identity": p["identity"]}
                            for p in units]}, indent=2), encoding="utf-8")
             os.chmod(keymap, 0o600)
+    if keys and (args.apply or args.scan_only):
         detail = keys / f"{run_id}.detail.jsonl"
         with detail.open("w", encoding="utf-8") as fh:
             for rec in findings:
@@ -643,7 +679,7 @@ def main():
         report_path.write_text(report, encoding="utf-8")
 
     print(report)
-    if keys:
+    if keys and (args.apply or args.scan_only):
         print(f"\nPrivate detail log (real matched strings): {keys}/{run_id}.detail.jsonl")
     if args.apply:
         print(f"Map: {keys}/{run_id}.map.json")
@@ -653,7 +689,9 @@ def main():
                   f"this copy.")
             return 1
     elif not args.scan_only:
-        print("\n--- DRY RUN. Nothing written. Review the above, then re-run with --apply. ---")
+        print("\n--- DRY RUN. Nothing written — not even the private detail log. Review the "
+              "above, then re-run with --apply, or --scan-only --keys DIR to record the "
+              "matched strings without copying anything. ---")
     return 0
 
 
@@ -681,8 +719,8 @@ def self_test():
         finally:
             sys.argv = old
 
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as keydir:
+        tmp, keydir = Path(tmp), Path(keydir)
         sub = tmp / "inputs" / "mp1-quilla-brandsmith"
         sub.mkdir(parents=True)
         essay = sub / "quilla-brandsmith-essay.md"
@@ -751,7 +789,7 @@ def self_test():
               not any(f["class"] == "identity" for f in f2))
 
         # guard: the map may not live with the material
-        out, keys = tmp / "coded", tmp / "keys"
+        out, keys = tmp / "coded", keydir / "keys"        # keys live OUTSIDE the workspace
         try:
             run(["--inputs", str(tmp / "inputs"), "--roster", str(roster),
                  "--out", str(out), "--keys", str(out / "k"), "--apply"])
@@ -782,6 +820,42 @@ def self_test():
         check("map still carries the real identity", "Quilla Brandsmith" in keyfile.read_text())
         check("detail log holds the matched strings",
               "Quilla Brandsmith" in next(keys.glob("*.detail.jsonl")).read_text())
+
+        # --- the privacy defects the release dogfood found, each with its reproduction ---
+        try:
+            run(["--inputs", str(tmp / "inputs"), "--roster", str(roster),
+                 "--out", str(out), "--keys", str(tmp / "inside-keys"), "--apply"])
+            check("a key directory inside the workspace is refused", False)
+        except SystemExit as e:
+            check("a key directory inside the workspace is refused", e.code == 2)
+
+        dryws = tmp / "dry"
+        (dryws / "inputs" / "mp1-quilla-brandsmith").mkdir(parents=True)
+        (dryws / "inputs" / "mp1-quilla-brandsmith" / "e.md").write_text(
+            "By Quilla Brandsmith.\n", encoding="utf-8")
+        drykeys = keydir / "drykeys"
+        rc6, out6 = run(["--inputs", str(dryws / "inputs"), "--roster", str(roster),
+                         "--out", str(dryws / "coded"), "--keys", str(drykeys)])
+        check("a dry run writes NOTHING — not the coded copy, not the detail log",
+              rc6 == 0 and not drykeys.exists() and not (dryws / "coded").exists())
+        check("and the dry-run message says so accurately", "not even the private" in out6)
+
+        # a name the SEARCH set drops as too common must still be redacted from the report
+        common = tmp / "common"
+        (common / "inputs" / "bob-smith").mkdir(parents=True)
+        (common / "inputs" / "bob-smith" / "Bob_Report.md").write_text("Draft.\n",
+                                                                       encoding="utf-8")
+        crost = tmp / "common-roster.csv"
+        crost.write_text("path,name\nbob-smith,Bob Smith\n", encoding="utf-8")
+        rc7, out7 = run(["--inputs", str(common / "inputs"), "--roster", str(crost),
+                         "--out", str(common / "coded"), "--keys", str(keydir / "ck"),
+                         "--apply"])
+        rep7 = (common / "coded" / "scan-report.md").read_text()
+        check("a common-word name never reaches the report verbatim",
+              "Bob" not in rep7 and "[id]" in rep7)
+        check("and the path-leak line cannot contradict itself",
+              not ("No coded path carries an identifier" in rep7
+                   and "still carry an identifier" in rep7))
 
         # scan-only writes nothing
         out2 = tmp / "never"
@@ -833,11 +907,20 @@ def self_test():
               "student name" in out5.lower() and "already empty in the source" in out5)
         check("only the unit that is actually blank is recorded",
               len(re.findall(r"\| unit-[a-z]+ \| (student name|date) \|", out5)) == 2)
-        check("the control sentence is stated",
-              "every unit would appear above, not some" in out5)
+        check("the control is stated as three states, not two",
+              "three states, not two" in out5
+              and "contain no such field at all" in out5
+              and "nothing scannable" in out5)
+        check("the control names the filled-in units as the evidence",
+              "it was **filled in**" in out5)
         att = []
         blank_identity_fields("**Student Name:** Grace Hopper\n", "unit-x/wk.md", att)
-        check("a filled-in field is never recorded as blank", att == [])
+        check("a filled-in field is recorded, but never as blank",
+              len(att) == 1 and att[0]["blank"] is False)
+        att2 = []
+        blank_identity_fields("**Student Name:** _________________\n", "unit-y/wk.md", att2)
+        check("an empty field is recorded as blank",
+              len(att2) == 1 and att2[0]["blank"] is True)
 
     print(f"self-test: {checks - len(failures)}/{checks} checks passed")
     for f in failures:

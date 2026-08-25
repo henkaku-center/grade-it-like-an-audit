@@ -103,8 +103,18 @@ Kept honest with counts, updated as runs happen:
 
 - `agreement.py` verified against a hand-computed example (quadratic-weighted κ = 0.900
   reproduced exactly; degenerate inputs handled). CI re-runs this check on every push.
+- **Release dogfood before 0.2.0 (2026-08-25): 63 findings — 18 blockers, 29 minors, 16
+  notes** from three scope-isolated auditors over the changed docs and the shipped scripts.
+  It stopped the release. Every script self-test was green throughout while a dry run was
+  writing real names to disk, the report could print a name it had dropped as a common word,
+  `--keys` was guarded against the current directory rather than the workspace, matrix
+  columns were raw directory names, `die()` was undefined, family labels collapsed for the
+  format the demo itself uses, and the LICENCE did not cover the code being shipped. One
+  finding was verified and rejected. Record and the written-back lesson:
+  `docs/test-runs/2026-08-25-release-dogfood/`.
 - Script self-tests, all in CI, all fixtures with hand-computed answers:
-  `code-units.py` **42/42**, `reconcile-deductions.py` **51/51**, `compare-runs.py` **13/13**.
+  `code-units.py` **49/49**, `reconcile-deductions.py` **58/58**, `compare-runs.py` **13/13**
+  (up from 42/51/13 — the added checks are regressions for the dogfood's blockers).
   The strictness work added hand-computed cases in both directions — a cohort of known average
   with targets above and below it, the asserted multiplier and the residual left by discrete
   rounding, the count of deductions that round away to notes, and the two degenerate cases
@@ -121,6 +131,22 @@ Kept honest with counts, updated as runs happen:
   parse `working-notes/<unit>/draft-evaluation.md` — the one-file-per-unit layout this
   method's own workspaces produce — despite the documentation instructing exactly that
   command. Both are covered by tests now.
+- **The method has been tested on material it had never seen.** The two arms below ran
+  against two real assignments from a course the harness had no prior exposure to — the
+  instructor's own course, graded on their own machine, with no submission content published
+  here; the institutional-coverage question this file asks you to settle is theirs to answer,
+  and this run is not evidence that it can be skipped — and were
+  compared against grades a human had already issued. With the task's own rulebook supplied
+  it reproduced those grades to **3.0 points on a /90 basis with no outcome-band change**,
+  and independently rediscovered the judgment-heavy defects the human had found. That is a
+  real external validation, not a self-consistency check, and it is the strongest external evidence here — on **n=5 units with 3 comparable issued
+  findings, no same-condition control arm, and finding-pairs adjudicated by hand**.
+  **What it does not cover:** those runs exercised the *grading judgment*, not the shipped
+  orchestration. They used general-purpose subagents with hand-written prompts, not the
+  bundled `unit-auditor` definition, and they graded in one shot rather than running the
+  skill's actual round (preflight → lead normalize → fan-out → lead-consistency → findings
+  table → human approval → re-audit → convergence → write-back). A single `/grade-audit run`
+  in a live session would close that gap, and nothing else here does.
 - **Validated against a real cohort's issued grades (2026-08-25), two arms.** Primed (the
   task's own precedents supplied): MAD **3.0 points on a /90 basis**, no outcome-band change.
   Unprimed (precedents withheld, policy and waiver kept): MAD **11.4**, one outcome-band
@@ -134,8 +160,10 @@ Kept honest with counts, updated as runs happen:
   lexical matching produced false pairs.
 - Plugin structure: `claude plugin validate --strict` passes (manifest, skills, agents);
   `scripts/validate-structure.py` 15/15 checks pass.
-- Eval cases executed with `claude plugin eval`: 0 of 3 (runner in early access at
-  authoring time — see `evals/README.md`).
+- Eval cases executed with `claude plugin eval`: **0 of 3**. Retried at the 0.2.0 release
+  (2026-08-25, Claude Code 2.1.245) — the runner is still gated and exits with an
+  early-access notice. Manually executed: 1 of 3 (the demo-defect-recall machinery, 2026-08-24).
+  See `evals/README.md`.
 - **Fan-out + lead pass executed for real against the demo fixture (2026-08-24):** 3
   blind auditors + 1 lead pass. All 6 catchable planted defects caught, all as blockers;
   the 7th (the world-claim) was flagged as unverifiable by the artifact-vs-world check;
@@ -157,5 +185,21 @@ Kept honest with counts, updated as runs happen:
   residue of the fixes themselves — which were fixed in prose and annotated (never
   silently edited) in the preserved artifacts. Record and written-back lessons in
   `DESIGN.md`; reports in `docs/test-runs/2026-08-24-docs-dogfood/`.
+- **The full audit round executed in a live user session (2026-08-25)** — the first time,
+  and it exercised the machinery this file previously listed as unrun. A 3-unit round
+  produced per-unit auditor reports, a lead-consistency pass, a deduction matrix and a
+  ruling queue. **Blindness held 3/3**: every `FILES READ` list was in-scope, with real
+  counts and no bare universals. The lead arbitrated the matrix, escalated 2 rows it would
+  not settle, and **added a third question of its own** that no single row flagged. Two
+  defects the run exposed, both fixed: the lead's added questions were never merged into
+  `ruling-requests.md` (so the human would not see them), and the drafts' deductions **name
+  no issue at all**, which the matrix now reports as the discipline failure it is rather
+  than dressing a prose fragment up as a defect family.
+- **Demo executed in a live user session (2026-08-25):** run twice end to end by a user
+  against the plugin directory, taking **12 and 18 minutes**. The README previously promised
+  "10 minutes" on no measurement; it now states the measured range. This closes, for the demo
+  skill only, the gap LIMITS has carried since 0.1.0. The `grade-audit-run` round — matrix,
+  ruling requests, approval gates, write-back — has still never been executed in a live
+  session.
 - **Headless load test (2026-08-24):** `claude --plugin-dir . -p` confirmed a live Claude
   Code session sees all 4 skills and all 3 agents under the plugin's namespace.

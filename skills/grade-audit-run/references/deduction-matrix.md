@@ -15,7 +15,8 @@ Three blanks in one workbook is one *unfilled fields* charge, not three. This is
 leniency; it is the difference between grading a defect and grading how many times a defect
 happened to surface. Measured on a real cohort, charging per instance instead of per family
 moved the mean absolute error against the issued grades from **3.6 to 11.4 points on a /90
-basis** — larger than every other cause combined, including missing precedents.
+basis** on the one cohort this was measured against. Withheld precedents accounted for a
+comparable share of the same gap; the two overlap and cannot be attributed independently.
 
 Instances still belong in the evidence; they justify the charge and they belong in the
 letter. They do not each carry a price.
@@ -31,7 +32,7 @@ tier:
 | `standard` | minor and above | −2 / −1 / 0 | waive where a rule states it |
 | `strict` | note and above | −3 / −2 / −1 | waive only on an explicit written ruling |
 
-`python3 scripts/reconcile-deductions.py --show-preset strict` prints any of them.
+`python3 "<this skill's directory>/scripts/reconcile-deductions.py" --show-preset strict` prints any of them.
 
 Two properties that are not negotiable by preset:
 
@@ -49,7 +50,8 @@ records it — that is the whole point of having a Ruling column.
 If the task sets an expected average, run the check after the matrix is priced:
 
 ```
-python3 scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md \
+python3 "<this skill's directory>/scripts/reconcile-deductions.py" \
+    working-notes/*/draft-evaluation.md \
     --target-average 92 --basis 100 --emit-rulings working-notes/ruling-requests.md
 ```
 
@@ -73,7 +75,8 @@ which is happening than the distance from a number set before anyone read the wo
 ## Building it
 
 ```
-python3 scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md \
+python3 "<this skill's directory>/scripts/reconcile-deductions.py" \
+    working-notes/*/draft-evaluation.md \
     --emit-matrix working-notes/deduction-matrix.md \
     --emit-rulings working-notes/ruling-requests.md
 ```
@@ -113,7 +116,10 @@ consistency extension (lead-grader call — FLAGGED, revert if he sees a distinc
 ## The ruling queue — questions for the human
 
 Everything the lead may not settle becomes a numbered question in
-`working-notes/ruling-requests.md`. Each one carries the family, the per-unit charges, and
+`working-notes/ruling-requests.md`. The generator writes the questions it can see from the
+matrix alone; **the lead adds the ones only a cross-unit read reveals**, and the orchestrator
+appends them to the same file — otherwise they live only in the lead's report and never reach
+the human who has to answer them. Each one carries the family, the per-unit charges, and
 three pre-drafted dispositions (price for all / genuinely different / waive everywhere) so
 answering costs a sentence.
 
@@ -151,7 +157,11 @@ fan out → build matrix → arbitrate → ask the human → apply rulings
 Stop when **both** hold on the same pass:
 
 - no unit produces a blocker, **and**
-- the rebuilt matrix has no unarbitrated flag and no cell moved since the previous round.
+- the rebuilt matrix has no unarbitrated flag, **no open ruling request**, and no cell moved
+  since the previous round.
+
+That is a restatement of the one rule in `references/convergence-and-bounding.md`; if they
+ever disagree, that file wins.
 
 Record `matrix cells moved` and `open ruling requests` as columns in
 `working-notes/round-metrics.md`, alongside blockers and minors. A cell-movement count that

@@ -53,9 +53,13 @@ new error. A prior "clean" verdict is NOT evidence; assume it missed something a
    with its evidence and zero points — demoted, never dropped. If no specific issue can be
    named, award the points; that holds at every strictness setting.
 6b. TOOLING vs SUBJECT — if this workspace is coded, the coding pass copied file contents
-   byte-for-byte and renamed only the folder. Never charge the subject for a blank field, a
+   byte-for-byte; it renamed the folder, and filenames too if `--rename-files` was used. Never charge the subject for a blank field, a
    missing name or an empty section on the assumption the tooling removed it; a blank here was
    blank in the submission. If you think content was altered, report it as a TOOLING finding.
+6c. ARTIFACT vs WORLD — for each remaining claim, ask whether it is about the artifact or
+   about the world (a prediction, a reception claim, future influence). A claim about the
+   world has no source that can contradict it; flag it as unverifiable rather than passing
+   it because nothing disproves it.
 7. POLICY — [your rules: no cross-unit comparisons, no other unit named, required anonymization,
    tone constraints, etc.].
 8. EXTRACTION FIDELITY — if the delivered copy is extracted from a master file, confirm it
@@ -65,7 +69,15 @@ new error. A prior "clean" verdict is NOT evidence; assume it missed something a
 Write a report: a verdict line (CLEAN / N findings), then each finding as
   [BLOCKER | MINOR | NOTE] — exact quoted text — source:line ground truth — proposed fix
 then a "what I verified clean" checklist. BLOCKER = a subject-facing error that must be fixed
-before delivery. Return the verdict line and a terse numbered list of findings. Nothing else.
+before delivery. Return, and nothing else:
+
+1. Verdict line: `CLEAN` or `N findings (B blockers, M minors, K notes)`.
+2. Numbered findings, most severe first: `[BLOCKER|MINOR|NOTE] — exact text — why it fails —
+   the ground truth — proposed fix`.
+3. A "verified clean" checklist with REAL COUNTS ("6 of 8 verified"), never a bare
+   "all verified".
+4. `FILES READ:` the complete list of files you actually opened. The lead pass treats this
+   line as a claim and checks it; omitting it disables that check.
 ```
 
 ---

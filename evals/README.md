@@ -22,9 +22,11 @@ Should/shouldn't-trigger query sets for the front door (16 queries) and the demo
   follows the `claude plugin eval` documented format (`evals/<case>/prompt.md +
   graders/*.md`).
 - Executed with `claude plugin eval`: **0 of 3** — the runner is in early access and not
-  enabled for this environment (re-verified by executing the command on 2026-08-24: it
-  refuses with an early-access notice). Run `claude plugin eval . --threshold 0.8` once
-  enabled.
+  enabled for this environment. Re-verified at the 0.2.0 release by running
+  `claude plugin eval . --threshold 0.8` on **2026-08-25 against Claude Code 2.1.245**: it
+  exits with `` `plugin eval` is currently in early access ``. The subcommand is present in
+  the CLI's help output, which is why this was retried; presence is not access. Run it once
+  the gate lifts.
 - Executed manually: **1 of 3** — the demo-defect-recall scenario's machinery (blind
   fan-out + lead pass over the fixture) ran on 2026-08-24 and satisfied the recall
   grader 6/6 and the blindness and sealed-key clauses of the honesty grader; reports in

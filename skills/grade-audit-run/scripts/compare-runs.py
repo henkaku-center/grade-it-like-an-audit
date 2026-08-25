@@ -46,6 +46,13 @@ def issue_name(label):
     return s.strip(" *—–-") or label.strip(" *—–-") or "(unlabelled in source)"
 
 
+def is_unlabelled(name):
+    """A deduction that names no issue cannot be paired with a finding, whichever way the
+    source left it: absent entirely, or recorded as `(unnamed issue in <Component>)` by
+    reconcile-deductions. Both mean the same thing — nothing to match on."""
+    return name.startswith("(unlabelled") or name.startswith("(unnamed issue in ")
+
+
 def load_new_run(d):
     """Accepts both schemas: components[].deductions[] and components[].findings[] with a
     `disposition` of deduct / waived-note."""
@@ -122,7 +129,7 @@ def worksheet(args):
                      f"{len(deducts)}  ·  fresh waived-notes: {len(waived)}\n")
         for i, d in enumerate(o2, 1):
             nm = recon.redact(issue_name(d["label"]), names)
-            unlabelled = nm.startswith("(unlabelled")
+            unlabelled = is_unlabelled(nm)
             mark = "  ← **UNCOMPARABLE: no parseable label; verdict must be `uncomparable`**" \
                 if unlabelled else ""
             lines.append(f"**O{i}** −{d['amount']:g} [{d['component']}] {nm}{mark}")
@@ -200,6 +207,10 @@ def self_test():
           issue_name("** — Hack shipped without its engine (−1, matrix row 11): because…")
           == "Hack shipped without its engine")
     check("issue_name survives a plain label", issue_name("Author placeholder") == "Author placeholder")
+    check("both forms of 'names no issue' are recognised as uncomparable",
+          is_unlabelled("(unlabelled in source)")
+          and is_unlabelled("(unnamed issue in Write-up clarity)")
+          and not is_unlabelled("Missing degrees of freedom"))
     check("an unparseable label is surfaced, never silently empty",
           issue_name("**") == "(unlabelled in source)")
 

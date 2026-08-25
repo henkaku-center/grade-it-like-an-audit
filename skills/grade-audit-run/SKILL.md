@@ -37,7 +37,7 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    path-isolation rules exactly; they are the blindness guarantee.
 4. **Build the deduction matrix.** Blind auditors cannot police fairness across units, so
    consistency is made structural instead. Run
-   `scripts/reconcile-deductions.py working-notes/*/draft-evaluation.md --emit-matrix
+   `python3 "<this skill's directory>/scripts/reconcile-deductions.py" working-notes/*/draft-evaluation.md --emit-matrix
    working-notes/deduction-matrix.md --emit-rulings working-notes/ruling-requests.md`.
    One row per defect family, one column per unit. **One charge per (family, unit) — never
    per instance.** Seed the price schedule from the task's preset
@@ -48,9 +48,13 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    (normalize a price the instruction files fix; propagate a waiver everywhere-or-nowhere;
    collapse instances), flags analogy-based extensions for reversal, applies the strictest
    verdict anywhere to every instance of a shared phrasing — and refuses the rest. It is
-   read-only; you write its decisions into the matrix.
+   read-only; you write its decisions into the matrix. **The lead will raise ruling requests
+   the generator did not** — questions it found by reading across units that no single row
+   flags. Append those to `working-notes/ruling-requests.md` before showing the human, or
+   they exist only inside the lead's report and the human never answers them. Observed live:
+   a run where the generator wrote 2 questions and the lead added a third.
 5b. **Expected-average check (only if the task sets one).** After the matrix is priced, run
-   `reconcile-deductions.py … --target-average N --basis N`. It reports the awarded cohort
+   `python3 "<this skill's directory>/scripts/reconcile-deductions.py" … --target-average N --basis N`. It reports the awarded cohort
    average, the gap, the uniform multiplier that would close it and the residual after
    rounding — and applies nothing. A gap beyond tolerance becomes `Q0` in the ruling queue
    with three routes (scale the schedule / adjust individual grades / advisory only). Present
@@ -75,7 +79,9 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 9. **Convergence check.** Update `working-notes/round-metrics.md` (blockers, minors,
    findings-in-prior-fixes, **matrix cells moved**, **open ruling requests**) and evaluate
    the rules in `references/convergence-and-bounding.md`. Converged = one pass where no unit
-   blocks AND the matrix has no unarbitrated flag AND no cell moved. Bounding triggered →
+   blocks, the matrix has no unarbitrated flag, **no ruling request is open**, and no cell
+   moved (the rule is stated once, in `references/convergence-and-bounding.md`; this is a
+   restatement, not a second definition). Bounding triggered →
    stop looping, diff what ships. Otherwise → another round, with the human's go-ahead.
    **The human closes the loop, not the counter:** once cell movement is small and blockers
    are zero, show the diff of what moved and offer the close explicitly — the recorded runs

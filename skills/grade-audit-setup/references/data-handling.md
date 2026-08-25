@@ -85,11 +85,16 @@ LMS field and out of the file.
 
 ### Keep the key out of reach — and enforce it
 
-The map goes in a directory the script refuses to place inside the workspace, `chmod 700`,
-map at `0600`. The in-workspace report carries counts and unit codes only, never names. The
-script prints the `deny` rule for `.claude/settings.json` so the grading session cannot read
-the map even if it tries — one of the few places in this method where a guarantee is
-*enforced* rather than constructed.
+The map goes in a directory the script refuses to place inside the workspace — checked
+against the workspace root, not merely the directory you ran from — `chmod 700`, map at
+`0600`. The in-workspace report carries counts and unit codes, and redacts any roster
+identity from the paths it prints.
+
+The script also prints a `deny` rule for `.claude/settings.json`. Be precise about what that
+buys: it denies the **Read tool** and **`cat`** on that path. It does not stop `head`,
+`grep`, `less`, or a Python one-liner, and the map sits under the same UID as the session. It
+is a guardrail that makes casual access fail loudly, **not a sandbox**. The real separation is
+that the directory is outside the workspace, and you can keep it on different media entirely.
 
 ## Half 2 — the model provider (what to check, where)
 
@@ -145,5 +150,6 @@ Disclaimer).
 
 Everything the harness produces is a local file you can read; what leaves your machine is
 the same as any Claude session under your plan's terms — so set the workspace to
-anonymized codes, keep inputs gitignored and the name map local, and the material that
-reaches anyone is grading of unit codes against your rubric.
+anonymized codes, keep inputs gitignored and the name map local, and what reaches anyone is
+your rubric applied to coded units — **plus whatever identity the submissions themselves
+still contain**, which this pass reports and does not remove.

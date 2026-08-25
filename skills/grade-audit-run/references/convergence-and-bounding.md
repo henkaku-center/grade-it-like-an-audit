@@ -13,7 +13,7 @@ Append one row to `working-notes/round-metrics.md` at the end of every round:
 |---|---|---|---|---|---|---|
 | 1 | 4 | 12 | — | 2/5 | — | 6 |
 | 2 | 1 | 9 | 3/10 (30%) | 3/5 | 7 | 2 |
-| 3 | 0 | 3 | 2/3 (67%) | 5/5 | 1 | 0 |
+| 3 | 0 | 3 | 2/3 (67%) | 2/5 | 1 | 0 |
 ```
 
 "Findings in prior round's fixes" = of this round's findings, how many sit in text that did

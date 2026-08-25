@@ -66,6 +66,16 @@ script (`skills/grade-audit-run/scripts/agreement.py`) computes κ/ρ/MAD. Compu
 asserted; and the script prints its own small-n caveat rather than letting a coefficient
 overclaim.
 
+**A green self-test is not evidence the feature works.** The 0.2.0 dogfood found 18 blockers
+while every script suite passed — a dry run writing real names to disk, a report printing a
+name it had dropped as a common word, a key-directory guard checking the working directory
+instead of the workspace, matrix columns carrying directory names, a documented flag raising
+`NameError`. Each had a passing test beside it, because the suites tested what the code did
+rather than what the documentation promised, and none of them ran the documented commands as
+written. Three separate defects this session were caught by executing the thing instead of
+reading it. The rule written back: **a self-test that never runs the documented command is
+not testing the feature**, and covering new code is part of adding it.
+
 **A strictness dial must not become a way to stop looking.** Adopters need to grade harder or
 softer than the templates imply — measured, the same harness produced 96–100 under one
 rulebook and 63–84 under another. The obvious design makes auditors less sensitive at lower
@@ -108,6 +118,8 @@ and lead reports) are preserved under `docs/test-runs/`.
 | 2026-08-24 demo-fixture test (fan-out + lead over the demo workspace) | 3 | 1 | 9 (6 planted, 3 unplanted — 2 found by unit auditors incl. 1 upgraded from minor by the lead, 1 lead-pass only) | 2 | known-extras section added to the demo answer key | All 6 catchable planted defects caught; world-claim flagged by artifact-vs-world; 3 blocker-class unplanted defects found (a 4th, minor-level, is in the preserved reports), kept in the fixture deliberately and documented. Blindness 3/3. Artifacts: `docs/test-runs/2026-08-24-demo-fixture/`. |
 | 2026-08-24 docs dogfood (3 scope-isolated auditors over README / meta-docs / skills+agents, repo as ground truth) | 3 | 1 | 5 | 11 (+14 notes) | 3 lessons below | Caught a license contradiction and a fourteen-rounds overclaim that predate the plugin, wrong counts in our own "honest counts" records, a path collision in the run protocol, and a one-source violation (a promised template sentence that didn't exist). All blockers and minors fixed same day. Artifacts: `docs/test-runs/2026-08-24-docs-dogfood/`. |
 | 2026-08-24 docs dogfood, round 2 (diff-scoped re-audit of round 1's fixes — a fix is a new claim) | diff of the round-1 commit | 1 | 0 | 7 (+3 notes) | — | 43 of 50 changed facts verified clean; all 5 round-1 blocker fixes held. The 7 minors were residue of the fixes themselves: a leftover of the corrected phrasing in one skill, the license fix still overstating (attribution = credit + license link + change-notes), a condensation tally short by two, a fourth unplanted fixture catch the counts missed, and a paraphrase-in-quotes inside a preserved report. Fixed in prose; preserved artifacts annotated, never edited. |
+| 2026-08-25 release dogfood (3 scope-isolated auditors over the 0.2.0 diff: run skill / setup+agents+templates / top-level docs, each running the commands the docs describe) | 3 scopes | 1 | 18 | 29 (+16 notes) | 1 lesson below | **Stopped the release.** Every script self-test was green throughout while a dry run wrote real names to disk, the report could print a name dropped as a common word, `--keys` guarded the working directory instead of the workspace, matrix columns carried directory names, `die()` was undefined, family labels collapsed for the format the demo itself uses, and the LICENCE did not cover the shipped code. One finding verified and rejected (arithmetic that did close). All 18 fixed with regressions; suites 42→49 and 51→60. Artifacts: `docs/test-runs/2026-08-25-release-dogfood/`. |
+| 2026-08-25 live user session (first end-to-end run of `grade-audit-run` outside the authors' scripts, 3-unit demo workspace) | 3 | 1 | — | — | 2 fixes | Blindness held 3/3 — every `FILES READ` in scope, real counts, no bare universals. The lead arbitrated the matrix, escalated 2 rows and **added a third question of its own**. Two defects only a live run could surface: the lead's added ruling requests were never merged into `ruling-requests.md`, and the fixture's own drafts deduct **without naming an issue**, which the matrix now reports as the discipline failure it is. Demo timed at 12 and 18 minutes, correcting a README claim of 10. |
 
 ## Lessons banked from the dogfood (the write-back, applied to ourselves)
 

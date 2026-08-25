@@ -37,6 +37,25 @@ indifferent adopter does not have to choose. See
 awarded. That is the attribution guarantee this whole method rests on. Lowering strictness
 demotes a finding to a zero-point note — it never hides it, and the subject still sees it.
 
+## Never-events — applied by default
+
+These hold without being asked for, and the auditors enforce them:
+
+- **No subject is named in another subject's feedback.** No names, no quotes, no rankings, no
+  cohort comparison that identifies anyone, no "unlike another submission".
+- **An outcome appears only in that subject's own delivery** — never in another's, never in a
+  shared file, never in a class-wide message.
+
+[Add any task-specific never-events below.]
+
+## Data handling and institutional coverage
+
+[Recorded at setup from Q6a/Q6b. Delete this section only if the material involves no people.]
+
+- **Institutional coverage (Q6a):** [what covers this use, in the user's own words] — recorded [date]
+- **Coded units (Q6b):** [yes / no]; `--keys` directory: [absolute path, outside this workspace]
+- **Deny rule added to `.claude/settings.json`:** [yes / no]
+
 ## Criteria / rubric
 
 [The fixed point split or pass/fail bar, held constant across every unit. A table works well.]

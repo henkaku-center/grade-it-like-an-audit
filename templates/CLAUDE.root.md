@@ -60,6 +60,9 @@ Every judgment is a discrete, named, evidenced claim:
 
 - **Internal section** — the reasoning and evidence: an outcome table, and per-unit findings,
   each `Finding: … — (severity) … How to avoid: …`.
+- **Never-events, always on:** no subject named in another subject's feedback (no names,
+  quotes, rankings, or identifying comparisons), and an outcome visible only in that
+  subject's own delivery.
 - **Subject-facing section** — what actually gets delivered. [State any rules: no cross-unit
   comparisons, cite the deliverable not the process log, anonymize where required, etc.]
 

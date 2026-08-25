@@ -73,13 +73,15 @@ Strictness never licenses a vague deduction.
 
 ## If the workspace is coded
 
-The coding pass copied file **contents byte-for-byte** (hash-verified) and renamed only the
-top-level folder. It did not blank, redact, translate or alter anything inside any file. So:
+The coding pass copied file **contents byte-for-byte** (hash-verified). It renamed the
+top-level folder, and — if `--rename-files` was used — filenames too. It did not blank, redact, translate or alter anything inside any file. So:
 
 - **Never attribute a blank field, a missing name, an empty section or altered text to the
   coding pass.** A blank in a coded unit was blank in the submission.
 - If you nonetheless believe content was altered, say so as a **TOOLING finding** naming the
   file and what looks wrong — never as a defect charged to the subject.
+- **Never charge a subject for a path that no longer resolves.** A cross-reference broken by a
+  coded filename is a tooling artefact, not the subject's error.
 - Person tokens: `[unit-…]` is the subject; `[peer-n]` / `[ta-n]` are other people, each a
   distinct voice, numbered locally to this unit.
 

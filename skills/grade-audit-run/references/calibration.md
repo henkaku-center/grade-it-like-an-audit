@@ -32,8 +32,10 @@ decides a pairing itself, because lexical similarity demonstrably cannot.
 
    The script prints per-unit diffs, mean absolute difference, exact agreement, Spearman
    rho, and quadratic-weighted kappa with an interpretation band — computed, not asserted.
-   Pass `--scale-min/--scale-max` so the kappa reflects the real scale, not just observed
-   scores.
+   Pass `--scale-min/--scale-max` so the printed scale is honest and out-of-range scores are
+   caught. Note what it does *not* do: quadratic-weighted kappa here is invariant to the
+   declared range (the weight normalizer cancels, and expected agreement is built from the
+   observed marginals), so the coefficient itself will not move.
 4. **Report.** Show: the script output verbatim; for every unit where scores differ, BOTH
    rationales side by side (the human can see exactly where the harness reads the rubric
    differently); and the script's own small-n caveat. Then ask the human how to proceed:

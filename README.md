@@ -3,7 +3,7 @@
 **A field-tested method for instructing AI agents on recurring, high-stakes tasks — using
 layered markdown, persistent memory, and a self-correcting write-back loop. Now an
 installable Claude Code plugin with a guided setup, a blind-auditor fan-out, and a
-10-minute demo that hunts planted defects in front of you.**
+12-to-18-minute demo that hunts planted defects in front of you.**
 
 <!-- demo recording goes here: docs/demo.gif — see RELEASING.md checklist -->
 
@@ -31,10 +31,10 @@ comes around again.
 The demo grades three **fictional** students whose draft evaluations contain **seven
 planted defects** — a misquote, a wrong number, an overclaimed compliment, a
 misattribution, broken arithmetic, an error hiding inside a previous "fix," and one defect
-the system **cannot catch by design**. You watch independent auditors hunt the six (our
+**no source can settle** — the harness flags it as unverifiable; only a human can rule on it. You watch independent auditors hunt the six (our
 pre-ship test run caught all six — plus three blocker-class defects we hadn't planted),
 then the answer key is unsealed, the seventh is revealed, and you learn why a human
-stays in the loop. Ten minutes, zero real data.
+stays in the loop. Twelve to eighteen minutes, measured twice. Zero real data.
 
 ```
 /plugin marketplace add henkaku-center/grade-it-like-an-audit
@@ -169,7 +169,7 @@ Three moving parts:
 
 3. **The write-back loop.** The part that matters most. When a review catches a failure,
    the fix isn't just applied — a *rule* goes back into the docs, so that failure can't
-   recur next time. **The instruction set compounds. Every run makes it stronger.** (In
+   recur next time. **The instruction set compounds. Every run that catches something makes it stronger.** (In
    the plugin, a round is not closed until its lessons are written back.)
 
 What those files *encode* is the working method:
