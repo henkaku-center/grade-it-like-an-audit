@@ -2,6 +2,23 @@
 
 ## 0.3.0 — 2026-08-25
 
+- **Agents default to `sonnet`, and the model is configurable per task.** The bundled agents
+  declared no model, so they inherited whatever the operator's session was running — which on
+  a large-model session makes an N-auditors-per-round fan-out expensive and slow for no stated
+  reason. All three now declare `sonnet`, and both task templates carry a "Models and cost"
+  block the run skill reads and passes at spawn time. Stated in LIMITS rather than glossed:
+  this is a **cost decision, not a measured equivalence** — every finding count recorded in
+  that file was produced by a larger model than the shipped default, so those counts are an
+  upper bound until someone measures the gap. The lead pass is one call doing the hardest
+  reasoning, so it is the first worth raising.
+- **The letter's sign-off is recorded, not inferred.** A live run signed every letter "Joe" —
+  correctly, but by accident: the plugin has no signature field, and the name came from the
+  operator's own global writing-style rules. That works invisibly for one person and produces
+  an improvised or absent sign-off for anyone else, and can vary between rounds. Both task
+  templates now carry a "Who the feedback is from" block (name as it should appear, register,
+  reply-to), the interview asks for it (Q3b), and the report template tells the drafter to use
+  the recorded value rather than improvise — a cohort receiving differently-signed letters
+  reads as carelessness about the thing they care most about.
 - **A default workspace, so `CLAUDE.md` is not the user's problem.**
   `templates/quickstarts/student-grading.CLAUDE.task.md` is a complete, defensible grading
   workspace — layout, never-events, the discrete-attributable-deduction rule, strictness

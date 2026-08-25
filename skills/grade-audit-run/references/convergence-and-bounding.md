@@ -9,17 +9,21 @@ round, from the metrics file — never from impression.
 Append one row to `working-notes/round-metrics.md` at the end of every round:
 
 ```markdown
-| Round | Blockers | Minors | Findings in prior round's fixes | Units clean this pass | Matrix cells moved | Open ruling requests |
-|---|---|---|---|---|---|---|
-| 1 | 4 | 12 | — | 2/5 | — | 6 |
-| 2 | 1 | 9 | 3/10 (30%) | 3/5 | 7 | 2 |
-| 3 | 0 | 3 | 2/3 (67%) | 2/5 | 1 | 0 |
+| Round | Blockers | Minors | Notes | Findings in prior round's fixes | Units clean this pass | Matrix cells moved | Open ruling requests |
+|---|---|---|---|---|---|---|---|
+| 1 | 4 | 12 | 7 | — | 2/5 | — | 6 |
+| 2 | 1 | 9 | 5 | 3/10 (30%) | 3/5 | 7 | 2 |
+| 3 | 0 | 3 | 4 | 2/3 (67%) | 2/5 | 1 | 0 |
 ```
 
 "Findings in prior round's fixes" = of this round's findings, how many sit in text that did
 not exist before the previous round's revisions. Compute it by checking each finding's
 location against what the previous round changed — this is the bounding rule's input, so
 count it honestly, per finding, not by feel.
+
+"Notes" counts findings reported at zero points — everything below the charge threshold. A
+lenient preset creates these by demotion, so without the column the ledger silently loses the
+findings the subject still receives, and a run can look quiet while it is only cheap.
 
 "Matrix cells moved" = how many (family, unit) charges changed since the previous round,
 after rulings were applied. "Open ruling requests" = fairness questions still unanswered.

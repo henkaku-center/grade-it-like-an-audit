@@ -80,6 +80,12 @@ is the human's judgment plus the evidence discipline — not the loop count.
 
 ## What it costs
 
+- The bundled agents default to **`sonnet`**, and the task file can raise any of them. That
+  default is a cost decision, **not a measured equivalence**: nothing here has compared what
+  a smaller model finds against a larger one on the same corpus. The recorded runs — the
+  demo fixture, the docs dogfood, the cohort validation — were all executed by larger
+  models, so every finding count in this file was produced at a higher tier than the
+  shipped default. Treat the counts as an upper bound until someone measures the gap.
 - One audit round over N units ≈ **N auditor subagent runs + 1 lead pass**. Budget
   **3–5 rounds** — and note the honest caveat that the two recorded hardening runs took
   5, and 9 with an early stop; budget for re-audits of revised units on top. The demo
@@ -216,8 +222,15 @@ Kept honest with counts, updated as runs happen:
 - **Demo executed in a live user session (2026-08-25):** run twice end to end by a user
   against the plugin directory, taking **12 and 18 minutes**. The README previously promised
   "10 minutes" on no measurement; it now states the measured range. This closes, for the demo
-  skill only, the gap LIMITS has carried since 0.1.0. The `grade-audit-run` round — matrix,
-  ruling requests, approval gates, write-back — has still never been executed in a live
-  session.
+  skill only, the gap LIMITS has carried since 0.1.0.
+- **What is still unexercised, precisely (as of 2026-08-25).** Round *one* of
+  `grade-audit-run` has now run live twice — fan-out, lead-consistency pass, deduction matrix,
+  ruling queue — once on the synthetic demo and once on real submissions. What has never run
+  is a **second round**, and with it everything that only exists across rounds: `matrix cells
+  moved` has never been non-zero, revised units have never been re-audited whole, the
+  convergence and bounding rules have never been evaluated against real trajectory data, and
+  **write-back has never fired**, because it closes a round rather than opening one. The
+  recursion this method is built around is therefore designed, documented and tested by
+  fixture — but not yet observed.
 - **Headless load test (2026-08-24):** `claude --plugin-dir . -p` confirmed a live Claude
   Code session sees all 4 skills and all 3 agents under the plugin's namespace.

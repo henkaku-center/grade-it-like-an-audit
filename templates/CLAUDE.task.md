@@ -58,6 +58,28 @@ These hold without being asked for, and the auditors enforce them:
 - **Names back at delivery:** `code-units.py --decode <keys>/<run>.map.json`, run outside the
   grading session; hand-check one row before sending the batch.
 
+## Models and cost
+
+[The auditors are the bill: one subagent per unit per round. They default to `sonnet`, which
+is the cost driver handled. Raise one if its work suffers — and see the caveat below before
+assuming a smaller model finds the same defects.]
+
+- **Unit auditors:** [sonnet | opus] — N per round, so this is the number that matters
+- **Lead consistency pass:** [sonnet | opus] — 1 per round; it does the hardest reasoning
+  (cross-unit arbitration), so it is the first one worth raising
+- **Fresh reader:** [sonnet | opus] — 1, and already a labelled weak proxy
+
+## Who the feedback is from
+
+[Recorded once so every letter signs the same way. Without this the sign-off is inferred from
+whatever personal writing rules the operator happens to have — which works by accident for
+one person and varies or vanishes for anyone else. A grade letter is a formal communication;
+name its sender.]
+
+- **Signed:** [the name as it should appear, e.g. "Joe" or "Prof. Okonkwo"]
+- **Register:** [first-name and warm / formal / departmental — pick one and hold it]
+- **Reply-to:** [office hours, email, or "reply to this message"]
+
 ## Criteria / rubric
 
 [The fixed point split or pass/fail bar, held constant across every unit. A table works well.]

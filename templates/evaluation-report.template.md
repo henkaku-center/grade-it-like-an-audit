@@ -48,6 +48,10 @@ and what they were corrected *from*, so the trail survives.]
 
 ## Subject-facing — [letters / feedback / report]
 
+<!-- Close every letter with the sign-off recorded in the task CLAUDE.md ("Who the feedback
+is from"). Do not improvise it and do not vary it between units: the same cohort receiving
+differently-signed letters reads as carelessness about the thing they care most about. -->
+
 > Delivered per unit. No cross-unit comparisons; no other unit named; [your anonymization and
 > tone rules]. Cite the deliverable, not the process log.
 

@@ -59,8 +59,8 @@ would have prevented this round's discrepancy.
 
 ## 4. Round trail
 
-| Round | Blockers | Minors | Cells moved | Open ruling requests | Note |
-|---|---|---|---|---|---|
-| 1 | | | — | | |
+| Round | Blockers | Minors | Notes (demoted) | Cells moved | Open ruling requests | Comment |
+|---|---|---|---|---|---|---|
+| 1 | | | | — | | |
 
 Closed at round [N] by [human]: "[the words they used]". Round [N+1] not run.

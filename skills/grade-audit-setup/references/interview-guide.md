@@ -47,6 +47,13 @@ comments to the author; approval status for the team. · CA: findings memo to le
 remediation list to control owners. · CO: risk summary to the deal owner; markup to the
 counterparty's counsel.
 
+**Q3b — who the feedback is from.** "How should the feedback be signed, and how formal?"
+One line, recorded in the task CLAUDE.md. Ask because otherwise the sign-off is inferred from
+whatever personal writing rules the operator happens to have — invisible when it works,
+inconsistent when it does not, and absent for anyone whose setup carries none. Capture the
+name as it should appear, the register (first-name and warm / formal / departmental), and
+where a reply should go.
+
 ## Q4 — Ground-truth sources
 
 "When there's a factual disagreement — a number, a quote, what something did — what

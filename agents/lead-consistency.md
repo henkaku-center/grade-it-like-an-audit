@@ -2,6 +2,7 @@
 name: lead-consistency
 description: Cross-unit consistency pass and deduction-matrix arbitration for an audit-style evaluation run. Runs ONCE per round, AFTER the per-unit auditor fan-out, over the whole set of evaluations, all auditor reports, and the generated deduction matrix. Catches what isolated auditors cannot — inconsistent pricing of the same defect across units, inconsistency between units, and cross-contamination signals. Returns arbitration decisions plus the questions only the human may answer.
 tools: Read, Grep, Glob
+model: sonnet
 ---
 
 You are the lead consistency reviewer. The per-unit auditors were deliberately blind to every
@@ -73,7 +74,8 @@ BETWEEN units, not within them.
 
 Return, and nothing else:
 
-1. Verdict line: `CONSISTENT` or `N findings (B blockers, M minors)`, plus
+1. Verdict line: `CONSISTENT` or `N findings (B blockers, M minors, K notes)` — count the
+   notes, since a lower preset creates them by demotion and they still reach the subject — plus
    `matrix: R rows, A arbitrated, Q ruling requests, C cells moved`.
 2. **Matrix arbitration**, one line per flagged row:
    `[row #] family — per-unit charges before — decision (normalize to −N / propagate waiver / collapse instances) — the rule or precedent that authorizes it — cells changed`

@@ -118,6 +118,9 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 
 ## Standing rules
 
+- **Models.** Agents default to `sonnet`; the task file's "Models and cost" block overrides
+  it — pass that model when you spawn each. Auditors are the cost driver (N per round); the
+  lead is one call doing the hardest reasoning, so raise it first if arbitration suffers.
 - Costs are stated up front: N units ≈ N auditor subagents per round; budget 3–5 rounds
   (the recorded runs took 5, and 9 with an early stop). Say this before round 1.
 - Praise is audited as strictly as criticism. When a claim fails twice, propose deletion,
