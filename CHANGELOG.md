@@ -25,6 +25,13 @@
   pass; missing it costs a student's privacy. Worth stating plainly because it is easy to
   mistake for a naming problem: **no coding scheme prevents this.** The defect is in the
   sentence, not the label — rename the unit and the letter still points at another student.
+  And it is not a guarantee that no student is ever referenced: it searches for *labels*. Of
+  four ways one student can surface in another's letter it covers one and a half — a unit code
+  always, a real name at delivery only (the grading session is denied the map by design, so it
+  cannot search names; `--personalize` has it legitimately and refuses on names too), and
+  neither an identifying description nor a verbatim quote of another's work. Those are
+  judgment, which is what the auditors and the lead pass are for. Documented as such in
+  LIMITS.md rather than left to be assumed.
 - **`--personalize` puts the real names back into the letters, locally.** Reads the coded
   letters and the map, writes named copies, sends nothing — no script this plugin ships
   imports `socket`, `http`, `urllib` or `requests`, and that is checkable with one grep.

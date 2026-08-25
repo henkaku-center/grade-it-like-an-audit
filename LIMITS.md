@@ -44,7 +44,18 @@ is the human's judgment plus the evidence discipline — not the loop count.
    carrying the prior rounds' rulings matched the issued grades to **3.0**, while the same
    harness without them diverged by 11.4 and moved one outcome band — the measured argument
    for write-back.
-5. **Strictness is a real axis, and the presets do not settle it for you.** The same harness
+5. **The cross-reference check is deterministic for codes, not for references.** Naming one
+   student inside another's feedback is a never-event, and the harness now checks for it
+   mechanically every round rather than only at delivery. But it searches for unit *labels*.
+   Of four ways one student can appear in another's letter it catches one and a half: a unit
+   code (always), a real name (at delivery only, where the map is legitimately in hand — the
+   grading session is denied the map by design and cannot search for names), and **neither**
+   an identifying description without a name ("the only submission that used a permutation
+   test") nor a verbatim quote of another student's work. Those two are judgment, which is
+   what the auditors' cross-contamination check and the lead pass exist for. Do not read the
+   mechanical check as a guarantee that no student is ever referenced; read it as the cheap
+   half being covered cheaply.
+6. **Strictness is a real axis, and the presets do not settle it for you.** The same harness
    on the same submissions produced **96–100** under one rulebook and **63–84** under a
    stripped-back one. The presets (`lenient`/`standard`/`strict`) make that axis explicit
    rather than leaving it to whatever the templates implied, but they only *seed* prices — the
@@ -53,7 +64,7 @@ is the human's judgment plus the evidence discipline — not the loop count.
    preset demotes it to a zero-point note that still reaches the subject; only an explicit
    report-threshold change hides anything, and the round report then says how much), and
    **license a vague deduction** (an unnamed issue is awarded at every setting).
-6. **An enforced average is a policy choice with a cost, and the harness will not make it for
+7. **An enforced average is a policy choice with a cost, and the harness will not make it for
    you.** Scaling the price schedule by one uniform multiplier keeps attribution intact —
    every deduction still names its issue, only the tariff moves. Adjusting individual grades
    to hit a number does not, and the harness says so before offering it. Neither route can
@@ -61,7 +72,7 @@ is the human's judgment plus the evidence discipline — not the loop count.
    judgment is the human's, and forcing an average onto a cohort that really is excellent (or
    really is weak) misreports them. The residual after discrete rounding is reported, never
    absorbed.
-7. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
+8. **Blindness is by construction, not enforcement.** Auditor isolation comes from what
    their prompts contain — there is no per-unit filesystem sandbox. Each auditor reports
    the files it read, and the lead pass checks those reports; but per the method's own
    lesson 4, a "files I read" line is itself a claim. The eval suite includes a

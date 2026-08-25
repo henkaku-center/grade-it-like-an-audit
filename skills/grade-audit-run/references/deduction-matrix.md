@@ -37,6 +37,23 @@ catching it at delivery costs the whole grading pass.
 No naming scheme prevents this, which is worth being clear about: the defect is in the
 sentence, not the label. Rename the unit and the letter still points at another student.
 
+**What this check does NOT catch — state it plainly rather than let it be assumed.** It
+searches for other units' *labels*. Measured against four ways one student can appear in
+another's feedback, it catches one:
+
+| how the reference appears | caught here? |
+| --- | --- |
+| names another unit's code — "unlike unit-b" | **yes** |
+| names the student — "unlike Grace's proof" | no, here; **yes at delivery**, where the map is in hand |
+| identifies without naming — "the only submission that used a permutation test" | **no** |
+| quotes another student's work verbatim | **no** |
+
+The last two are judgment, which is what the auditors' cross-contamination check and the lead
+pass are for; the harness cannot mechanise them and does not pretend to. The name case is
+deliberately split: at matrix time the grading session is denied the map — that is the point
+of keeping it outside the workspace — so it cannot search for names; `--personalize` has the
+map legitimately and refuses on real names as well as codes.
+
 ## Strictness: the preset seeds the schedule, the ruling overrides it
 
 The task CLAUDE.md carries a preset. It sets two thresholds and a starting price per severity

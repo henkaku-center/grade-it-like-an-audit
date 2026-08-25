@@ -780,6 +780,16 @@ def personalize(letters_dir, mapfile, out_dir, name_field, apply, code_phrase=No
             continue
         text = f.read_text(encoding="utf-8", errors="replace")
         intruders = sorted(c for c in names if c != me and term_regex(c).search(text))
+        # other students' real names, which the matrix-time check cannot see
+        for other_code, other_name in names.items():
+            if other_code == me or not other_name:
+                continue
+            parts = [p for p in re.split(r"[\s,]+", other_name) if len(p) > 2]
+            for token in {other_name, *parts}:
+                if term_regex(token).search(text):
+                    intruders.append(f"{other_code} (by name)")
+                    break
+        intruders = sorted(set(intruders))
         if intruders:
             problems.append((f, f"NEVER-EVENT: this letter names another unit "
                                 f"({', '.join(intruders)}) inside it. No subject may be named "
@@ -1079,6 +1089,23 @@ def self_test():
               "not treated as a letter" in ob)
         check("a letter naming another unit is refused as a NEVER-EVENT",
               "NEVER-EVENT" in ob)
+        # at delivery the map is in hand, so real names are covered too
+        byname = Path(tmp) / "byname"; byname.mkdir()
+        u2 = json.loads(key2.read_text())["units"]
+        first = u2[0]["identity"].get("name", "").split()[0]
+        (byname / f"{u2[1]['code']}.md").write_text(
+            f"Dear [student],\n\nUnlike {first}, your proof held.\n", encoding="utf-8")
+        bnout = Path(tmp) / "bnout"
+        sys.argv = ["code-units.py", "--personalize", str(byname), "--map", str(key2),
+                    "--out", str(bnout), "--apply"]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()) as b:
+                rcn = main()
+            on = b.getvalue()
+        finally:
+            sys.argv = old_argv
+        check("a letter naming another student BY NAME is refused too",
+              rcn == 1 and "(by name)" in on and not bnout.exists())
         check("that refusal is non-zero and writes nothing",
               rcb == 1 and not badout.exists())
         check("matching is by exact stem, so one filename cannot claim two units",
