@@ -1,7 +1,8 @@
 # Data handling — where does the student work go?
 
-The first question a careful adopter asks, answered in two halves: what stays on your
-machine (which you control), and what reaches the model provider (which you configure).
+The first question a careful adopter asks, answered in two halves — what stays on your
+machine (which you control), and what reaches the model provider (which you configure) —
+with the coded-units pass in between, which shrinks what reaches anyone at all.
 Written 2026-08; the provider half changes — the links are the authority, not this page.
 
 ## Half 1 — your machine, your rules (what this plugin does)
@@ -15,10 +16,80 @@ Written 2026-08; the provider half changes — the links are the authority, not 
 - The methodology's own repo demonstrates the stance: it publishes run *statistics* and
   templates, and not one person's data. Hold your workspace to the same line: keep real
   material in a separate, private (or non-)repo.
-- **Anonymize-before-grading option** (offered at setup): replace names with codes
-  (student-a, …) in a copy of the inputs and grade the copy; keep the code→name map in a
-  local file the workspace never reads. The audit harness never needs real names — units
-  are units.
+- **Coded-units pass** (offered at setup): grade a copy in which each person is a random
+  unit code, with the map kept outside the workspace. The audit harness never needs real
+  names — units are units. Run it with `scripts/code-units.py`; the section below is what it
+  does and, more importantly, what it does not.
+
+## The coded-units pass — what it buys, and what it does not
+
+`skills/grade-audit-setup/scripts/code-units.py` copies each person's material to
+`unit-a/`, `unit-b/`, … , keeps the code→identity map **outside** the workspace, and
+**scans** the contents rather than rewriting them. Stdlib only, dry-run by default.
+
+```
+python3 code-units.py --inputs inputs/ --roster roster.csv \
+        --out inputs-coded/ --keys ~/.grade-audit-keys/f26-mp1/
+# read the scan report it prints, then:
+python3 code-units.py ... --apply
+```
+
+`roster.csv` is one row per person with a `path` (or `folder`/`file`) column naming their
+submission and an optional `role` column; every other cell is an identifier to search for.
+No roster? `--roster-from-dirs` derives candidates from each submission's own folder name.
+
+### It never rewrites your files, and that is the point
+
+An earlier version redacted file contents. Tested against a raw session log, it broke the
+method's own ATTRIBUTION check — it folded collaborators into the subject's code, so a log
+reading "Sam suggested antithetic variates" came out as the subject suggesting it: the exact
+BLOCKER the method exists to catch, manufactured by the privacy feature and undetectable
+afterwards. It also destroyed `@property` decorators and `github.com/numpy/numpy`
+citations. **A redaction pass rewrites the same files the evidence discipline depends on.**
+
+So this one observes and reports. Copies are byte-for-byte and hash-verified, timestamps
+preserved, and the report carries the proof (`N/N copied files hash-match their source`).
+It also records identity template fields **already blank in the source, before grading**, so
+a student's blank can never be mistaken for something the tool removed — the units *not*
+listed are the control.
+
+### The reason to do it that has nothing to do with law
+
+Blind grading. The method already commits to auditor blindness and no cross-unit comparison;
+coded units serve that by taking the name off the work before the judgment forms. That is a
+pedagogical claim you can defend without a lawyer, and it is the claim this feature rests on.
+
+### The headline limit: it codes the container, not the content
+
+If a submission says "By Jane Doe" inside, it still does. On a real cohort, **5 of 5 units
+carried identity findings inside their file contents** — and 5,628 of 5,629 of them sat in
+the agent session transcripts, not the deliverables. The scan tells you where; the fixes are
+upstream: anonymous export from your LMS, or an assignment instruction to keep names in the
+LMS field and out of the file.
+
+### The privacy benefit is real and strictly secondary
+
+- **GDPR: pseudonymization is not anonymization.** Recital 26 — if a key exists that can
+  re-attribute the data, it is still personal data and the Regulation applies in full. You
+  keep the key, because you have to return grades to real people. This is an Article 32
+  security measure, not an exemption.
+- **FERPA: the content is the education record, not just the name on it.** The
+  de-identification provision (34 CFR §99.31(b)) needs indirect identifiers gone *and* a
+  reasonable determination that identity is not ascertainable. On student prose you cannot
+  make that determination, and in your own hands nothing is de-identified — you hold the
+  roster.
+- **Why codes and not hashes.** Hashing a name is reversible against a class roster in
+  microseconds, and the same FERPA provision requires a code *not based on* the student's
+  own information. Codes here are random, shuffled, and fresh per run — a code reused across
+  assignments is a linkable profile.
+
+### Keep the key out of reach — and enforce it
+
+The map goes in a directory the script refuses to place inside the workspace, `chmod 700`,
+map at `0600`. The in-workspace report carries counts and unit codes only, never names. The
+script prints the `deny` rule for `.claude/settings.json` so the grading session cannot read
+the map even if it tries — one of the few places in this method where a guarantee is
+*enforced* rather than constructed.
 
 ## Half 2 — the model provider (what to check, where)
 

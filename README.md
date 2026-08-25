@@ -272,7 +272,9 @@ honest one.*
 
 If you adopt this method, keep your actual working files — inputs, evaluations, memory,
 audit notes — in a **separate, private** repository; the plugin's setup gitignores them
-by default and offers an anonymize-before-grading option. Where your material involves
+by default and offers a coded-units pass (random unit codes, contents copied byte-for-byte
+and scanned rather than rewritten, the name map kept outside the workspace — blind grading
+and risk reduction, not compliance). Where your material involves
 students or other people, read the data-handling guidance
 ([`skills/grade-audit-setup/references/data-handling.md`](skills/grade-audit-setup/references/data-handling.md))
 — including the parts that are your institution's call, not a plugin's.

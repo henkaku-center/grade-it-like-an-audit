@@ -36,7 +36,9 @@ a bracket unfilled — anything the interview didn't cover gets asked, not guess
   never-deduct sentence. Q6 → waivers/gotchas as applicable. Precedents section starts
   empty.
 - **.gitignore**: whenever the material involves people (or the user chose it in Q6):
-  `<task>/inputs/` and `<task>/working-notes/` at minimum, plus anything else Q6 named.
+  `<task>/inputs/` and `<task>/working-notes/` at minimum, plus anything else Q6 named. If
+  the coded-units pass was accepted, add the coded copy too (`<task>/inputs-coded/` or
+  whatever `--out` they chose) — coded is not de-identified, and the work is still in there.
   Add one comment line saying why: evaluation material stays out of version control shared
   beyond this machine.
 - **output-template.md**: component names and the subject-facing rules substituted; the

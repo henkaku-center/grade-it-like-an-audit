@@ -6,6 +6,11 @@ The direction of trust is the point: the harness is measured against the human's
 not the other way around. Do not suggest proceeding to real grading until the human has
 seen the numbers.
 
+Related: to compare a finished harness run against grades that were already issued — a
+fidelity check rather than a calibration — use `scripts/compare-runs.py`. It aligns units,
+proposes finding-pairs by component, and emits a worksheet for adjudication; it never
+decides a pairing itself, because lexical similarity demonstrably cannot.
+
 ## Procedure
 
 1. **Intake.** The human picks 3–5 units they have graded (or will grade now) and confirms

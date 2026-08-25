@@ -53,8 +53,10 @@ call that is theirs.
   scoring from partial evidence makes the outcome depend on who got recorded).
 - If the user's task involves personal data (students, employees, clients), the
   never-events question is where you surface `references/data-handling.md` — including
-  the anonymize-before-grading option — and default everything sensitive to git-ignored,
-  local-only paths.
+  the coded-units pass (`scripts/code-units.py`: random unit codes, contents copied
+  byte-for-byte and scanned rather than rewritten, map kept outside the workspace) — and
+  default everything sensitive to git-ignored, local-only paths. Offer it for what it is:
+  blind grading first, exposure reduction second, compliance never.
 - **Student work triggers the institutional question (interview Q6a), always — asked
   every time, never a blocker.** Student submissions and grades are typically
   FERPA-covered education records; whether an AI service may process them is governed by

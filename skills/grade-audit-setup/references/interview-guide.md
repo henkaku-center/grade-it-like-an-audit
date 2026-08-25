@@ -91,6 +91,20 @@ walk them through the plugin's `references/data-handling.md` guidance now, and d
 the strictest option they'll accept. Also set where working files live (private repo vs
 local-only).
 
+**Q6b — the coded-units offer (whenever the material is about people).** "Do you want to
+grade coded units instead of named ones? I can copy the submissions into a workspace where
+each person is `unit-a`, `unit-b`, … , with the map kept in a directory this session cannot
+read." Sell it on the methodological ground first — it takes the name off the work before
+the judgment forms, which is what blind grading means — and on exposure reduction second.
+**State the limit in the same breath:** it codes the container, not the content; file
+contents are copied byte-for-byte and scanned, never rewritten, so a name written inside a
+submission is still there, and the scan report tells you where. It is pseudonymization, not
+anonymization, and it establishes no compliance with anything. If they accept, run
+`scripts/code-units.py` as a dry run, walk them through the scan report (especially "Needs
+your eyes" and the attestation of fields already blank in the source), then `--apply`.
+Record the choice and the `--keys` location in the generated task CLAUDE.md, and add the
+printed `deny` rule to `.claude/settings.json` so the separation is enforced, not promised.
+
 **Q6a — the institutional question (ALWAYS ASKED when the material is student work;
 NEVER a blocker).** Ask directly: "Is your use of this AI service on student work covered
 by your institution's policies or agreements? (Many institutions have approved
