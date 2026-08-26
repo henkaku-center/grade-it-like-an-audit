@@ -1,3 +1,15 @@
+## 0.4.1 — 2026-08-26
+
+- The plugin and marketplace manifest descriptions still said "blind per-unit auditor fan-out."
+  Those two strings are what an instructor reads in the plugin browser before installing
+  anything, and they were the last user-facing place the internal abstraction leaked out. Now
+  "per-submission," which stays accurate for the non-grading uses too. Agent internals keep
+  "unit" deliberately, since the same harness covers code review, contract review, and
+  compliance audit.
+- Re-tagged so the release tag matches `main`. The 0.4.0 tag had fallen four commits behind,
+  one of which changed skill content (`data-handling.md`), so anyone resolving by tag rather
+  than by branch would have got the superseded reasoning.
+
 ## 0.4.0 — 2026-08-26
 
 **A public face, and the framing correction behind it.**

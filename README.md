@@ -219,7 +219,7 @@ where its blind spot is. See [`METHODOLOGY.md`](METHODOLOGY.md) for the detail, 
 ## How it compares
 
 No other Claude Code skill did audit-style grading when we surveyed (2026-08): blind
-per-unit fan-out + lead consistency pass + a bounded convergence loop + structural
+per-submission fan-out + lead consistency pass + a bounded convergence loop + structural
 write-back — and none we found, in any category, publishes failure-inclusive run
 statistics. Commercial tools are far ahead on UI and LMS integration;
 PrairieLearn on classroom-scale infrastructure; one apparently dormant skill's
