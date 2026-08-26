@@ -1,7 +1,8 @@
 # LIMITS.md — what this does not do, what it costs, and when not to use it
 
-Read this before your first real run. A methodology page that only advertises itself is
-worthless; this one publishes its blind spots and its bill, because they were paid for.
+Read this before your first real run. A page that only lists what a method does well is not
+much use to someone deciding whether to rely on it. This one lists what it cannot do, what it
+costs, and where it has failed.
 
 ## The honest headline numbers (real runs, real counts)
 
