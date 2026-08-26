@@ -180,11 +180,26 @@
       &ldquo;By Jane Doe&rdquo; inside, it still does. On one real cohort, <strong>all 5 students'
       submissions carried identity findings inside their file contents</strong> &mdash; and 5,628 of the 5,629
       individual findings sat in agent session transcripts rather than in the deliverables. The pass
-      <em>reports</em> where identity remains; it deliberately does not rewrite anything, because an
-      earlier version that did rewrite contents broke the method's own attribution check, folding a
-      collaborator into the subject's code and manufacturing precisely the defect the method exists to
-      catch. The real fixes are upstream: anonymous export from your LMS, or an assignment instruction
-      to keep names in the LMS field and out of the files.</p>
+      <em>reports</em> where identity remains, and does not rewrite it.</p>
+      <p>That is a decision rather than a missing feature, and the reason is not the obvious one.
+      The substitution map already exists and is already correct: each student gets their own code
+      and every other named person gets a separate token, so nobody is ever folded into the
+      subject. (An early version did fold them together, which broke the method's own attribution
+      check &mdash; a log reading &ldquo;Sam suggested antithetic variates&rdquo; came out as the
+      student suggesting it. That bug is fixed.) The same substitution already runs on filenames.
+      Pointing it at file contents would be a small change.</p>
+      <p><strong>What stops it is that the evidence discipline depends on the source being
+      unedited.</strong> Every quotation is checked verbatim against the file it came from. Rewrite
+      the file and the auditor compares a rewritten quote against a rewritten source: the check
+      still passes, and it can no longer catch a misquote of what the student actually wrote. False
+      positives make that worse rather than better, because a surname that collides with a variable
+      name is skimmable noise in a report and silent destruction in a rewrite.</p>
+      <p>It would also buy no compliance. You hold the roster either way, so the data stays
+      personal under Recital 26. And the identity that matters most is often not a name at all
+      &mdash; <em>&ldquo;my father's restaurant,&rdquo; &ldquo;as I said in office hours on
+      Tuesday&rdquo;</em> &mdash; which no substitution reaches, for the same reason the fourth row
+      of Figure 9 has no token to match. So the effective fixes are upstream: anonymous export from
+      your LMS, or an assignment instruction to keep names in the LMS field and out of the files.</p>
     </div>
 
     <p>Two more honest edges. The <code>deny</code> rule the script prints for your settings file

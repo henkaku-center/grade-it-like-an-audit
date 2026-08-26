@@ -53,6 +53,21 @@ It also records identity template fields **already blank in the source, before g
 a student's blank can never be mistaken for something the tool removed — the units *not*
 listed are the control.
 
+That early bug is fixed — `build_plan()` now gives the subject their own code and every other
+named person a separate token, and folds nobody into the subject. So the historical bug is no
+longer the reason contents are left alone. The current reason is stronger: **the evidence
+discipline depends on the source being unedited.** Every quotation is checked verbatim against
+the file it came from, so rewriting the file means comparing a rewritten quote against a
+rewritten source — the check still passes while losing the ability to catch a misquote of what
+the student actually wrote. A false positive compounds it: a surname that collides with a
+variable name is skimmable noise in a report and silent destruction in a rewrite.
+
+If you want content substitution anyway, the coherent design is: rewrite the derived copy only,
+keep the hash-verified original, and move quote verification out of the round and into delivery,
+where `--decode` and `--personalize` already run against the original. The cost is real — you
+stop catching misquotes *during* a round, which is when they are cheapest to fix — so it is not
+offered by default. Open an issue if your situation makes that trade worth it.
+
 ### The reason to do it that has nothing to do with law
 
 Blind grading. The method already commits to auditor blindness and no cross-unit comparison;
