@@ -37,21 +37,122 @@
   <div class="wrap">
     <p class="kicker">The landscape, honestly surveyed</p>
     <h1>How it compares</h1>
-    <p class="lead">Surveyed 2026&#8209;08&#8209;24 and re-verified 2026&#8209;08&#8209;26. Per this
-    method's own discipline, the places competitors are <em>ahead</em> come first, and the searches
-    that back every &ldquo;nobody does this&rdquo; claim are listed at the bottom so you can repeat
-    them.</p>
+    <p class="lead">There are good AI grading products, and several of them will suit you better
+    than this one. Here is what you get here that you cannot get from them, what you give up in
+    exchange, and the searches behind every claim so you can repeat them.</p>
+    <p class="subtle">Surveyed 2026&#8209;08&#8209;24, re-verified 2026&#8209;08&#8209;26. Prices
+    below are quoted from each vendor's own pricing page on the date shown, and they change.</p>
   </div>
 </header>
+
+<section id="case">
+  <div class="wrap">
+    <p class="eyebrow">The case for this one</p>
+    <h2>What you get here that the products do not offer</h2>
+
+    <p>Most of these are structural rather than featural, which is why no amount of product
+    polish elsewhere closes them.</p>
+
+    <div class="ctx-grid">
+      <div class="ctx">
+        <p class="scope">01</p><h3>No new vendor sees your students' work</h3>
+        <p>This is the big one for anyone who has been through a procurement review. Adopting a
+        commercial grader means adding a company to your institution's list of processors handling
+        education records, and getting that approved. Here there is no such company: the plugin
+        adds no destination of its own, and the only service in the loop is your own Claude
+        session, under terms your institution may already cover.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">02</p><h3>No licence, per seat or per student</h3>
+        <p>Free, CC BY 4.0, forever, for any number of students. You pay for your own model usage
+        and nothing else. There is no plan to age out of and no per-student count to true up at
+        renewal.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">03</p><h3>Your rubric, not a vendor's idea of good work</h3>
+        <p>The standard being applied is a markdown file you wrote and can edit mid-term. In a
+        hosted product the scoring model is the product, and you tune it at the edges. Here every
+        precedent your course sets is written back into your own rulebook and is yours to read,
+        change, or delete.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">04</p><h3>Nothing to be locked into</h3>
+        <p>Every artifact is a plain file on your machine: rubric, findings, matrix, precedents,
+        letters. There is no export step because there is nothing to export from, and if you stop
+        using this tomorrow you keep everything, in a format you can still read in ten years.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">05</p><h3>It is not limited to essays</h3>
+        <p>Most AI graders are essay graders. This reads whatever you point it at &mdash; code,
+        notebooks, PDFs, reports with figures, mixed submissions &mdash; because the discipline is
+        &ldquo;cite the source&rdquo; rather than a text-scoring model.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">06</p><h3>You can read the whole method</h3>
+        <p>Including the parts that failed. The rules, the agent prompts, the scripts, and the run
+        statistics are all in the open, so you can audit the auditor rather than trust a scoring
+        model you are not permitted to inspect.</p>
+      </div>
+    </div>
+
+    <p>And the rigour layer on top of those: blind per-student auditing, a cross-student
+    consistency pass, an explicit bound that detects a loop auditing its own repairs, and a
+    write-back step that makes the instruction set stronger every term. No surveyed project
+    combines more than two of the five (Figure 11).</p>
+
+    <h3>What it costs, side by side</h3>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>&nbsp;</th><th>Price</th><th>Cap</th><th>Who else holds the student work</th></tr></thead>
+      <tbody>
+        <tr><td><b>Grade it like an audit</b></td>
+          <td><b>Free</b> (CC BY 4.0) plus your own model usage</td>
+          <td class="num">None</td>
+          <td><b>Nobody new.</b> Your own Claude session, under your existing terms</td></tr>
+        <tr><td><a href="https://cograder.com/pricing/">CoGrader</a></td>
+          <td>Free tier; $15/mo billed annually, or $19/mo</td>
+          <td>100/mo free; 350/mo on Standard</td><td>The vendor</td></tr>
+        <tr><td><a href="https://www.essaygrader.ai/pricing">EssayGrader</a></td>
+          <td>Free tier; $6.99 / $14.99 / $34.99 per month</td>
+          <td>50 / 100 / 350 / 800 essays per month</td><td>The vendor</td></tr>
+        <tr><td><a href="https://guides.gradescope.com/hc/en-us/articles/24838908062093-AI-assisted-grading-and-answer-groups">Gradescope</a></td>
+          <td>Institutional quote; not published publicly</td>
+          <td>Per institutional licence</td><td>The vendor (Turnitin)</td></tr>
+        <tr><td><a href="https://www.classcompanion.com">Class Companion</a></td>
+          <td>Free to teachers; LMS integration needs a school plan, price not published</td>
+          <td>Per plan</td><td>The vendor</td></tr>
+        <tr><td><a href="https://docs.prairielearn.com/aiGrading/">PrairieLearn</a></td>
+          <td><b>Free</b> and open source, self-hosted</td>
+          <td class="num">None</td><td>Nobody new, if you self-host</td></tr>
+      </tbody>
+    </table></div>
+
+    <p class="src">Prices read from each vendor's own pricing page on 2026-08-26. CoGrader and
+    EssayGrader publish theirs; Gradescope and Class Companion do not publish institutional
+    pricing, so those rows say so rather than guessing. Free tiers are real and may be all a
+    small course needs &mdash; the point of this table is not that the products are expensive,
+    it is that <b>a per-seat price and a third-party processor are two costs this one does not
+    have.</b></p>
+
+    <div class="card good">
+      <p class="lbl">Choose this one if</p>
+      <p>You care more about being able to <em>defend</em> a grade than about grading quickly;
+      your institution's approval process makes adding a vendor slow or impossible; your
+      submissions are not plain essays; you want the standard being applied to be a document you
+      own; or you want the same method for something that is not grading at all.</p>
+    </div>
+  </div>
+</section>
 
 <section id="ahead">
   <div class="wrap">
     <p class="eyebrow">First, the honest part</p>
     <h2>Where others are genuinely ahead</h2>
 
-    <p>If you want AI grading that is convenient, integrated with your LMS, supported, and proven at
-    institutional scale, <strong>this project is not your best option and is not trying to be.</strong>
-    It is a rigour layer, not a convenience rival.</p>
+    <p>Having made the case, here is the other side of it, at full strength. If what you need is
+    convenience, LMS integration, vendor support, or proven scale across a whole institution, one
+    of the products below will serve you better. This is a rigour layer, not a convenience rival,
+    and pretending otherwise would waste your time.</p>
 
     <ul class="tight">
       <li><strong>Commercial products are ahead on everything operational.</strong>
@@ -74,6 +175,15 @@
       repository was created and last pushed on the same day, 2026&#8209;02&#8209;22, at 7 stars &mdash;
       which is part of why the idea needed a maintained home.)</li>
     </ul>
+
+    <div class="card warn">
+      <p class="lbl">And what you give up by choosing this one</p>
+      <p>No interface beyond a terminal, no LMS integration or grade passback, no support contract,
+      no certification, and no peer review. It requires Claude Code and a willingness to edit
+      markdown. Model usage is not free even though the tool is, and a round over N submissions
+      spawns N auditors plus a lead pass, three to five times over. If that list is disqualifying,
+      it genuinely is disqualifying, and one of the products above is the better answer.</p>
+    </div>
   </div>
 </section>
 
