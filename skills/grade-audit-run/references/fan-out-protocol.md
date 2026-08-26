@@ -65,6 +65,8 @@ the points are awarded.
 
 After all unit reports are in, spawn one `lead-consistency` subagent with: every unit's
 evaluation (the full set), every report from this round, **this round's
-`working-notes/deduction-matrix.md`**, and the instruction files. It alone
+`working-notes/deduction-matrix.md`**, and the instruction files. Save its verbatim report to
+**`working-notes/audit-round<N>-lead.md`** — the name is fixed, because two live runs
+produced two different names and anything referencing the lead report by path then breaks. It alone
 may read across units. Apply its strictest-verdict propagation to the findings table before
 showing the human.

@@ -86,6 +86,12 @@ top-level folder, and — if `--rename-files` was used — filenames too. It did
 - Person tokens: `[unit-…]` is the subject; `[peer-n]` / `[ta-n]` are other people, each a
   distinct voice, numbered locally to this unit.
 
+## Your verdict line
+
+**Exactly one of these two forms, as the first line, and nothing else.** Not a sentence about
+which one applies: `CLEAN`, or `N findings (B blockers, M minors, K notes)`. Observed live:
+"CLEAN verdict: not applicable — findings below", which is neither form and cannot be counted.
+
 ## Discipline on your own report
 
 - Every finding is a discrete, named, evidenced claim: if you cannot name the specific text

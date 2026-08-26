@@ -81,11 +81,16 @@ is the human's judgment plus the evidence discipline — not the loop count.
 ## What it costs
 
 - The bundled agents default to **`sonnet`**, and the task file can raise any of them. That
-  default is a cost decision, **not a measured equivalence**: nothing here has compared what
-  a smaller model finds against a larger one on the same corpus. The recorded runs — the
-  demo fixture, the docs dogfood, the cohort validation — were all executed by larger
-  models, so every finding count in this file was produced at a higher tier than the
-  shipped default. Treat the counts as an upper bound until someone measures the gap.
+  default is a cost decision, and it has now been measured **once**, on the one corpus with
+  ground truth: a fresh marketplace install running the demo at the sonnet default caught
+  **6 of 6 catchable planted defects, all as blockers**, flagged the seventh (uncatchable by
+  design) as unverifiable, caught two of the known unplanted extras, and — the part that
+  matters — its lead pass made the cross-unit catch blind auditors structurally cannot,
+  the degrees-of-freedom inconsistency charged in one unit and waived in another, plus a
+  second inconsistency the earlier larger-model run did not report. That is parity on this
+  fixture, not proof in general: n=1, on a small synthetic corpus whose defects were planted
+  to be findable. The other counts in this file were produced at a higher tier and remain
+  upper bounds.
 - One audit round over N units ≈ **N auditor subagent runs + 1 lead pass**. Budget
   **3–5 rounds** — and note the honest caveat that the two recorded hardening runs took
   5, and 9 with an early stop; budget for re-audits of revised units on top. The demo
@@ -255,5 +260,15 @@ Kept honest with counts, updated as runs happen:
 - **Still unexercised.** Write-back has never fired in a live session — it closes a round,
   and no round has been closed yet. Convergence and bounding have therefore been evaluated
   against real trajectory data but never actually triggered a stop.
+- **Fresh-environment install test (2026-08-26)** — `RELEASING.md` step 8, never previously
+  performed. `/plugin marketplace add henkaku-center/grade-it-like-an-audit` → install → demo,
+  in an empty directory, from the published `v0.3.0` rather than a local `--plugin-dir`. The
+  marketplace manifest resolved, all four skills and three agents registered, the front door
+  routed an empty directory correctly, and the demo reported the corrected **12–18 minute**
+  figure — confirming the installed artifact was the fixed one. Two defects it exposed, both
+  fixed: the lead report's filename was never specified (two live runs produced
+  `audit-round1-lead.md` and `lead-round1.md`), and both agent specs' verdict lines came back
+  as prose — "CLEAN verdict: not applicable — findings below" — instead of the machine-readable
+  form the output spec asks for.
 - **Headless load test (2026-08-24):** `claude --plugin-dir . -p` confirmed a live Claude
   Code session sees all 4 skills and all 3 agents under the plugin's namespace.

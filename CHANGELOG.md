@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.3.1 — 2026-08-26
+
+Two defects found by the first fresh-environment install test, plus the measurement that test
+happened to produce.
+
+- **The lead report's filename was never specified.** Two live runs produced
+  `audit-round1-lead.md` and `lead-round1.md`; anything referencing the lead report by path
+  breaks on one of them. Fixed at `working-notes/audit-round<N>-lead.md`.
+- **Both agents' verdict lines came back as prose.** The output spec asks for `CLEAN` or
+  `N findings (B blockers, M minors, K notes)` as the first line; live runs produced "CLEAN
+  verdict: not applicable — findings below" and "CONSISTENT verdict does not apply", which are
+  neither form and cannot be counted. Both specs now say exactly one of the two forms, nothing
+  else, and quote the observed failure.
+- **The sonnet default is no longer unmeasured.** A fresh install running the demo at the
+  default caught **6 of 6 catchable planted defects, all as blockers**, flagged the seventh
+  (uncatchable by design) as unverifiable, caught two known unplanted extras, and its lead
+  pass made the cross-unit catch blind auditors structurally cannot — plus one the earlier
+  larger-model run missed. Parity on this fixture; n=1 on a small synthetic corpus, so LIMITS
+  says that rather than claiming general equivalence.
+
 ## 0.3.0 — 2026-08-25
 
 - **The ruling queue now has memory.** A live four-round run showed it re-asking questions

@@ -74,7 +74,10 @@ BETWEEN units, not within them.
 
 Return, and nothing else:
 
-1. Verdict line: `CONSISTENT` or `N findings (B blockers, M minors, K notes)` — count the
+1. Verdict line — **exactly one of these two forms and nothing else**, as the first line of
+   your report. Not a sentence about which one applies: `CONSISTENT`, or
+   `N findings (B blockers, M minors, K notes)`. Observed live: "CONSISTENT verdict does not
+   apply — findings below", which is not parseable and not what was asked. Count the
    notes, since a lower preset creates them by demotion and they still reach the subject — plus
    `matrix: R rows, A arbitrated, Q ruling requests, C cells moved`.
 2. **Matrix arbitration**, one line per flagged row:
