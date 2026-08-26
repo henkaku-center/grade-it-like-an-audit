@@ -66,6 +66,16 @@ script (`skills/grade-audit-run/scripts/agreement.py`) computes κ/ρ/MAD. Compu
 asserted; and the script prints its own small-n caveat rather than letting a coefficient
 overclaim.
 
+**The cross-unit view finds bugs in the assignment, not just in the work.** On the first
+real cohort run, the lead pass reported that three units had inherited the same two errors
+from the course's own stencils — a comment and worked example that undercount recorded sweeps
+by 500, and an acceptance-rate denominator that includes burn-in. Neither was charged to any
+student, under the method's standing rule that you never deduct for following an instruction
+you gave them. The structural point is why this was findable at all: one student misreading a
+scaffold is a defect; three doing it identically is a scaffold bug, and only something looking
+across units can tell those apart. A blind per-unit auditor would have charged all three, or
+none, and been confidently wrong either way.
+
 **A green self-test is not evidence the feature works.** The 0.2.0 dogfood found 18 blockers
 while every script suite passed — a dry run writing real names to disk, a report printing a
 name it had dropped as a common word, a key-directory guard checking the working directory
@@ -120,6 +130,7 @@ and lead reports) are preserved under `docs/test-runs/`.
 | 2026-08-24 docs dogfood, round 2 (diff-scoped re-audit of round 1's fixes — a fix is a new claim) | diff of the round-1 commit | 1 | 0 | 7 (+3 notes) | — | 43 of 50 changed facts verified clean; all 5 round-1 blocker fixes held. The 7 minors were residue of the fixes themselves: a leftover of the corrected phrasing in one skill, the license fix still overstating (attribution = credit + license link + change-notes), a condensation tally short by two, a fourth unplanted fixture catch the counts missed, and a paraphrase-in-quotes inside a preserved report. Fixed in prose; preserved artifacts annotated, never edited. |
 | 2026-08-25 release dogfood (3 scope-isolated auditors over the 0.2.0 diff: run skill / setup+agents+templates / top-level docs, each running the commands the docs describe) | 3 scopes | 1 | 18 | 29 (+16 notes) | 1 lesson below | **Stopped the release.** Every script self-test was green throughout while a dry run wrote real names to disk, the report could print a name dropped as a common word, `--keys` guarded the working directory instead of the workspace, matrix columns carried directory names, `die()` was undefined, family labels collapsed for the format the demo itself uses, and the LICENCE did not cover the shipped code. One finding verified and rejected (arithmetic that did close). All 18 fixed with regressions; suites 42→49 and 51→60. Artifacts: `docs/test-runs/2026-08-25-release-dogfood/`. |
 | 2026-08-25 live user session (first end-to-end run of `grade-audit-run` outside the authors' scripts, 3-unit demo workspace) | 3 | 1 | — | — | 2 fixes | Blindness held 3/3 — every `FILES READ` in scope, real counts, no bare universals. The lead arbitrated the matrix, escalated 2 rows and **added a third question of its own**. Two defects only a live run could surface: the lead's added ruling requests were never merged into `ruling-requests.md`, and the fixture's own drafts deduct **without naming an issue**, which the matrix now reports as the discipline failure it is. Demo timed at 12 and 18 minutes, correcting a README claim of 10. |
+| 2026-08-26 first complete loop on real work (4 rounds, 3 real submissions, coded units) | 3 | 4 | 6 → 1 → 1 → 0 | 10 → 10 → 1 → 0 | 2 precedents, both traced to human rulings | **Converged** by Rule 1 and **write-back fired** — the first time either has happened live. Matrix cells moved: 0 in every round; charges identical throughout (5.5/6/4), so the outcome was settled at round 1 and four rounds went into prose and grounding. Round 2's findings were mostly defects introduced by round 1's fixes. The lead scoped round 4 minimally by itself and re-verified its CLEAN independently. Caveats: round 4 ran on a smaller model and on a narrowed scope. Also found two bugs in the course's own stencils that three units had inherited — charged to none, under what-the-subject-was-owed. |
 
 ## Lessons banked from the dogfood (the write-back, applied to ourselves)
 

@@ -257,9 +257,34 @@ Kept honest with counts, updated as runs happen:
   **Confound, recorded rather than hidden:** the operator switched to a smaller model at round
   4, so round 4's counts are not comparable with rounds 1–3 and are excluded from the table
   above. Rounds 1–3 ran on one tier throughout.
-- **Still unexercised.** Write-back has never fired in a live session — it closes a round,
-  and no round has been closed yet. Convergence and bounding have therefore been evaluated
-  against real trajectory data but never actually triggered a stop.
+- **The loop closed. Four rounds, convergence reached, write-back fired (2026-08-26).** The
+  full method has now run end to end on real work, which it had never done:
+
+  | round | blockers | minors | notes | findings in prior fixes | matrix cells moved |
+  |---|---|---|---|---|---|
+  | 1 | 6 | 10 | 7 | — | 0 |
+  | 2 | 1 | 10 | 5 | ~5 | 0 |
+  | 3 | 1 | 1 | 7 | 1 family | 0 |
+  | 4 | **0** | **0** | 0 | none — CLEAN | 0 |
+
+  Convergence by Rule 1: clean for the whole set on one pass, matrix stable, no open ruling
+  requests. **Write-back fired**, appending two dated precedents traced to the human's own
+  rulings — family granularity is a human call, and marked ellipses in quoted cites are
+  acceptable iff every retained fragment verifies. That is the mechanism the method is named
+  for, and until this run it had never executed.
+
+  **The number that never moved is still the most useful one.** `matrix cells moved` was 0 in
+  all four rounds and the charges were identical throughout (5.5 / 6 / 4). The outcome was
+  settled at round 1; four rounds of work went into the prose and the evidence. That matches
+  the headline record of 0 outcome changes across 14 earlier rounds, and it is the clearest
+  statement of what this loop is for: it protects the writing and the grounding, not the grade.
+
+  **Two caveats on the clean round, because a clean pass is the easiest thing to over-read.**
+  Round 4 ran on a smaller model than rounds 1–3, and it was deliberately scoped to one unit
+  with the other two byte-frozen. A CLEAN verdict from a weaker model on a narrowed scope is
+  the ambiguous case, not the triumphant one. Mitigating it: the lead pass independently
+  re-verified that unit's CLEAN rather than accepting the auditor's checklist, and said so in
+  its report.
 - **Fresh-environment install test (2026-08-26)** — `RELEASING.md` step 8, never previously
   performed. `/plugin marketplace add henkaku-center/grade-it-like-an-audit` → install → demo,
   in an empty directory, from the published `v0.3.0` rather than a local `--plugin-dir`. The

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.3.2 — 2026-08-26
+
+Record-keeping only; no behaviour change.
+
+- **The loop closed.** Four rounds on real submissions reached convergence and **write-back
+  fired** — the mechanism this method is named for, and the last path never exercised. Two
+  dated precedents were appended, both traced to the human's own rulings. `LIMITS.md` and
+  `DESIGN.md` carry the full trajectory, including the two caveats that stop a clean round
+  being over-read: round 4 ran on a smaller model and on a deliberately narrowed scope.
+- **`matrix cells moved` was 0 in all four rounds**, with charges identical throughout. The
+  outcome was settled at round 1 and four rounds of work went into the prose and the evidence
+  — which is what this loop is for, and what the matrix was added to make visible.
+- **The cross-unit view found bugs in the assignment, not the work.** Three units had
+  inherited the same two errors from the course's own stencils; none was charged, under the
+  standing rule that you never deduct for following an instruction you were given. Recorded in
+  `DESIGN.md`: one student misreading a scaffold is a defect, three doing it identically is a
+  scaffold bug, and only a cross-unit view can tell those apart.
+
 ## 0.3.1 — 2026-08-26
 
 Two defects found by the first fresh-environment install test, plus the measurement that test
