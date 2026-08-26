@@ -2,6 +2,15 @@
 
 ## 0.3.0 — 2026-08-25
 
+- **The ruling queue now has memory.** A live four-round run showed it re-asking questions
+  already settled: the underlying matrix rows still differ after a ruling ("justified
+  difference" is an answer, not a change), so the generator asked again every round and by
+  round three the queue was noise a human learns to skip. `--prior-matrix` reads the existing
+  matrix and suppresses any family whose Ruling cell a human or the lead has filled — an
+  auto-flag does not count as a ruling. On the real workspace this cut the queue from 3
+  questions to the 1 genuinely open. The same run also showed a question the lead raised at
+  round 3 never reaching the queue file, because the merge was an instruction to the
+  orchestrator rather than a mechanism.
 - **Agents default to `sonnet`, and the model is configurable per task.** The bundled agents
   declared no model, so they inherited whatever the operator's session was running — which on
   a large-model session makes an N-auditors-per-round fan-out expensive and slow for no stated

@@ -470,6 +470,9 @@ def main():
     ap.add_argument("--tolerance", type=float, default=None, metavar="N",
                     help="gap below which the target is treated as met "
                          "(default: 1%% of the basis — 1.0 on a /100 rubric, 0.06 on a /6 one)")
+    ap.add_argument("--prior-matrix", metavar="PATH",
+                    help="an existing deduction-matrix.md; families whose Ruling cell is "
+                         "already filled are not re-asked in the ruling queue")
     ap.add_argument("--verify-quotes", metavar="INPUTS_DIR",
                     help="check every quoted span in each unit's evaluation against the "
                          "submissions on disk: sourced in its own unit, borrowed from another "
@@ -649,7 +652,7 @@ def main():
         n = write_rulings(args.emit_rulings, all_units, clusters, all_names,
                           target_analysis(all_units, all_ded, args.target_average, args.basis)
                           if args.target_average is not None else None,
-                          tol)
+                          tol, settled_families(args.prior_matrix))
         print(f"ruling requests written: {args.emit_rulings} ({n} question(s) for the human)")
     print("=== 3. Per-unit deduction inventory ===")
     print(f"  {'unit':6s} {'score':>9s} {'deductions':>11s} {'points lost':>12s}")
@@ -708,13 +711,41 @@ def write_matrix(path, units, clusters, names):
     Path(path).write_text("\n".join(L), encoding="utf-8")
 
 
-def write_rulings(path, units, clusters, names, target=None, tolerance=1.0):
+AUTO_FLAG = ("← not charged everywhere", "PRICE DIFFERS", "arbitrate")
+
+
+def settled_families(prior_matrix):
+    """Families whose Ruling cell a human or the lead has already filled in.
+
+    Without this the queue has no memory: the underlying rows still differ, so the generator
+    re-asks a question every round after it was settled, and by round three the queue is noise
+    the human has learned to skip. Observed on a real four-round run.
+    """
+    p = Path(prior_matrix) if prior_matrix else None
+    if not p or not p.exists():
+        return set()
+    settled = set()
+    for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 3 or cells[0] in ("#", "---"):
+            continue
+        ruling = cells[-1]
+        if ruling and not any(f in ruling for f in AUTO_FLAG):
+            settled.add(_norm_space(cells[1]))
+    return settled
+
+
+def write_rulings(path, units, clusters, names, target=None, tolerance=1.0, settled=()):
     """The questions for the human. Two kinds the lead must never settle silently: the same
     family priced differently across units, and a family charged in some units but not
     others. Both are fairness questions, and both are cheap to answer and expensive to guess."""
     labels = [u["label"] for u in units]
     qs = []
     for c in clusters:
+        if _norm_space(family_name(c, names)) in settled:
+            continue                          # already ruled on; do not re-ask
         charged = {}
         for m in c["members"]:
             charged.setdefault(m["unit"], []).append(m["amount"])
@@ -884,6 +915,20 @@ def self_test():
               len(fd) == 1 and fd[0]["amount"] == 1 and fd[0]["unit"] == "student-a")
         check("full-credit component lines produce no deduction",
               all(d["component"] != "Data cleaning" for d in fd))
+
+        # the ruling queue must not re-ask a settled question
+        pm = Path(tmp) / "prior-matrix.md"
+        pm.write_text(
+            "| # | Family | U1 | U2 | Ruling |\n|---|---|---|---|---|\n"
+            "| 1 | Missing degrees of freedom | −1 | — | Ruling 1: justified difference |\n"
+            "| 2 | Unfilled template fields | −1 | — | ← not charged everywhere: justified or unfair? |\n",
+            encoding="utf-8")
+        s = settled_families(pm)
+        check("a filled Ruling cell marks the family settled",
+              "missing degrees of freedom" in s)
+        check("an auto-flag is not mistaken for a ruling",
+              "unfilled template fields" not in s)
+        check("a missing prior matrix is not an error", settled_families(None) == set())
 
         # the never-event, checked deterministically every round rather than left to judgment
         xr = cross_reference_check([("unit-a", "Unlike unit-b, this stalled.\nmore\n"),

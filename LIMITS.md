@@ -223,14 +223,37 @@ Kept honest with counts, updated as runs happen:
   against the plugin directory, taking **12 and 18 minutes**. The README previously promised
   "10 minutes" on no measurement; it now states the measured range. This closes, for the demo
   skill only, the gap LIMITS has carried since 0.1.0.
-- **What is still unexercised, precisely (as of 2026-08-25).** Round *one* of
-  `grade-audit-run` has now run live twice — fan-out, lead-consistency pass, deduction matrix,
-  ruling queue — once on the synthetic demo and once on real submissions. What has never run
-  is a **second round**, and with it everything that only exists across rounds: `matrix cells
-  moved` has never been non-zero, revised units have never been re-audited whole, the
-  convergence and bounding rules have never been evaluated against real trajectory data, and
-  **write-back has never fired**, because it closes a round rather than opening one. The
-  recursion this method is built around is therefore designed, documented and tested by
-  fixture — but not yet observed.
+- **The recursion ran, on real work: three full rounds (2026-08-25/26).** The first observed
+  convergence trajectory, on a live 3-unit workspace of real submissions:
+
+  | round | blockers | minors | notes | findings in prior fixes | matrix cells moved |
+  |---|---|---|---|---|---|
+  | 1 | 6 | 10 | 7 | — | 0 |
+  | 2 | 1 | 10 | 5 | ~5 | 0 |
+  | 3 | 1 | 1 | 7 | 1 family | 0 |
+
+  Blockers fell 6 → 1 → 1; round 2's findings were mostly defects introduced by round 1's own
+  fixes, which is the pattern METHODOLOGY predicts and the bounding rule exists for. The lead
+  scoped round 4 minimally by itself (fix and re-audit one unit whole; verify the others
+  byte-unchanged), which is the discipline working without being asked.
+
+  **The most useful number is the one that never moved.** `matrix cells moved` was 0 in every
+  round and the charges were identical across all three (5.5 / 6 / 4). The grades were stable
+  from round 1; what kept churning was the prose. That is exactly the separation the matrix
+  was added to make visible, and it says the loop was protecting the writing, not the outcome
+  — consistent with this file's headline record of 0 outcome changes in 14 earlier rounds.
+
+  Two defects only a multi-round run could expose, both fixed: the ruling queue **re-asked
+  questions already settled** (the underlying rows still differ, so the generator had no
+  memory of the matrix's Ruling column — by round 3 the queue was noise), and a question the
+  lead raised at round 3 **never reached the queue file at all**, because the merge was an
+  instruction to the orchestrator rather than a mechanism.
+
+  **Confound, recorded rather than hidden:** the operator switched to a smaller model at round
+  4, so round 4's counts are not comparable with rounds 1–3 and are excluded from the table
+  above. Rounds 1–3 ran on one tier throughout.
+- **Still unexercised.** Write-back has never fired in a live session — it closes a round,
+  and no round has been closed yet. Convergence and bounding have therefore been evaluated
+  against real trajectory data but never actually triggered a stop.
 - **Headless load test (2026-08-24):** `claude --plugin-dir . -p` confirmed a live Claude
   Code session sees all 4 skills and all 3 agents under the plugin's namespace.

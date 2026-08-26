@@ -49,13 +49,12 @@ evaluations the human wrote (read `references/reverse-audit.md`).
    never drop. Construction rules in `references/fan-out-protocol.md` — follow the
    path-isolation rules exactly; they are the blindness guarantee.
 4. **Build the deduction matrix.** Blind auditors cannot police fairness across units, so
-   consistency is made structural instead. Run
-   `python3 "<this skill's directory>/scripts/reconcile-deductions.py" working-notes/*/draft-evaluation.md --emit-matrix
-   working-notes/deduction-matrix.md --emit-rulings working-notes/ruling-requests.md`.
-   It also runs a deterministic **cross-reference check**: if any unit's own evaluation
-   names another unit, that is a never-event (no subject named or identifiable in another
-   subject's feedback) and it prints before anything else. Fix those before the round
-   proceeds — the auditors are asked to catch this too, but this one is arithmetic.
+   consistency is made structural instead. Run `reconcile-deductions.py` (this skill's
+   `scripts/`) over `working-notes/*/draft-evaluation.md` with `--emit-matrix`,
+   `--emit-rulings`, and `--prior-matrix` pointed at the existing matrix — that last flag
+   stops the queue re-asking settled questions. Exact invocation in the reference.
+   It also runs a deterministic **cross-reference check** — a unit's evaluation naming another
+   unit is a never-event and prints before anything else; fix those before proceeding.
 
    One row per defect family, one column per unit. **One charge per (family, unit) — never
    per instance.** Seed the price schedule from the task's preset
@@ -118,9 +117,9 @@ evaluations the human wrote (read `references/reverse-audit.md`).
 
 ## Standing rules
 
-- **Models.** Agents default to `sonnet`; the task file's "Models and cost" block overrides
-  it — pass that model when you spawn each. Auditors are the cost driver (N per round); the
-  lead is one call doing the hardest reasoning, so raise it first if arbitration suffers.
+- **Models.** Agents default to `sonnet`; the task file's "Models and cost" block overrides it
+  — pass it when spawning. Auditors are the cost driver (N per round); the lead is one call
+  doing the hardest reasoning, so raise it first.
 - Costs are stated up front: N units ≈ N auditor subagents per round; budget 3–5 rounds
   (the recorded runs took 5, and 9 with an early stop). Say this before round 1.
 - Praise is audited as strictly as criticism. When a claim fails twice, propose deletion,
