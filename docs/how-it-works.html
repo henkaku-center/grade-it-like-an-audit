@@ -60,7 +60,7 @@
         <tr><td><code>check-mine</code></td><td>The reverse audit. You wrote the evaluations; the
           harness fact-checks your quotes, numbers, arithmetic, attributions, and praise. Nothing is
           applied. The AI grades nothing at all.</td><td>Your writing</td></tr>
-        <tr><td><code>calibrate</code></td><td>You grade 3&ndash;5 units, the harness grades the same
+        <tr><td><code>calibrate</code></td><td>You grade 3&ndash;5 submissions, the harness grades the same
           ones blind, and <code>agreement.py</code> reports &kappa;, &rho;, and mean absolute
           difference. Deterministic Python, so the agreement figures are computed rather than
           asserted by a model.</td><td>A small pilot</td></tr>
@@ -68,7 +68,7 @@
           four follow-ups &mdash; that writes your whole workspace: the rulebook, the task file, the
           output template, the directory tree. No template-filling by hand.</td><td>Sets up for real</td></tr>
         <tr><td><code>run</code></td><td>One audit round. The eleven steps below.</td><td>Yes</td></tr>
-        <tr><td><code>status</code></td><td>Reads the files and reports where you are: units found,
+        <tr><td><code>status</code></td><td>Reads the files and reports where you are: submissions found,
           their state, the round metrics table, what was written back, and the single next
           step.</td><td>Read-only</td></tr>
         <tr><td><code>bank &lt;lesson&gt;</code></td><td>Write-back between rounds. Drafts a dated
@@ -87,21 +87,21 @@
     <figure>
       <div class="cycle">
         <div class="cstep"><span class="cn">01</span><span><b>Preflight</b>
-          <span class="d">&mdash; confirm the rubric was fixed before grading, the sources of truth exist, and the units are all present.</span></span></div>
+          <span class="d">&mdash; confirm the rubric was fixed before grading, the sources of truth exist, and every submission is present.</span></span></div>
         <div class="cstep"><span class="cn">02</span><span><b>Lead normalizes</b>
           <span class="d">&mdash; one pass to make the drafts comparable in shape, so auditors are not flagging formatting differences as substance.</span></span></div>
         <div class="cstep"><span class="cn">03</span><span><b>Fan out</b>
-          <span class="d">&mdash; one auditor subagent per unit, each with a fresh context containing only its own unit. Figure 4.</span></span></div>
+          <span class="d">&mdash; one auditor subagent per submission, each with a fresh context containing only its own. Figure 4.</span></span></div>
         <div class="cstep"><span class="cn">04</span><span><b>Build the deduction matrix</b>
-          <span class="d">&mdash; cluster findings into defect families and price them across every unit at once. Figure 5.</span></span></div>
+          <span class="d">&mdash; cluster findings into defect families and price them across every submission at once. Figure 5.</span></span></div>
         <div class="cstep"><span class="cn">05</span><span><b>Lead consistency pass</b>
-          <span class="d">&mdash; the only reader that sees all units. Arbitrates the matrix and catches what blindness structurally hides.</span></span></div>
+          <span class="d">&mdash; the only reader that sees every submission. Arbitrates the matrix and catches what blindness structurally hides.</span></span></div>
         <div class="cstep"><span class="cn">5b</span><span><b>Expected-average check</b>
           <span class="d">&mdash; if you set a target, report the gap and the honest ways to close it. Applies nothing.</span></span></div>
         <div class="cstep emph"><span class="cn">06</span><span><b>Two things go to you, together</b>
           <span class="d">&mdash; the findings table <em>and</em> the questions the harness cannot answer. Rulings are requested, never assumed.</span></span></div>
         <div class="cstep"><span class="cn">07</span><span><b>Apply what you approved</b>
-          <span class="d">&mdash; then re-audit each touched unit <em>whole</em>, because a fix is new text and new text is where findings come from.</span></span></div>
+          <span class="d">&mdash; then re-audit each touched submission <em>whole</em>, because a fix is new text and new text is where findings come from.</span></span></div>
         <div class="cstep"><span class="cn">08</span><span><b>Rebuild the matrix and diff it</b>
           <span class="d">&mdash; how many cells moved is the number that tells you whether outcomes are still in motion.</span></span></div>
         <div class="cstep"><span class="cn">09</span><span><b>Convergence check</b>
@@ -124,26 +124,26 @@
 
     <figure>
       <div class="fanout">
-        <div class="node lead">Lead consistency pass<span class="role">sees all units &middot; arbitrates &middot; once per round</span></div>
+        <div class="node lead">Lead consistency pass<span class="role">sees every submission &middot; arbitrates &middot; once per round</span></div>
         <div class="fan-stem"></div>
         <div class="fan-row">
-          <div class="node">Auditor<span class="role">unit A only</span></div>
-          <div class="node">Auditor<span class="role">unit B only</span></div>
-          <div class="node">Auditor<span class="role">unit C only</span></div>
-          <div class="node">Auditor<span class="role">unit D only</span></div>
-          <div class="node">&hellip;<span class="role">one per unit</span></div>
+          <div class="node">Auditor<span class="role">student A only</span></div>
+          <div class="node">Auditor<span class="role">student B only</span></div>
+          <div class="node">Auditor<span class="role">student C only</span></div>
+          <div class="node">Auditor<span class="role">student D only</span></div>
+          <div class="node">&hellip;<span class="role">one each</span></div>
         </div>
-        <p class="fan-caption">read-only tools &middot; fresh context each &middot; no unit can see another</p>
+        <p class="fan-caption">read-only tools &middot; fresh context each &middot; no submission can see another</p>
       </div>
       <figcaption><b>Figure 4.</b> Isolation is <b>by construction of context</b>, not by enforcement:
-      an auditor is blind because of what its prompt contains, and there is no per-unit filesystem
+      an auditor is blind because of what its prompt contains, and there is no per-submission filesystem
       sandbox behind that. We say so on <a href="limits.html">Limits</a> rather than implying a
       guarantee we do not provide.</figcaption>
     </figure>
 
     <p>Blindness buys fairness in one direction and costs it in another. An auditor that cannot see
-    unit B cannot be contaminated by it &mdash; and also cannot notice that unit B was charged one
-    point for the very thing it just charged three for. Asking a blind reader to be consistent asks
+    another student's work cannot be contaminated by it &mdash; and also cannot notice that the
+    student next to it was charged one point for the very thing it just charged three for. Asking a blind reader to be consistent asks
     for exactly what its isolation forbids. So consistency is not requested from the auditors at all.
     It is <em>constructed</em>, in a document.</p>
   </div>
@@ -154,8 +154,11 @@
     <p class="pillar-index">The round &mdash; 3 of 3</p>
     <h2>The deduction matrix</h2>
 
-    <p>Every finding is clustered into a defect <em>family</em> and priced across all units at once.
-    One binding rule governs it: <strong>one charge per (family, unit) &mdash; never per
+    <p>Every finding is clustered into a defect <em>family</em> and priced across every submission at once.
+    (The column labels below are the codes the tool assigns when you grade blind &mdash; one per
+    student, reshuffled every run, so nobody's name is attached to the work while the judgment is
+    forming.)
+    One binding rule governs it: <strong>one charge per defect family per student &mdash; never per
     instance.</strong> Charging every instance instead of one charge per family moved the mean
     absolute error from 3.6 to 11.4 points on a /90 basis in testing, more than every other cause
     combined. That one rule is worth more accuracy than everything else in the method.</p>
@@ -190,11 +193,11 @@
       <p class="src">&mdash; <a href="https://github.com/henkaku-center/grade-it-like-an-audit/blob/main/docs/test-runs/2026-08-24-demo-fixture/lead-consistency-report.md">docs/test-runs/2026-08-24-demo-fixture/lead-consistency-report.md</a></p>
     </div>
 
-    <p>The same structure catches something else worth having. When three units make the identical
+    <p>The same structure catches something else worth having. When three students make the identical
     mistake, that is usually not three students being careless &mdash; it is a bug in the assignment.
-    In one real run the cross-unit view found that three submissions had inherited the same two errors
+    In one real run the cross-student view found that three submissions had inherited the same two errors
     from the course's own scaffold code. None was charged, under the standing rule that you never
-    deduct for following an instruction you gave them. A blind per-unit reader would have charged all
+    deduct for following an instruction you gave them. A blind per-student reader would have charged all
     three or none, and been confidently wrong either way.</p>
   </div>
 </section>
@@ -387,17 +390,17 @@ rubric.md; student-a draft-evaluation.md, ledger.md, report.md, session-log.md
 <section id="cost">
   <div class="wrap">
     <p class="eyebrow">Options &mdash; 4 of 4</p>
-    <h2>Models, cost, and coded units</h2>
+    <h2>Models, cost, and coded submissions</h2>
 
-    <p>One round over N units spawns N auditor subagents plus one consistency pass. Budget three to
+    <p>One round over N submissions spawns N auditor subagents plus one consistency pass. Budget three to
     five rounds. Each role's model is set independently in your task file, and all three default to
     the mid-tier model because the cost driver is the auditors, not the reasoning.</p>
 
     <div class="tablewrap"><table>
       <thead><tr><th>Role</th><th>Calls per round</th><th>Default</th><th>Worth raising?</th></tr></thead>
       <tbody>
-        <tr><td>Unit auditors</td><td class="num">N</td><td><code>sonnet</code></td>
-          <td>Last. This is where the money goes &mdash; N of them every round.</td></tr>
+        <tr><td>Auditors (one per submission)</td><td class="num">N</td><td><code>sonnet</code></td>
+          <td>Last. This is where the money goes &mdash; one per submission, every round.</td></tr>
         <tr><td>Lead consistency pass</td><td class="num">1</td><td><code>sonnet</code></td>
           <td><b>First.</b> Hardest reasoning in the method, and only one call.</td></tr>
         <tr><td>Fresh reader</td><td class="num">1</td><td><code>sonnet</code></td>

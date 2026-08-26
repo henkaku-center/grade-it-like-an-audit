@@ -361,3 +361,6 @@ h2 .qual { font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-
   .ledger .lrow { grid-template-columns:3.4rem 1fr; gap:.6rem; }
   .bars .brow { grid-template-columns:2.6rem 1fr 5.2rem; }
 }
+
+/* Anchor links must not land under the sticky nav. */
+section[id], [id] { scroll-margin-top: 4.5rem; }

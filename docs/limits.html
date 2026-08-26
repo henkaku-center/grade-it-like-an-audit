@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Limits & privacy — Grade it like an audit</title>
-<meta name="description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<meta name="description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded submissions are pseudonymization and not anonymization, and where responsibility rests.">
 <link rel="canonical" href="https://henkaku-center.github.io/grade-it-like-an-audit/limits.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Grade it like an audit">
 <meta property="og:title" content="Limits & privacy — Grade it like an audit">
-<meta property="og:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<meta property="og:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded submissions are pseudonymization and not anonymization, and where responsibility rests.">
 <meta property="og:url" content="https://henkaku-center.github.io/grade-it-like-an-audit/limits.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Limits & privacy — Grade it like an audit">
-<meta name="twitter:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<meta name="twitter:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded submissions are pseudonymization and not anonymization, and where responsibility rests.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23e6e4db'/><path d='M3 4h10M3 8h10M3 12h6' stroke='%2397302b' stroke-width='1.6'/></svg>">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/theme.js"></script>
@@ -94,14 +94,15 @@
     <figure>
       <div class="coverage">
         <div class="cov mech"><span class="mark">&check;</span><span>
-          <b>A unit code</b>
-          <span class="how">Checked every round. Codes are tokens; a token can be searched for.</span></span></div>
+          <b>Their code</b>
+          <span class="how">Checked every round. When submissions are coded, each student's folder gets a
+          label like <code>unit-a</code>. A label is a token, and a token can be searched for.</span></span></div>
         <div class="cov mech"><span class="mark">&check;</span><span>
           <b>A real name</b>
           <span class="how">Checked at delivery, where the name map is legitimately in hand. The
           grading session itself is denied that map by design.</span></span></div>
         <div class="cov mech"><span class="mark">&check;</span><span>
-          <b>A verbatim quote of another unit's work</b>
+          <b>A verbatim quote of another student's work</b>
           <span class="how">Checked by <code>--verify-quotes</code>, which also catches quotes that
           are sourced nowhere at all.</span></span></div>
         <div class="cov open"><span class="mark">&#33;</span><span>
@@ -138,7 +139,7 @@
 <section id="privacy">
   <div class="wrap">
     <p class="eyebrow">Privacy</p>
-    <h2>What coding units buys, and what it does not</h2>
+    <h2>What coding submissions buys, and what it does not</h2>
 
     <p><code>code-units.py</code> replaces student names on submission folders with random,
     per-run codes, copies everything byte-for-byte with hash verification, and keeps the map outside
@@ -149,7 +150,8 @@
       <div class="flow">
         <div class="fbox stays">
           <span class="ftitle">Pseudonymized</span>
-          <span class="fbody"><code>unit-a/</code>, <code>unit-b/</code> &mdash; random codes,
+          <span class="fbody">Each student's folder becomes <code>unit-a/</code>, <code>unit-b/</code>
+          &mdash; random codes,
           reshuffled every run, so a code is never a profile you can follow across
           assignments.</span>
         </div>
@@ -175,8 +177,8 @@
     <div class="card accent">
       <p class="lbl">The headline limit</p>
       <p><strong>It codes the container, not the content.</strong> If a submission says
-      &ldquo;By Jane Doe&rdquo; inside, it still does. On one real cohort, <strong>5 of 5 units
-      carried identity findings inside their file contents</strong> &mdash; and 5,628 of the 5,629
+      &ldquo;By Jane Doe&rdquo; inside, it still does. On one real cohort, <strong>all 5 students'
+      submissions carried identity findings inside their file contents</strong> &mdash; and 5,628 of the 5,629
       individual findings sat in agent session transcripts rather than in the deliverables. The pass
       <em>reports</em> where identity remains; it deliberately does not rewrite anything, because an
       earlier version that did rewrite contents broke the method's own attribution check, folding a
@@ -190,7 +192,7 @@
     <code>grep</code>, <code>less</code>, or a Python one-liner, and the map sits under the same user
     account as the session. It is a guardrail that makes casual access fail loudly, <strong>not a
     sandbox.</strong> And auditor blindness is likewise by construction of context rather than by
-    enforcement: there is no per-unit filesystem sandbox, and an agent's &ldquo;files I read&rdquo;
+    enforcement: there is no per-submission filesystem sandbox, and an agent's &ldquo;files I read&rdquo;
     line is itself a claim.</p>
 
     <p>What is verifiable: every script this plugin ships reads and writes local files and contains no
@@ -216,9 +218,10 @@
       <div class="ctx"><p class="scope">03</p><h3>Shared model blind spots</h3>
         <p>Independent reviewers drawn from the same model share failure modes. More of them will not
         help. A human outside the loop will.</p></div>
-      <div class="ctx"><p class="scope">04</p><h3>Fairness across the set</h3>
+      <div class="ctx"><p class="scope">04</p><h3>Fairness across the cohort</h3>
         <p>Pricing, not detection, is where a run goes wrong. A run can be evidence-perfect and still
-        unfair, because fairness is a property of the set and no blind auditor can see the set.</p></div>
+        unfair, because fairness is a property of the whole cohort, and no blind auditor can see
+        the cohort.</p></div>
       <div class="ctx"><p class="scope">05</p><h3>Comparative disclosure</h3>
         <p>The fourth column of Figure 9. An identifying description with no name and no quote has no
         token to match.</p></div>
@@ -256,7 +259,7 @@
       <li><strong>For work with no ground truth to check against.</strong> The whole discipline rests
       on being able to open a source and see whether a claim holds. Where nothing can be checked,
       this method has no advantage over careful reading.</li>
-      <li><strong>When one careful pass would do.</strong> A round over N units costs N auditor
+      <li><strong>When one careful pass would do.</strong> A round over N submissions costs N auditor
       subagents plus a lead pass, three to five times over. For a handful of short submissions that
       is not a good trade.</li>
     </ul>
