@@ -1,569 +1,322 @@
-<title>The markdown is the program — how to instruct a grading agent</title>
-<style>
-  :root {
-    --bg:#e6e4db; --surface:#f3f1ea; --surface-2:#edeae1; --ink:#22252c; --ink-soft:#575b52;
-    --ink-faint:#7f8278; --rule:#cdcabd; --rule-soft:#dedbcf; --oxblood:#97302b; --oxblood-tint:#f0dfd9;
-    --verified:#3c6a4c; --verified-tint:#dde8dd; --amber:#8f6317; --amber-tint:#efe4cd;
-    --shadow:0 1px 0 rgba(34,37,44,.04), 0 8px 28px -18px rgba(34,37,44,.35);
-    --serif:"Iowan Old Style","Palatino Linotype","Palatino","Book Antiqua",Georgia,"Times New Roman",serif;
-    --sans:"Seravek","Gill Sans Nova","Gill Sans","Segoe UI",system-ui,-apple-system,sans-serif;
-    --mono:ui-monospace,"SF Mono","SFMono-Regular","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg:#16181d; --surface:#1e2026; --surface-2:#23262d; --ink:#e7e4da; --ink-soft:#a3a599;
-      --ink-faint:#7c7e73; --rule:#34373f; --rule-soft:#2a2d34; --oxblood:#d5726a; --oxblood-tint:#3a2422;
-      --verified:#83b493; --verified-tint:#20302a; --amber:#d0a052; --amber-tint:#332a1a;
-      --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -18px rgba(0,0,0,.7);
-    }
-  }
-  :root[data-theme="light"] {
-    --bg:#e6e4db; --surface:#f3f1ea; --surface-2:#edeae1; --ink:#22252c; --ink-soft:#575b52;
-    --ink-faint:#7f8278; --rule:#cdcabd; --rule-soft:#dedbcf; --oxblood:#97302b; --oxblood-tint:#f0dfd9;
-    --verified:#3c6a4c; --verified-tint:#dde8dd; --amber:#8f6317; --amber-tint:#efe4cd;
-    --shadow:0 1px 0 rgba(34,37,44,.04), 0 8px 28px -18px rgba(34,37,44,.35);
-  }
-  :root[data-theme="dark"] {
-    --bg:#16181d; --surface:#1e2026; --surface-2:#23262d; --ink:#e7e4da; --ink-soft:#a3a599;
-    --ink-faint:#7c7e73; --rule:#34373f; --rule-soft:#2a2d34; --oxblood:#d5726a; --oxblood-tint:#3a2422;
-    --verified:#83b493; --verified-tint:#20302a; --amber:#d0a052; --amber-tint:#332a1a;
-    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -18px rgba(0,0,0,.7);
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grade it like an audit</title>
+<meta name="description" content="A grading tool whose purpose is feedback. It proposes grades, but every point deducted names an issue and cites a source you can open — and across 14 audit rounds and 70 independent reviews, no finding has ever changed a grade.">
+<link rel="canonical" href="https://henkaku-center.github.io/grade-it-like-an-audit/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grade it like an audit">
+<meta property="og:title" content="Grade it like an audit">
+<meta property="og:description" content="A grading tool whose purpose is feedback. It proposes grades, but every point deducted names an issue and cites a source you can open — and across 14 audit rounds and 70 independent reviews, no finding has ever changed a grade.">
+<meta property="og:url" content="https://henkaku-center.github.io/grade-it-like-an-audit/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Grade it like an audit">
+<meta name="twitter:description" content="A grading tool whose purpose is feedback. It proposes grades, but every point deducted names an issue and cites a source you can open — and across 14 audit rounds and 70 independent reviews, no finding has ever changed a grade.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23e6e4db'/><path d='M3 4h10M3 8h10M3 12h6' stroke='%2397302b' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="sitenav" aria-label="Site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Grade it like an audit</a>
+    <a class="nl" href="index.html" aria-current="page">Overview</a>
+    <a class="nl" href="how-it-works.html">How it works</a>
+    <a class="nl" href="limits.html">Limits &amp; privacy</a>
+    <a class="nl" href="compare.html">How it compares</a>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button">System</button>
+  </div>
+</nav>
+<main id="main">
 
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
-    font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
-  .wrap { max-width:50rem; margin:0 auto; padding:0 1.5rem; }
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">A Claude Code plugin, and the method it came from</p>
+    <h1>Grade it like an audit</h1>
+    <p class="lead">A grading tool whose purpose is feedback. It drafts evaluations and proposes
+    grades &mdash; but never a number it simply thought of. Every point deducted names an issue and
+    cites a source you can open, and you decide every one of them.</p>
+    <p class="subtle">It was built on a real teaching workload and is published with its failures
+    attached. The headline result is the one most tools would bury: across fourteen audit rounds and
+    seventy independent reviews, <strong>no finding has ever changed a grade.</strong> Every catch
+    improved the evidence or the wording. That is not a disappointing result. It is the design.</p>
 
-  h1,h2,h3 { font-family:var(--serif); font-weight:600; text-wrap:balance; letter-spacing:-0.01em; }
-  h1 { font-size:clamp(2.1rem,5.4vw,3.15rem); line-height:1.06; margin:0 0 1rem; }
-  h2 { font-size:clamp(1.5rem,3.6vw,2rem); line-height:1.12; margin:0 0 .6rem; }
-  h3 { font-size:1.16rem; line-height:1.25; margin:0 0 .35rem; }
-  p { margin:0 0 1rem; }
-  a { color:var(--oxblood); text-underline-offset:2px; }
-  strong { font-weight:600; color:var(--ink); }
-  em { font-style:italic; }
-
-  .eyebrow { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--oxblood); display:flex; align-items:center; gap:.55rem; margin:0 0 1.1rem; }
-  .eyebrow::before { content:""; width:1.6rem; border-top:2px solid var(--oxblood); display:inline-block; }
-  .lead { font-family:var(--serif); font-size:1.28rem; line-height:1.45; color:var(--ink); }
-  .subtle { color:var(--ink-soft); }
-
-  header.hero { padding:clamp(3.5rem,9vw,6rem) 0 2.5rem; }
-  .kicker { font-family:var(--mono); font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
-    color:var(--ink-faint); margin:0 0 1.4rem; }
-  .hero-meta { margin-top:2rem; padding-top:1.3rem; border-top:1px solid var(--rule);
-    display:flex; flex-wrap:wrap; gap:1.5rem 2.5rem; font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); }
-  .hero-meta b { color:var(--ink); font-weight:600; }
-  .repo-link { display:inline-flex; align-items:center; gap:.55rem; margin-top:1.7rem;
-    font-family:var(--mono); font-size:.82rem; letter-spacing:.01em; text-decoration:none;
-    color:var(--oxblood); border:1px solid var(--oxblood); border-radius:3px; padding:.55rem .95rem; }
-  .repo-link:hover { background:var(--oxblood-tint); }
-  .repo-link .gh { font-weight:700; }
-  .repo-link .arrow { margin-left:.15rem; }
-  footer a { color:var(--oxblood); }
-
-  section { padding:2.6rem 0; border-top:1px solid var(--rule-soft); }
-  section.pillar { padding-top:3rem; }
-  .pillar-index { font-family:var(--mono); font-size:.74rem; letter-spacing:.12em; color:var(--ink-faint);
-    text-transform:uppercase; margin:0 0 .3rem; }
-
-  /* contents */
-  .contents { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.2rem 1.4rem; margin:1.6rem 0; box-shadow:var(--shadow); }
-  .contents ol { list-style:none; counter-reset:c; margin:0; padding:0; display:grid; gap:.15rem; }
-  .contents li { counter-increment:c; display:grid; grid-template-columns:2rem 1fr; align-items:baseline; gap:0 .3rem; padding:.55rem 0; border-top:1px solid var(--rule-soft); }
-  .contents li:first-child { border-top:0; }
-  .contents li::before { content:counter(c,decimal-leading-zero); font-family:var(--mono); font-size:.76rem; color:var(--oxblood); }
-  .contents .ci-body { display:flex; flex-direction:column; gap:.15rem; min-width:0; }
-  .contents a { color:var(--ink); text-decoration:none; }
-  .contents a:hover { color:var(--oxblood); text-decoration:underline; }
-  .contents .ci-note { color:var(--ink-faint); font-size:.86rem; line-height:1.4; }
-
-  .card { background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:1.3rem 1.4rem; box-shadow:var(--shadow); margin:1.4rem 0; }
-  .card > :last-child { margin-bottom:0; }
-  .card.accent { border-left:3px solid var(--oxblood); }
-  .card.good { border-left:3px solid var(--verified); }
-
-  /* mono code-ish blocks */
-  .code { font-family:var(--mono); font-size:.82rem; line-height:1.7; background:var(--surface-2);
-    border:1px solid var(--rule); border-radius:3px; padding:1rem 1.15rem; overflow-x:auto; color:var(--ink); margin:1.2rem 0; }
-  .code .del { color:var(--oxblood); }
-  .code .hint { color:var(--verified); }
-  .code .muted { color:var(--ink-faint); }
-  .code .key { color:var(--oxblood); }
-
-  /* file tree */
-  .filetree { font-family:var(--mono); font-size:.8rem; line-height:1.85; background:var(--surface-2);
-    border:1px solid var(--rule); border-radius:3px; padding:1.1rem 1.2rem; overflow-x:auto; margin:1.4rem 0; }
-  .filetree pre { margin:0; white-space:pre; }
-  .filetree .path { color:var(--ink); }
-  .filetree .ann { color:var(--ink-faint); }
-  .filetree .load { color:var(--verified); }
-  .filetree .auth { color:var(--oxblood); }
-  .filetree .tree { color:var(--ink-faint); }
-
-  /* three contexts grid */
-  .ctx-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:.8rem; margin:1.5rem 0; }
-  .ctx { border:1px solid var(--rule); border-top:3px solid var(--oxblood); border-radius:3px; background:var(--surface); padding:1rem 1.1rem; }
-  .ctx .scope { font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--oxblood); margin:0 0 .4rem; }
-  .ctx h3 { font-family:var(--sans); font-size:.98rem; font-weight:600; letter-spacing:0; margin:0 0 .3rem; }
-  .ctx p { font-size:.9rem; color:var(--ink-soft); margin:0; }
-  .ctx code { font-family:var(--mono); font-size:.82em; color:var(--ink); }
-
-  .tag { display:inline-block; font-family:var(--mono); font-size:.66rem; letter-spacing:.04em; text-transform:uppercase;
-    padding:.1rem .45rem; border-radius:2px; border:1px solid currentColor; vertical-align:middle; }
-  .tag.load { color:var(--verified); background:var(--verified-tint); }
-  .tag.auth { color:var(--oxblood); background:var(--oxblood-tint); }
-
-  /* fan-out */
-  .fanout { margin:1.6rem 0 .4rem; }
-  .node { font-family:var(--mono); font-size:.78rem; text-align:center; border:1px solid var(--rule);
-    border-radius:3px; background:var(--surface); padding:.55rem .5rem; color:var(--ink); }
-  .node .role { display:block; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-top:.2rem; }
-  .node.lead { border-color:var(--oxblood); background:var(--oxblood-tint); max-width:22rem; margin:0 auto; }
-  .fan-stem { width:1px; height:1.4rem; background:var(--rule); margin:0 auto; }
-  .fan-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr)); gap:.7rem; margin-top:.2rem; }
-  .fan-caption { font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); text-align:center; margin-top:.9rem; }
-
-  /* loop */
-  .loop { display:flex; flex-wrap:wrap; gap:.5rem; margin:1.5rem 0 .6rem; }
-  .loop-step { flex:1 1 7rem; min-width:6.5rem; border:1px solid var(--rule); border-radius:3px;
-    background:var(--surface); padding:.6rem .65rem; font-size:.8rem; line-height:1.3; }
-  .loop-step .n { font-family:var(--mono); font-size:.68rem; color:var(--oxblood); display:block; margin-bottom:.15rem; }
-  .loop-step.converge { border-color:var(--verified); background:var(--verified-tint); }
-  .loop-step.converge .n { color:var(--verified); }
-  .loop-back { font-family:var(--mono); font-size:.74rem; color:var(--oxblood); display:flex; align-items:center; gap:.5rem; margin-top:.9rem; }
-  .loop-back::before { content:"\21bb"; font-size:1.15rem; }
-
-  /* write-back cycle */
-  .cycle { display:grid; grid-template-columns:1fr; gap:.5rem; margin:1.5rem 0; }
-  .cycle .cstep { display:grid; grid-template-columns:2.4rem 1fr; gap:.8rem; align-items:baseline;
-    border:1px solid var(--rule); border-radius:3px; background:var(--surface); padding:.75rem .9rem; }
-  .cycle .cstep .cn { font-family:var(--mono); font-size:.72rem; color:var(--oxblood); }
-  .cycle .cstep.emph { border-left:3px solid var(--verified); }
-  .cycle .cstep b { font-weight:600; }
-  .cycle .cstep span.d { color:var(--ink-soft); font-size:.92rem; }
-
-  ol.lessons { list-style:none; counter-reset:L; padding:0; margin:1.5rem 0 0; display:grid; gap:1rem; }
-  ol.lessons > li { counter-increment:L; position:relative; padding-left:3rem; }
-  ol.lessons > li::before { content:counter(L,decimal-leading-zero); position:absolute; left:0; top:.05rem;
-    font-family:var(--mono); font-size:.82rem; color:var(--oxblood); border:1px solid var(--oxblood); border-radius:3px; padding:.1rem .35rem; line-height:1; }
-  ol.lessons h3 { font-family:var(--sans); font-weight:600; font-size:1.02rem; letter-spacing:0; margin-bottom:.15rem; }
-  ol.lessons p { margin:0; color:var(--ink-soft); font-size:.96rem; }
-
-  ol.recipe { list-style:none; counter-reset:R; padding:0; margin:1.4rem 0 0; display:grid; gap:.1rem; }
-  ol.recipe > li { counter-increment:R; display:grid; grid-template-columns:2.2rem 1fr; align-items:baseline;
-    padding:.8rem 0; border-top:1px solid var(--rule-soft); }
-  ol.recipe > li:first-child { border-top:0; }
-  ol.recipe > li::before { content:counter(R); font-family:var(--mono); font-size:.82rem; color:var(--oxblood); font-weight:600; }
-  ol.recipe b { font-weight:600; }
-  ol.recipe .why { color:var(--ink-soft); font-size:.94rem; }
-  ol.recipe li.key b { color:var(--oxblood); }
-
-  .trail { margin:1.5rem 0 0; display:grid; gap:0; }
-  .round { display:grid; grid-template-columns:3.4rem 1fr; gap:1rem; padding:1rem 0; border-top:1px solid var(--rule-soft); }
-  .round:first-child { border-top:0; }
-  .round .rn { font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); padding-top:.15rem; }
-  .round .rn b { display:block; color:var(--ink); font-size:1.35rem; font-family:var(--serif); line-height:1; }
-  .round h3 { font-family:var(--sans); font-size:1rem; font-weight:600; letter-spacing:0; margin-bottom:.25rem; }
-  .round p { margin:0; font-size:.95rem; color:var(--ink-soft); }
-  .chip { display:inline-block; font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; text-transform:uppercase;
-    padding:.12rem .5rem; border-radius:2px; margin:.5rem .35rem 0 0; border:1px solid currentColor; }
-  .chip.block { color:var(--oxblood); background:var(--oxblood-tint); }
-  .chip.minor { color:var(--amber); background:var(--amber-tint); }
-  .chip.clean { color:var(--verified); background:var(--verified-tint); }
-
-  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(7rem,1fr)); gap:1px; background:var(--rule);
-    border:1px solid var(--rule); border-radius:3px; overflow:hidden; margin:1.5rem 0; }
-  .stat { background:var(--surface); padding:1rem 1.1rem; }
-  .stat .v { font-family:var(--serif); font-size:1.7rem; line-height:1; color:var(--ink); font-variant-numeric:tabular-nums; }
-  .stat .k { font-family:var(--mono); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin-top:.4rem; }
-
-  blockquote { margin:1.3rem 0; padding:.2rem 0 .2rem 1.3rem; border-left:3px solid var(--oxblood);
-    font-family:var(--serif); font-size:1.16rem; line-height:1.4; color:var(--ink); }
-
-  ul.tight { margin:.3rem 0 1rem; padding-left:1.1rem; }
-  ul.tight li { margin-bottom:.4rem; }
-  ul.tight li::marker { color:var(--oxblood); }
-
-  footer { padding:2.5rem 0 4rem; border-top:1px solid var(--rule); color:var(--ink-faint); font-family:var(--mono); font-size:.76rem; }
-  .divider-label { font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
-
-  @media (max-width:33rem) {
-    body { font-size:16px; }
-    .round { grid-template-columns:2.8rem 1fr; }
-    ol.lessons > li { padding-left:2.6rem; }
-  }
-  @media (prefers-reduced-motion:no-preference) { a { transition:color .15s ease; } }
-  :focus-visible { outline:2px solid var(--oxblood); outline-offset:2px; border-radius:2px; }
-</style>
-
-<div class="wrap">
-
-  <header class="hero">
-    <p class="kicker">A field-tested method for instructing AI agents</p>
-    <div class="eyebrow">Documentation-driven agents</div>
-    <h1>The markdown is the program.</h1>
-    <p class="lead">You don’t configure a grading agent in code. You <em>instruct</em> it — in a layered, version-controlled, self-correcting set of markdown files that load into the agent’s context automatically and override its default behavior. The rubric, the fairness rules, the audit protocol, and every hard-won lesson live in those files. The agents just read them.</p>
-    <p class="subtle">This guide explains that system so you can build one for a new assignment — or for any recurring task you hand to an AI agent. It comes in two passes: a one-screen <strong>summary</strong>, then the <strong>detail</strong> — the file layers, the persistent memory, the write-back loop that makes the instructions compound, and the three things the docs encode (a deduction discipline, a verification harness, and an audit loop). The whole point: your instructions become a durable asset that gets <em>smarter every time it’s used.</em></p>
     <div class="hero-meta">
-      <span><b>Layer 1</b> · Instruction files</span>
-      <span><b>Layer 2</b> · Persistent memory</span>
-      <span><b>Layer 3</b> · The write-back loop</span>
-    </div>
-    <a class="repo-link" href="https://github.com/henkaku-center/grade-it-like-an-audit"><span class="gh">GitHub</span> · get the repository &amp; templates<span class="arrow">→</span></a>
-    <div style="margin-top:1.1rem;padding:.8rem 1rem;border:1px solid rgba(127,127,127,.35);border-radius:8px;font-size:.92em;">
-      <b>Now installable.</b> This method ships as a Claude Code plugin with a guided setup, an automated blind-auditor fan-out, and a 10-minute demo on synthetic data that catches planted defects in front of you:
-      <code style="display:block;margin-top:.45rem;white-space:pre-wrap;">/plugin marketplace add henkaku-center/grade-it-like-an-audit
-/plugin install grade-it-like-an-audit
-/grade-audit demo</code>
-    </div>
-  </header>
-
-  <!-- ============ SUMMARY ============ -->
-  <section id="summary">
-    <div class="eyebrow">The one-screen version</div>
-    <h2>Summary</h2>
-    <p>An AI agent is only as reliable as the instructions in front of it, and a chat prompt evaporates when the session ends. So we treat instructions as <strong>infrastructure</strong>: files in the repo, loaded every session, refined every run. Three moving parts.</p>
-
-    <div class="card">
-      <p style="margin:0 0 .6rem"><strong>1 · Layered instruction files (<code style="font-family:var(--mono);font-size:.85em">CLAUDE.md</code>).</strong> <span class="subtle">Markdown that auto-loads into context and overrides defaults. Layered by scope — general conventions at the repo root, assignment specifics one level down, the student-facing tutor prompt beside the assignment itself. Most-specific wins; general fills the gaps.</span></p>
-      <p style="margin:0 0 .6rem"><strong>2 · Persistent memory.</strong> <span class="subtle">A per-user store that survives across sessions — an indexed set of single-fact files, so a fresh session already knows what happened last time and what you prefer.</span></p>
-      <p style="margin:0"><strong>3 · The write-back loop.</strong> <span class="subtle">The part that matters most. When the audit catches a failure, the fix isn’t just applied — a <em>rule</em> goes back into the docs, so that failure can’t recur next assignment. The instruction set compounds.</span></p>
+      <span><b>Four skills</b> &middot; setup, run, demo, calibrate</span>
+      <span><b>Three agents</b> &middot; blind auditors, a lead pass, a fresh reader</span>
+      <span><b>Zero</b> student data in this repository</span>
     </div>
 
-    <p>What those files <em>encode</em> is the actual grading method: a <strong>discrete-deduction discipline</strong> (every point removed is a named, evidenced claim), an <strong>independent audit harness</strong> (one reviewer per unit, blind to the rest), and a <strong>loop</strong> that ends only when a single pass is clean for the entire set at once. In one real run, that loop took five rounds — and three of its catches were errors <em>inside a previous round’s fix.</em></p>
+    <a class="repo-link" href="https://github.com/henkaku-center/grade-it-like-an-audit">
+      <span class="gh">GitHub</span> &middot; henkaku-center/grade-it-like-an-audit <span class="arrow">&rarr;</span></a>
+  </div>
+</header>
 
-    <nav class="contents" aria-label="Contents">
-      <ol>
-        <li><div class="ci-body"><a href="#files">The layered instruction files</a><span class="ci-note">what auto-loads, and the “three contexts” trap</span></div></li>
-        <li><div class="ci-body"><a href="#memory">Persistent memory</a><span class="ci-note">continuity across sessions</span></div></li>
-        <li><div class="ci-body"><a href="#writeback">The write-back loop</a><span class="ci-note">why the docs get smarter</span></div></li>
-        <li><div class="ci-body"><a href="#deduction">Encoded: the deduction discipline</a></div></li>
-        <li><div class="ci-body"><a href="#harness">Encoded: the audit harness</a></div></li>
-        <li><div class="ci-body"><a href="#loop">Encoded: the loop to convergence — and its bound</a></div></li>
-        <li><div class="ci-body"><a href="#proof">In practice: two runs</a></div></li>
-        <li><div class="ci-body"><a href="#adapt">Set it up for your own work</a></div></li>
-      </ol>
-    </nav>
-  </section>
+<section id="honest">
+  <div class="wrap">
+    <p class="eyebrow">Start here if you are skeptical</p>
+    <h2>The numbers, including the ones that do not flatter us</h2>
 
-  <!-- ============ 1 · FILES ============ -->
-  <section class="pillar" id="files">
-    <p class="pillar-index">Layer 1 — detail</p>
-    <h2>The layered instruction files</h2>
-    <p>Every session, the agent reads the <code style="font-family:var(--mono)">CLAUDE.md</code> files in scope before it does anything, and treats them as overriding its defaults. They’re plain markdown, checked into the repo, and organized so that the instructions get <em>more specific as you get closer to the work.</em></p>
+    <p>Most of what is written about AI grading is written by people selling it. Here is the whole
+    measured record of this method, good and bad, from real runs on real work.</p>
 
-    <div class="filetree" aria-label="Repository file tree showing where instruction, output, and working files live.">
-<pre><span class="tree">your-project/</span>
-<span class="tree">├─ </span><span class="path">CLAUDE.md</span>                 <span class="auth">◆ root reviewer conventions</span> <span class="ann">— shared by every task</span>
-<span class="tree">├─ </span><span class="path">task-01/</span>
-<span class="tree">│  ├─ </span><span class="path">CLAUDE.md</span>              <span class="auth">◆ this task’s specifics</span> <span class="ann">— criteria, sources, gotchas</span>
-<span class="tree">│  ├─ </span><span class="path">shipped/CLAUDE.md</span>      <span class="ann">— (optional) instructions for a different audience</span>
-<span class="tree">│  ├─ </span><span class="path">inputs/</span>                <span class="ann">— the material under review (read-only)</span>
-<span class="tree">│  ├─ </span><span class="path">working-notes/&lt;unit&gt;/</span>  <span class="ann">— ledger · draft · audit-round{1..N}</span>
-<span class="tree">│  ├─ </span><span class="path">output.md</span>              <span class="auth">◆ authoritative output</span> <span class="ann">— fixed two-part format</span>
-<span class="tree">│  └─ </span><span class="path">deliverables/</span>          <span class="ann">— final artifacts, produced only after the audit passes</span>
-<span class="tree">└─ </span><span class="path">task-02/ …</span>             <span class="ann">— same shape; precedents carry forward</span></pre>
+    <div class="stat-row">
+      <div class="stat"><div class="v">14</div><div class="k">audit rounds run</div></div>
+      <div class="stat"><div class="v">70</div><div class="k">independent reviews</div></div>
+      <div class="stat"><div class="v">0</div><div class="k">outcomes ever changed</div></div>
+      <div class="stat"><div class="v">1</div><div class="k">defect only a human caught</div></div>
     </div>
 
-    <p>The load rule is simple and worth stating out loud: <strong>the most specific file in scope wins; more general files fill whatever it doesn’t say.</strong> The root file carries what’s true for all grading — the deduction rule, the report format, the audit protocol. The per-assignment file carries what’s true for <em>this</em> task — the point split, which files are the source of truth for verifying a claim, the per-task gotchas.</p>
+    <div class="card warn">
+      <p class="lbl">The failures, stated first</p>
+      <p>One run <strong>never converged.</strong> It went nine rounds and was stopped by a diff
+      rather than by a clean pass, because the loop had begun finding defects mostly in its own
+      repairs &mdash; it had stopped measuring the work's error rate and started measuring its own
+      edit rate.</p>
+      <p>After all nine of those rounds &mdash; forty-five separate reviews &mdash; <strong>one
+      human, reading the finished material cold, found a defect every one of them had passed.</strong>
+      It was a claim about the world (&ldquo;this will serve you well&rdquo;), and no source can
+      contradict a claim about the future. That is the permanent hole in the method, and it is why
+      the last reader has to be a person.</p>
+      <p>A more recent run did converge, in four rounds, and fired the write-back step for the first
+      time. Even there the clean round came from a smaller model on a deliberately narrowed scope,
+      which is the ambiguous case rather than the triumphant one. All of it is written up in
+      <a href="limits.html">Limits &amp; privacy</a>, at the same length as the successes.</p>
+    </div>
 
-    <h3 style="margin-top:1.7rem">The trap: three files named <code style="font-family:var(--mono);font-size:.8em">CLAUDE.md</code>, three different jobs</h3>
-    <p>The most-copied warning in our root file exists because these look identical and mean opposite things. An agent that confuses them will apply the wrong rules to the wrong reader.</p>
+    <p>The reason to publish this way is not modesty. It is that a grading tool asks you to stake
+    your students' feedback and your own professional judgment on it, and you cannot evaluate that
+    bet against marketing copy. You can evaluate it against a failure log.</p>
+  </div>
+</section>
+
+<section id="grades">
+  <div class="wrap">
+    <p class="eyebrow">The obvious question</p>
+    <h2>Does it decide grades? No. Does it propose them? Yes &mdash; like this.</h2>
+
+    <p>It would be easier to claim this tool never touches grades. That claim would be false, and you
+    would catch it in about thirty seconds of reading the source. What is true is more useful: a
+    proposed grade here is <em>arithmetic</em>, not judgment. It is what is left after each deduction
+    has named a specific issue and pointed at the file that shows it. Nothing is subtracted for a
+    general impression, because a general impression has nothing to cite.</p>
+
+    <figure>
+      <div class="ledger">
+        <div class="lrow"><span class="amt zero">&minus;0</span><span>
+          <span class="issue">Data cleaning &mdash; 5/5</span>
+          <span class="cite">Listwise deletion per the handout; removal count stated (344 &rarr; 333).
+          Source: <code>report.md</code></span></span></div>
+        <div class="lrow"><span class="amt zero">&minus;0</span><span>
+          <span class="issue">Analysis correctness &mdash; 5/5</span>
+          <span class="cite">One-way ANOVA appropriate for one numeric measure across three groups;
+          means and <code>F = 594.8, p &lt; 0.001</code> match the source.
+          Source: <code>report.md</code></span></span></div>
+        <div class="lrow"><span class="amt zero">&minus;0</span><span>
+          <span class="issue">Figures &mdash; 5/5</span>
+          <span class="cite">Three figures, all relevant. Source: <code>report.md</code></span></span></div>
+        <div class="lrow"><span class="amt">&minus;1</span><span>
+          <span class="issue">Write-up clarity &mdash; 4/5 &mdash; Figure 3 is never discussed in the text</span>
+          <span class="cite">How to avoid: every included figure earns a sentence in Results.
+          Source: <code>report.md</code>, Results section</span></span></div>
+        <div class="lrow total"><span class="amt">19/20</span><span>
+          <span class="issue">Proposed &mdash; and every point of the difference is on this page</span>
+          <span class="cite">The instructor approves, adjusts, or rejects each row before anything is sent.</span></span></div>
+      </div>
+      <figcaption><b>Figure 1.</b> A deduction ledger from the bundled synthetic demo. The rule that
+      produces it: <b>every point removed must name an issue and cite a source.</b> A deduction that
+      cannot do both is not applied &mdash; which also means the student always learns what the point
+      was for.</figcaption>
+    </figure>
+
+    <p>Now the part that is actually novel. That draft above was itself audited, and the audit found
+    two defects in it &mdash; neither of which touched the 19/20:</p>
+
+    <div class="code">
+<span class="del">[BLOCKER]</span> &ldquo;We removed rows with missing values since they were under three
+          percent of the data&rdquo; is presented in quotation marks but is a <span class="del">paraphrase</span>.
+          The source reads &ldquo;We removed <span class="key">the</span> rows with missing values
+          <span class="key">because</span> they were <span class="key">fewer than</span> three percent&hellip;&rdquo;
+          <span class="hint">fix: use the verbatim sentence.</span>
+
+<span class="del">[BLOCKER]</span> &ldquo;Every figure is labeled and captioned&rdquo; is a
+          <span class="del">falsified praise universal</span> &mdash; Figure 3 has a label but no caption.
+          <span class="hint">fix: &ldquo;Figures 1 and 2 are labeled and captioned; Figure 3 carries a
+          label but no caption.&rdquo;</span>
+    </div>
+
+    <p>A misquote inside quotation marks, and a compliment that overreaches by one counterexample.
+    Both would have gone to the student. Neither is a grading error, and that is the point:
+    <strong>the machinery protects what the student reads, not what the student scores.</strong>
+    Praise is audited exactly as strictly as criticism, because an unearned compliment is
+    misinformation the student may act on.</p>
+  </div>
+</section>
+
+<section id="rungs">
+  <div class="wrap">
+    <p class="eyebrow">Before it touches anything real</p>
+    <h2>You are not asked to trust it up front</h2>
+
+    <p>There are three rungs before a real submission is involved, in increasing order of exposure.
+    Stopping at any of them is a legitimate outcome, including stopping at the first.</p>
+
+    <figure>
+      <div class="rungs">
+        <div class="rung">
+          <span class="cmd">/grade-audit<br>demo</span>
+          <span class="what">Grades three fictional students whose draft evaluations contain seven
+          planted defects, then unseals the answer key and scores itself. One of the seven is
+          designed so that <em>no source can settle it</em> &mdash; the harness flags it as
+          unverifiable, and you learn firsthand where the method stops.
+          <span class="exposure">Data exposure: none &middot; fully synthetic &middot; 12&ndash;18 minutes, measured twice</span></span>
+        </div>
+        <div class="rung">
+          <span class="cmd">/grade-audit<br>check-mine</span>
+          <span class="what">Inverts the whole arrangement. <strong>The AI grades nothing.</strong>
+          You wrote the evaluations; it fact-checks them &mdash; quotations against the source,
+          numbers against the data, arithmetic, attribution, and whether your praise survives a
+          counterexample. Findings are shown to you and nothing is applied.
+          <span class="exposure">Data exposure: your own writing &middot; de-identify it first if you like</span></span>
+        </div>
+        <div class="rung">
+          <span class="cmd">/grade-audit<br>calibrate</span>
+          <span class="what">You grade three to five units first. The harness grades the same ones
+          blind. A plain Python script &mdash; not a model &mdash; reports quadratic-weighted
+          &kappa;, Spearman &rho;, and mean absolute difference, so you see how it compares to
+          <em>your</em> judgment before it touches anything that counts.
+          <span class="exposure">Data exposure: a small pilot &middot; the arrow of trust points at the human</span></span>
+        </div>
+        <div class="rung real">
+          <span class="cmd">/grade-audit<br>setup &rarr; run</span>
+          <span class="what">Real work, once your institution's position is clear and you have
+          decided the tool has earned it.
+          <span class="exposure">Data exposure: real &middot; read Limits &amp; privacy first</span></span>
+        </div>
+      </div>
+      <figcaption><b>Figure 2.</b> The rungs exist because &ldquo;try it and see&rdquo; is an
+      unreasonable ask when the material is other people's work. <b>Calibration measures the harness
+      against you</b>, never the reverse.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="stance">
+  <div class="wrap">
+    <p class="eyebrow">Where this stands</p>
+    <h2>A support device, and the reasons that is not just a disclaimer</h2>
+
+    <p>The most common objection to AI in grading is not that it scores badly. It is that careful,
+    personal feedback gets replaced by fluent boilerplate, and the relationship between a teacher and
+    a student quietly degrades. That objection is correct about most of the category, and this
+    project is built as an answer to it rather than a denial of it.</p>
 
     <div class="ctx-grid">
       <div class="ctx">
-        <p class="scope">Repo root</p>
-        <h3>Grader meta-conventions</h3>
-        <p>Shared across all assignments. The deduction rule, the output format, the audit loop, accumulated precedent.</p>
+        <p class="scope">Design commitment</p>
+        <h3>You decide every outcome</h3>
+        <p>Findings are proposals. Each one is shown to you with its evidence and applied only on
+        your approval. The harness proposes; the human disposes.</p>
       </div>
       <div class="ctx">
-        <p class="scope">task-01/</p>
-        <h3>Task specifics</h3>
-        <p>Criteria, source-of-truth files to verify against, waiver rules, input naming. Everything the root file can’t know in advance.</p>
+        <p class="scope">Design commitment</p>
+        <h3>Everything is a file you can read</h3>
+        <p>Rubric, findings, deduction matrix, round metrics, precedents &mdash; all plain markdown
+        on your machine. You can audit the auditor, and a session that dies mid-round loses nothing.</p>
       </div>
       <div class="ctx">
-        <p class="scope">shipped/</p>
-        <h3>Student-facing tutor prompt</h3>
-        <p>A different audience entirely — this one <em>ships to the people being assessed</em> and tells the agent to act as a Socratic tutor that never hands over answers.</p>
+        <p class="scope">Design commitment</p>
+        <h3>It documents its own reasoning</h3>
+        <p>Guidance to faculty is consistent that you remain accountable for a grade and must be able
+        to explain its basis. A run leaves exactly that record, as a by-product rather than an
+        afterthought.</p>
       </div>
     </div>
-    <p class="subtle">When you’re grading, you are not the student’s tutor — so “never give answers” does not apply to the instructor’s questions. Naming the contexts explicitly, in the docs, is what keeps an agent from importing a rule from the wrong layer.</p>
+
+    <p>There is a version of this tool that would be more popular and much worse: one that reads a
+    stack of submissions and returns a column of numbers. That tool would inherit every documented
+    failure of single-pass LLM scoring &mdash; the same essay scored differently on different runs,
+    leniency that <a href="https://arxiv.org/html/2607.14605">tracks the writer's first
+    language</a>, agreement between models that is
+    <a href="https://doi.org/10.1177/00131644261418138">only moderate</a> &mdash; and it would hand
+    you no way to notice. This one is slower on purpose, and it hands you the evidence instead of the
+    verdict.</p>
 
     <div class="card accent">
-      <h3>Output and working files are specified too</h3>
-      <p class="subtle" style="margin:0">The docs don’t just set policy — they fix the <strong>shape of the work</strong>. The authoritative output has a mandated two-part format (an internal audit section, then the reader-facing deliverable), so every run is comparable. The <code style="font-family:var(--mono);font-size:.85em">working-notes/&lt;unit&gt;/</code> folders hold the agent’s artifacts — an evidence ledger, a draft, and one audit report per round — all versioned in git, so the reasoning behind a result is recoverable months later.</p>
+      <p class="lbl">On telling your students</p>
+      <p>Institutional AI guidance keeps arriving at the same two points: people being evaluated have
+      an interest in knowing an automated system was involved, and the instructor remains accountable
+      for explaining the basis of a decision. Setup now asks whether you intend to disclose, records
+      your answer, and offers <a href="https://github.com/henkaku-center/grade-it-like-an-audit/blob/main/skills/grade-audit-setup/references/data-handling.md">suggested
+      wording</a> you are meant to edit rather than paste. It never blocks you, and it does not
+      lecture you &mdash; disclosure norms vary by institution, and some set them centrally.</p>
+      <p>What makes disclosure comfortable here is having something concrete to disclose: a human set
+      the criteria, approved every judgment, and decided every grade, and an automated pass checked
+      the quotations, figures, and arithmetic. On this workflow all of that is simply true.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============ 2 · MEMORY ============ -->
-  <section class="pillar" id="memory">
-    <p class="pillar-index">Layer 2 — detail</p>
-    <h2>Persistent memory across sessions</h2>
-    <p>The <code style="font-family:var(--mono)">CLAUDE.md</code> files are shared and per-repo. Memory is the complement: a <strong>per-user store that persists across sessions and projects</strong>, so a brand-new session doesn’t start from zero. It’s how the agent begins already knowing “the last run took four audit rounds,” “this one is finished,” or “the lead prefers to make the borderline calls personally.”</p>
-
-    <p>The mechanics are deliberately boring, which is what makes them reliable:</p>
-    <ul class="tight">
-      <li>An <strong>index file</strong> (<code style="font-family:var(--mono);font-size:.85em">MEMORY.md</code>) is loaded into context every session — one line per memory, so the agent knows what it knows.</li>
-      <li>Each memory is <strong>one file holding one fact</strong>, with frontmatter that says what it is and how to recall it.</li>
-      <li>A <code style="font-family:var(--mono);font-size:.85em">type</code> field sorts memories into <em>who the user is</em>, <em>how they want you to work</em>, <em>ongoing project state</em>, and <em>pointers to outside resources.</em></li>
-    </ul>
-
-    <div class="code" aria-label="Example memory file with frontmatter.">
-<span class="muted">--- one file, one fact ---</span>
-<span class="key">name:</span> task-2026-q3-complete
-<span class="key">description:</span> Q3 run finished — outcome, where things live, lessons
-<span class="key">metadata:</span>
-&nbsp;&nbsp;<span class="key">type:</span> project     <span class="muted">// user | feedback | project | reference</span>
-
-Q3 run completed 2025-10-14. Five review rounds to converge; outcomes never moved.
-Lesson banked: a fix is a new claim — re-verify replacements from scratch.
-Related: <span class="hint">[[task-2026-q2-complete]]</span>   <span class="muted">// memories link to each other</span>
-    </div>
-
-    <p class="subtle">The discipline that keeps it useful: one fact per file, update instead of duplicating, delete what turns out wrong, and don’t store what the repo already records. Memory is for what you couldn’t reconstruct from the code and the git history — not a second copy of it.</p>
-  </section>
-
-  <!-- ============ 3 · WRITE-BACK ============ -->
-  <section class="pillar" id="writeback">
-    <p class="pillar-index">Layer 3 — detail · the heart of the system</p>
-    <h2>The write-back loop</h2>
-    <p>Here is the property that makes the whole thing worth the effort. When a review catches a mistake, we don’t just fix the mistake. <strong>We add a rule to the docs so that class of mistake can’t recur</strong> — on this assignment or the next one. The instruction set is not written once; it is <em>edited by its own failures.</em></p>
-
-    <blockquote>Every rule in our root file exists because something went wrong once. The docs are a scar tissue of past mistakes — which is exactly why the next run doesn’t repeat them.</blockquote>
-
-    <div class="cycle" aria-label="The write-back cycle: a run surfaces a failure, which becomes a durable rule that pre-warns the next run.">
-      <div class="cstep"><span class="cn">01</span><span><b>A run hits a failure mode.</b> <span class="d">An auditor credits the student with an idea the assistant actually suggested — a real, subtle attribution error.</span></span></div>
-      <div class="cstep"><span class="cn">02</span><span><b>The immediate fix is applied and re-audited.</b> <span class="d">That letter is corrected and the whole thing re-checked.</span></span></div>
-      <div class="cstep emph"><span class="cn">03</span><span><b>A durable rule is written back into the docs.</b> <span class="d">“Verify who typed an idea first against the raw record — and scan the log’s actual structure, not just the obvious field.” Now it’s standing policy.</span></span></div>
-      <div class="cstep"><span class="cn">04</span><span><b>The next run’s agents are pre-warned.</b> <span class="d">They read that rule before they start. The mistake that cost a round last time costs nothing this time.</span></span></div>
-    </div>
-
-    <p>You can watch the institutional knowledge accumulate in the file itself. Real lines now standing in our root conventions, each traceable to the run that earned it:</p>
-    <div class="code">
-<span class="muted"># excerpts — each is a scar from a prior run</span>
-<span class="del">•</span> Write cohort claims without factual universals — one counterexample fails the audit.
-<span class="del">•</span> Revisions introduce errors at a high rate; re-audit whole units, not the flagged spot.
-<span class="del">•</span> Props (praise) are ledgered as strictly as deductions.
-<span class="del">•</span> Verify UI / behavior claims against the shipped code, not the session narrative.
-<span class="del">•</span> A fix is a new claim, and inherits the counterexample. <span class="muted">// re-verify from scratch</span>
-    </div>
-    <p class="subtle">A prompt you retype each session can’t do this. A file can. That’s the case for treating instructions as version-controlled infrastructure rather than conversation.</p>
-  </section>
-
-  <!-- ============ 4 · DEDUCTION ============ -->
-  <section class="pillar" id="deduction">
-    <p class="pillar-index">What the docs encode · 1 of 3</p>
-    <h2>The Discrete-Deduction Discipline</h2>
-    <p>One rule the files impose on every score: <strong>every point you remove is tied to a discrete, named issue, with a one-line “how to avoid.”</strong> If you can’t name the specific thing the person did or failed to do, the points are awarded. A deduction is a claim, and a claim needs evidence.</p>
+<section id="install">
+  <div class="wrap">
+    <p class="eyebrow">Getting started</p>
+    <h2>Install, then run the demo before anything else</h2>
 
     <div class="code">
-Item&nbsp;3: 16/20 <span class="del">— (−4) two required fields left empty;</span>
-&nbsp;&nbsp;the summary sheet marks them “n/a.”
-&nbsp;&nbsp;<span class="hint">How to avoid: either field accepts one line — “not measured, because X” scores full.</span>
-<span class="muted">// no nameable issue on the other 16 points → earned, not “given”</span>
+<span class="muted"># in Claude Code</span>
+/plugin marketplace add <span class="key">henkaku-center/grade-it-like-an-audit</span>
+/plugin install <span class="key">grade-it-like-an-audit</span>
+
+<span class="muted"># then, in any empty folder</span>
+/grade-audit demo
     </div>
 
-    <ul class="tight">
-      <li><strong>Praise is audited as strictly as criticism.</strong> The counterintuitive lesson from checking our own work: most errors were <em>overclaimed praise</em>, not wrong deductions. So every quote and superlative in the “what you did well” paragraph is logged with its source, exactly like a deduction.</li>
-      <li><strong>Ground truth beats memory, always.</strong> Every number or behavioral claim is verified against the source — the actual code, file, or record — never against recollection.</li>
-      <li><strong>“What we owe you.”</strong> If your own instructions told the person X, you don’t penalize them for X, even when the system does Y. Decide up front which sources are authoritative <em>for the subject</em> and which are merely true.</li>
-    </ul>
-  </section>
+    <p>New to Claude Code? It runs in the browser at
+    <a href="https://claude.ai/code">claude.ai/code</a> or in a terminal. A <b>skill</b> is an
+    instruction set you invoke by typing <code>/its-name</code>; a <b>CLAUDE.md</b> is a plain
+    markdown file of standing instructions &mdash; in this method, your rulebook, which you own and
+    edit. That is nearly all the jargon there is.</p>
 
-  <!-- ============ 5 · HARNESS ============ -->
-  <section class="pillar" id="harness">
-    <p class="pillar-index">What the docs encode · 2 of 3</p>
-    <h2>The audit harness: independent fan-out</h2>
-    <p>The person who writes an evaluation is the worst person to check it. So drafting and auditing are separate jobs, and the auditors are independent <em>by construction</em>: each is handed one unit of work and reads <strong>only that unit’s files</strong> — blind to the other evaluations and to each other. A claim can’t be “confirmed” by another unit’s data, and a detail borrowed from the wrong place has nowhere to hide.</p>
+    <p>After the demo, <code>/grade-audit</code> on its own always tells you where you are and what
+    is next. There are seven entry points in total, and
+    <a href="how-it-works.html">How it works</a> walks through each one with real output.</p>
 
-    <div class="fanout" role="img" aria-label="A lead grader fans out to independent auditors, each reading only one unit's files.">
-      <div class="node lead">Lead grader<span class="role">drafts + normalizes</span></div>
-      <div class="fan-stem"></div>
-      <div class="fan-row">
-        <div class="node">Auditor A<span class="role">reads only A</span></div>
-        <div class="node">Auditor B<span class="role">reads only B</span></div>
-        <div class="node">Auditor C<span class="role">reads only C</span></div>
-        <div class="node">Auditor D<span class="role">reads only D</span></div>
-        <div class="node">Auditor E<span class="role">reads only E</span></div>
-      </div>
-      <p class="fan-caption">independent · fresh eyes each round · no shared context</p>
+    <div class="card warn">
+      <p class="lbl">Before real student work</p>
+      <p><strong>Know where your institution stands before student work enters any AI tool &mdash;
+      this one included.</strong> Student submissions and grades are typically education records
+      under FERPA, or your local equivalent. Many institutions already hold arrangements that cover
+      AI services and yours may be among them, but that coverage comes from your institution's
+      agreements, not from this plugin or any provider's marketing. If you are unsure, ask your
+      registrar, privacy office, or counsel first, and use the no-student-data rungs meanwhile.</p>
+      <p>We do our best on privacy and <strong>we cannot guarantee it.</strong> Responsibility for the
+      law and policy of your region rests with you. The full position, including what the safeguards
+      do <em>not</em> cover, is on <a href="limits.html">Limits &amp; privacy</a> &mdash; please read
+      it before your first real run rather than after.</p>
     </div>
 
-    <p>Two supports make the fan-out work. The <strong>evidence ledger</strong>, written as the draft is written, logs every claim beside its source line — so auditing means checking each claim against what it cites, not re-deriving the evaluation. And a <strong>lead pass</strong> catches what isolation can’t: cross-unit consistency. In one run, an identical praise line was flagged in one letter and passed in another <em>in the same round</em>, because each auditor saw only their own. The lead grader greps the whole set for shared phrasings and applies the strictest verdict anywhere to every instance. Fan out for depth; one pass for coherence.</p>
-  </section>
-
-  <!-- ============ 6 · LOOP ============ -->
-  <section class="pillar" id="loop">
-    <p class="pillar-index">What the docs encode · 3 of 3</p>
-    <h2>The loop, the condition that ends it — and the bound you also need</h2>
-    <p>Audits find things; fixes get made; and then the fixes get audited <em>again.</em> The loop doesn’t stop when each unit has been clean at some point. It stops on one strict condition:</p>
-
-    <blockquote>One pass comes back clean for the entire set at the same time.</blockquote>
-
-    <p>That rule tells you when you <em>may</em> stop. It does not tell you what to do when the loop stops getting closer — and on a later run, it didn’t. Nine rounds. Blockers hit zero at round seven and stayed there; minor findings flattened and stopped falling. The diagnostic is one question:</p>
-
-    <blockquote>What fraction of this round’s findings are in text that did not exist before the last round?</blockquote>
-
-    <p>Seven of ten, on round nine. The loop had stopped measuring the work’s error rate and started measuring <strong>its own edit rate</strong>: every round made fixes, every fix was new text, and new text is where findings come from. A process that manufactures its own work does not converge, and running it again is not a plan.</p>
-
-    <p>The fix wasn’t a tenth round — it was to <strong>scope the exposure</strong>. Diff what actually <em>ships</em>. Most findings sat in internal notes nobody outside would ever read; of the material that reaches a reader, exactly two sentences had changed. One was a deletion, which can’t introduce a new claim. The other added one noun, checked against the source in a single search. Nine rounds of process, replaced by one diff and one check.</p>
-
-    <p class="subtle">Two cautions: this applies only <em>after</em> blockers have sat at zero for several rounds — a loop still finding substantive errors is converging, however slowly. And scoping is a verification step, not a skip: the two changed sentences were still checked. What got dropped was the ceremony of a full pass, not the checking.</p>
-
-    <div class="loop" role="img" aria-label="The audit loop: draft, normalize, audit, revise, re-audit — looping until one clean pass over the whole set, then ship.">
-      <div class="loop-step"><span class="n">1</span>Draft + ledger</div>
-      <div class="loop-step"><span class="n">2</span>Normalize (lead)</div>
-      <div class="loop-step"><span class="n">3</span>Audit (fan-out)</div>
-      <div class="loop-step"><span class="n">4</span>Revise</div>
-      <div class="loop-step"><span class="n">5</span>Re-audit <em>whole</em> unit</div>
-      <div class="loop-step converge"><span class="n">✓</span>Clean for all at once → ship</div>
+    <div class="nextpage">
+      <a href="how-it-works.html">How it works, with every option &rarr;</a>
+      <a href="limits.html">What it cannot do &rarr;</a>
+      <a href="compare.html">How it compares &rarr;</a>
     </div>
-    <p class="loop-back">if any unit fails, the set is not clean — revise and re-audit every touched unit again</p>
+  </div>
+</section>
 
-    <ul class="tight">
-      <li><strong>Re-audit the whole unit, not the flagged spot.</strong> A revision changes the surrounding text and how it reads; checking only the edited line misses what the edit broke.</li>
-      <li><strong>The human stays in the loop.</strong> Every round surfaces its findings and what changed; the judgment calls — borderline deductions, tone, whether a fix is acceptable — are the human’s, not the harness’s.</li>
-    </ul>
-  </section>
-
-  <!-- ============ PROOF ============ -->
-  <section id="proof">
-    <div class="eyebrow">In practice</div>
-    <h2>Two runs: one converged, one didn’t</h2>
-    <p class="subtle">Run A — a real run over five units. Outcomes were settled early and <strong>never moved</strong> — every finding was a grounding or phrasing defect, not a scoring error. Three defects were found <em>inside a previous round’s fix.</em> That’s the loop, and the write-back rules, earning their keep.</p>
-
-    <div class="trail">
-      <div class="round">
-        <div class="rn"><b>1</b>round</div>
-        <div>
-          <h3>Cleared too early.</h3>
-          <p>Declared clean after four of five auditors reported; the fifth landed late and caught a real misquote. Lesson banked into the docs: convergence means <em>all</em> units in the same pass.</p>
-          <span class="chip minor">premature clear</span><span class="chip block">1 late catch</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>2</b>round</div>
-        <div>
-          <h3>Four blockers the first pass had approved.</h3>
-          <p>A paraphrase inside quotation marks, credit for something the assistant actually prompted, and two praise universals — each falsifiable from the student’s own files.</p>
-          <span class="chip block">4 blockers</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>3</b>round</div>
-        <div>
-          <h3>A blocker inside a round-2 fix — plus a reversal.</h3>
-          <p>One reworded sentence still carried its counterexample. Separately, a round-1 “correction” turned out to be the error, and was reversed against the raw record.</p>
-          <span class="chip block">1 blocker</span><span class="chip minor">1 reversal</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>4</b>round</div>
-        <div>
-          <h3>Same clause, third rewrite, still wrong.</h3>
-          <p>The sentence kept implying a claim the shipped code couldn’t back. Only when reduced to a plain, countable fact did it hold.</p>
-          <span class="chip block">1 blocker</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>5</b>round</div>
-        <div>
-          <h3>Clean for all five, in the same pass.</h3>
-          <p>Zero blockers, zero must-fix items across the whole cohort at once. Convergence — cleared for review.</p>
-          <span class="chip clean">converged</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat"><div class="v">5</div><div class="k">rounds to converge</div></div>
-      <div class="stat"><div class="v">3</div><div class="k">defects hidden in prior fixes</div></div>
-      <div class="stat"><div class="v">0</div><div class="k">score changes from audits</div></div>
-      <div class="stat"><div class="v">1&times;</div><div class="k">clean pass = done</div></div>
-    </div>
-
-    <h3 style="margin-top:2.2rem">And a second run, which never converged</h3>
-    <p class="subtle">Same harness, harder material. This is the run that produced the bound in the section above — and it is the more useful of the two, because it shows the failure mode rather than the success.</p>
-
-    <div class="trail">
-      <div class="round">
-        <div class="rn"><b>1–5</b>rounds</div>
-        <div>
-          <h3>Real convergence, and the inverse failure.</h3>
-          <p>Substantive findings throughout, including the mirror of run A’s problem: text <em>softer</em> and more flattering than the reasoning behind it. Blockers falling round on round.</p>
-          <span class="chip block">3 blockers</span><span class="chip minor">18 minors</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>6–8</b>rounds</div>
-        <div>
-          <h3>The defect becomes the repair.</h3>
-          <p>Round 6’s one blocker was round 5’s blocker, surviving inside round 5’s replacement for it. Round 7 found that round 6’s <em>countermeasure</em> had itself failed three times. Round 8’s findings sat one level further inside the process again.</p>
-          <span class="chip minor">0 blockers by round 7</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>9</b>round</div>
-        <div>
-          <h3>Seven of ten findings were defects in round 8’s own repairs.</h3>
-          <p>The count rose rather than fell. Not a loop closing in — a loop idling, generating exactly as much work as it resolved.</p>
-          <span class="chip minor">10 minors</span><span class="chip block">0 blockers</span>
-        </div>
-      </div>
-      <div class="round">
-        <div class="rn"><b>✕</b>stop</div>
-        <div>
-          <h3>Ended by a diff, not by a tenth round.</h3>
-          <p>Two sentences of shipped text had changed since round 8. One a deletion, one a single new noun — both verified directly, in minutes.</p>
-          <span class="chip clean">scoped, then shipped</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat"><div class="v">9</div><div class="k">rounds, never converged</div></div>
-      <div class="stat"><div class="v">45</div><div class="k">independent reviews</div></div>
-      <div class="stat"><div class="v">0</div><div class="k">score changes from audits</div></div>
-      <div class="stat"><div class="v">2</div><div class="k">sentences actually at risk</div></div>
-    </div>
-
-    <p style="margin-top:1.6rem"><strong>Then the part that matters most.</strong> A second person read the finished material once, cold, with no knowledge of the process — and found a defect that all nine rounds had passed, and that one round had examined and explicitly approved. The sentence predicted the work’s future influence in the world. Every reviewer had checked whether it was sourced, correctly attributed and consistent with the record; it passed all three, <em>because a claim about what will happen later has no source to contradict it.</em></p>
-
-    <p>So: add the check the harness was missing — <em>is this claim about the artifact, or about the world?</em> — and keep one reader outside the loop. Not a better auditor. A different one, arriving once, without the process in their head. On both runs, that was the cheapest defect-per-hour in the whole method.</p>
-
-    <p class="subtle">Across both runs — fourteen rounds and seventy independent reviews — <strong>not one finding changed an outcome.</strong> Every one was a grounding or phrasing defect. If your loop is meant to protect the result, measure whether it ever has; if it only protects the prose, size it accordingly.</p>
-  </section>
-
-  <!-- ============ ADAPT ============ -->
-  <section class="pillar" id="adapt">
-    <p class="pillar-index">Take it with you</p>
-    <h2>Set this up for your own work</h2>
-    <p>None of this is specific to grading. It fits any recurring, high-stakes task you hand to an AI agent — code review, a compliance or security audit, report QA, contract review, release notes — anywhere a plausible-but-wrong result is expensive and the task will come around again. The setup:</p>
-
-    <ol class="recipe">
-      <li><span><b>Stand up the file tree.</b> <span class="why">One repo, a root instruction file, a folder per instance of the task, working-file and output conventions. Version everything in git.</span></span></li>
-      <li><span><b>Seed the root conventions.</b> <span class="why">Write down what’s true for every run: the standard for a finding, the output format, the review protocol. Keep it general; the specifics go one layer down.</span></span></li>
-      <li><span><b>Write the per-task file — and name your ground-truth sources.</b> <span class="why">The criteria for this task, and exactly which files or systems are authoritative for verifying a claim. Separate what’s authoritative from what your subject was entitled to rely on.</span></span></li>
-      <li><span><b>Fix the working-file shape.</b> <span class="why">An evidence ledger (claim + source, written as you draft), a defined output format, one review file per round. Make the reasoning recoverable.</span></span></li>
-      <li><span><b>Turn on memory for continuity.</b> <span class="why">Let a fresh session start knowing the last run’s state and your standing preferences, without re-explaining.</span></span></li>
-      <li><span><b>Run the harness and the loop.</b> <span class="why">Independent reviewer per unit, blind to the rest; a lead pass for cross-unit consistency; re-audit whole units; stop only on one clean pass over everything.</span></span></li>
-      <li class="key"><span><b>Write every lesson back into the docs.</b> <span class="why">This is the step that makes it worth doing. Each failure becomes a rule; the instruction set gets stronger every run instead of resetting to zero.</span></span></li>
-      <li><span><b>Keep a human on the judgment calls, and keep the trail.</b> <span class="why">What changed, and what it changed from, is the audit record — it’s how a later reader trusts the result.</span></span></li>
-    </ol>
-
-    <div class="card good" style="margin-top:1.8rem">
-      <h3>Working solo, or without a multi-agent setup?</h3>
-      <p class="subtle" style="margin:0">The instruction files and memory work with a single agent — the layering and the write-back loop are the valuable parts, and neither needs a fleet. You can even be your own auditor: draft, let it rest, and return as a stranger who must verify every claim against its source with no memory of writing it. The ledger is what makes that honest — “re-checking” means checking sources, not re-reading your own reasoning.</p>
-    </div>
-  </section>
-
-  <footer>
-    <div class="divider-label">A method for high-stakes AI-agent work · share freely</div>
-    <p style="margin:.7rem 0 0; font-family:var(--mono); font-size:.76rem; color:var(--ink-faint)">Repository &amp; templates: <a href="https://github.com/henkaku-center/grade-it-like-an-audit">github.com/henkaku-center/grade-it-like-an-audit</a></p>
-    <p style="margin:.4rem 0 0; font-family:var(--mono); font-size:.76rem; color:var(--ink-faint)">By Joseph Austerweil (@josephausterweil) · originated by Ira Winder (@irawinder) · CC BY 4.0</p>
-  </footer>
-
-</div>
+</main>
+<footer>
+  <div class="wrap">
+    <p class="divider-label">A method for high-stakes AI-agent work &middot; share freely</p>
+    <p><a href="https://github.com/henkaku-center/grade-it-like-an-audit">github.com/henkaku-center/grade-it-like-an-audit</a></p>
+    <p>By Joseph Austerweil (@josephausterweil) &middot; originated by Ira Winder (@irawinder) &middot; CC BY 4.0<br>
+    Built at the <a href="https://cml.chibatech.dev/">Computational Mind Lab</a>, Chiba Institute of Technology.</p>
+    <p>Provided &ldquo;as is,&rdquo; without warranty. Not legal advice, and nothing here establishes compliance
+    with FERPA, GDPR, or any institutional policy. See <a href="limits.html#liability">Limits &amp; privacy</a>.</p>
+  </div>
+</footer>
+</body>
+</html>

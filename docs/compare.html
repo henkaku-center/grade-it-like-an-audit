@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it compares — Grade it like an audit</title>
+<meta name="description" content="The AI-grading landscape surveyed honestly: where commercial tools and PrairieLearn are genuinely ahead, what this method combines that no surveyed project does, and the searches backing every absence claim.">
+<link rel="canonical" href="https://henkaku-center.github.io/grade-it-like-an-audit/compare.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grade it like an audit">
+<meta property="og:title" content="How it compares — Grade it like an audit">
+<meta property="og:description" content="The AI-grading landscape surveyed honestly: where commercial tools and PrairieLearn are genuinely ahead, what this method combines that no surveyed project does, and the searches backing every absence claim.">
+<meta property="og:url" content="https://henkaku-center.github.io/grade-it-like-an-audit/compare.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How it compares — Grade it like an audit">
+<meta name="twitter:description" content="The AI-grading landscape surveyed honestly: where commercial tools and PrairieLearn are genuinely ahead, what this method combines that no surveyed project does, and the searches backing every absence claim.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23e6e4db'/><path d='M3 4h10M3 8h10M3 12h6' stroke='%2397302b' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="sitenav" aria-label="Site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Grade it like an audit</a>
+    <a class="nl" href="index.html">Overview</a>
+    <a class="nl" href="how-it-works.html">How it works</a>
+    <a class="nl" href="limits.html">Limits &amp; privacy</a>
+    <a class="nl" href="compare.html" aria-current="page">How it compares</a>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button">System</button>
+  </div>
+</nav>
+<main id="main">
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">The landscape, honestly surveyed</p>
+    <h1>How it compares</h1>
+    <p class="lead">Surveyed 2026&#8209;08&#8209;24 and re-verified 2026&#8209;08&#8209;26. Per this
+    method's own discipline, the places competitors are <em>ahead</em> come first, and the searches
+    that back every &ldquo;nobody does this&rdquo; claim are listed at the bottom so you can repeat
+    them.</p>
+  </div>
+</header>
+
+<section id="ahead">
+  <div class="wrap">
+    <p class="eyebrow">First, the honest part</p>
+    <h2>Where others are genuinely ahead</h2>
+
+    <p>If you want AI grading that is convenient, integrated with your LMS, supported, and proven at
+    institutional scale, <strong>this project is not your best option and is not trying to be.</strong>
+    It is a rigour layer, not a convenience rival.</p>
+
+    <ul class="tight">
+      <li><strong>Commercial products are ahead on everything operational.</strong>
+      <a href="https://guides.gradescope.com/hc/en-us/articles/24838908062093-AI-assisted-grading-and-answer-groups">Gradescope</a>
+      (AI answer-grouping at institutional scale), <a href="https://cograder.com">CoGrader</a>,
+      <a href="https://www.briskteaching.com">Brisk</a>, <a href="https://www.classcompanion.com">Class
+      Companion</a> and others have real interfaces, LMS integration, grade passback, support
+      contracts, and compliance positioning. None of that exists here.</li>
+      <li><strong><a href="https://docs.prairielearn.com/aiGrading/">PrairieLearn</a> is ahead on
+      battle-tested infrastructure</strong> and a human-override workflow proven at course scale, in
+      an open-source platform with a real community.</li>
+      <li><strong><a href="https://github.com/Xiaochr/LLM-AES">LLM-AES</a> is ahead on academic
+      validation</strong> &mdash; peer-reviewed at LAK25. This project has honest internal run
+      statistics, which is not the same thing as external peer review, and should not be confused
+      with it.</li>
+      <li><strong><a href="https://github.com/ChantillyAn/homework-grader">homework-grader</a> had the
+      calibration idea first.</strong> Its quantitative teacher-calibration was ahead of this
+      project's original design, and <code>/grade-audit calibrate</code> exists because that was the
+      right idea. Credited here rather than quietly absorbed. (It appears dormant: at survey time its
+      repository was created and last pushed on the same day, 2026&#8209;02&#8209;22, at 7 stars &mdash;
+      which is part of why the idea needed a maintained home.)</li>
+    </ul>
+  </div>
+</section>
+
+<section id="table">
+  <div class="wrap">
+    <p class="eyebrow">Direct comparison</p>
+    <h2>Things you could install or adopt instead</h2>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Project</th><th>Type</th><th>Evidence-cited judgments</th>
+        <th>Independent audit pass</th><th>Write-back</th><th>Human in the loop</th>
+        <th>Published validation</th></tr></thead>
+      <tbody>
+        <tr><td><b>Grade it like an audit</b></td><td>Method + Claude Code plugin</td>
+          <td>Every judgment named and evidenced; praise audited too</td>
+          <td>Blind subagent per unit, lead consistency pass, explicit convergence bound</td>
+          <td>Every caught failure becomes a durable rule</td>
+          <td>Per-fix approval; one human reader outside the loop</td>
+          <td>Honest run statistics, failures included</td></tr>
+        <tr><td><a href="https://github.com/ChantillyAn/homework-grader">homework-grader</a></td><td>Claude Code skill</td>
+          <td>Mandatory quote per dimension</td>
+          <td>Bias controls and &kappa;-calibration; single grader, no second reviewer</td>
+          <td>Manual rubric refinement</td><td>Teacher calibrates and reviews flags</td>
+          <td>Built-in &kappa;/&rho;/MAD machinery; no external statistics</td></tr>
+        <tr><td><a href="https://github.com/YujxZJCN/teaching-skills">teaching-skills</a></td><td>Claude Code skill suite</td>
+          <td>Evidence-bound outputs</td><td>Deterministic gates; no blind fan-out</td>
+          <td>Per-term improvement record</td><td>Professor checkpoints</td><td>&mdash;</td></tr>
+        <tr><td><a href="https://github.com/rudini/claude-edu-plugins">claude-edu-plugins</a></td><td>Plugin (Moodle/Kahoot)</td>
+          <td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Partial</td><td>&mdash;</td></tr>
+        <tr><td><a href="https://github.com/Xiaochr/LLM-AES">LLM-AES</a></td><td>Research framework</td>
+          <td>Score-oriented</td><td>Dual-process (LLM plus supervised model)</td>
+          <td>&mdash;</td><td>Yes</td><td><b>Peer-reviewed (LAK25)</b></td></tr>
+        <tr><td><a href="https://docs.prairielearn.com/aiGrading/">PrairieLearn AI grading</a></td><td>Course platform feature</td>
+          <td>Per-submission rationale; full prompt transparency</td>
+          <td>Human review and override instead</td><td>&mdash;</td>
+          <td>The human grade always wins</td><td>Instructor-reported accuracy</td></tr>
+      </tbody>
+    </table></div>
+
+    <p class="src">Capabilities for homework-grader and teaching-skills are taken from their READMEs
+    rather than from code inspection; commercial claims are vendor claims. If this table misses a
+    competitor, please open an issue &mdash; it follows the same rule as everything else here: it gets
+    corrected, and the correction is the point.</p>
+  </div>
+</section>
+
+<section id="unique">
+  <div class="wrap">
+    <p class="eyebrow">The claim, stated so it can be checked</p>
+    <h2>What is actually unique</h2>
+
+    <p>Not &ldquo;AI grading.&rdquo; Plenty of tools do that, and several do it better than this one
+    in every way a busy department would care about. What no surveyed project combines is these five
+    at once:</p>
+
+    <figure>
+      <div class="tablewrap"><table>
+        <thead><tr><th>&nbsp;</th><th>Blind per-unit fan-out</th><th>Cross-unit consistency pass</th>
+          <th>Convergence bound</th><th>Structural write-back</th><th>Failure-inclusive stats</th>
+          <th>Total</th></tr></thead>
+        <tbody>
+          <tr><td><b>Grade it like an audit</b></td>
+            <td class="score on">&#9679;</td><td class="score on">&#9679;</td><td class="score on">&#9679;</td>
+            <td class="score on">&#9679;</td><td class="score on">&#9679;</td><td class="num"><b>5</b></td></tr>
+          <tr><td>homework-grader</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td>
+            <td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="num">0</td></tr>
+          <tr><td>teaching-skills</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td>
+            <td class="score off">&#9675;</td><td class="score on">&#9679;</td><td class="score off">&#9675;</td><td class="num">1</td></tr>
+          <tr><td>LLM-AES</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td>
+            <td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="score on">&#9679;</td><td class="num">1</td></tr>
+          <tr><td>PrairieLearn</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td>
+            <td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="num">0</td></tr>
+          <tr><td>claude-edu-plugins</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td>
+            <td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="score off">&#9675;</td><td class="num">0</td></tr>
+        </tbody>
+      </table></div>
+      <figcaption><b>Figure 11.</b> Scored from public documentation, generously where ambiguous. The
+      honest reading is not &ldquo;this one is best&rdquo; &mdash; it is that <b>these five properties
+      are unoccupied territory</b>, and a project that wants them has to build them.</figcaption>
+    </figure>
+
+    <p>The convergence bound is the one most likely to be undervalued. Every grading loop can detect
+    problems; far fewer can detect that they have <em>started auditing their own repairs</em>, which
+    is how a careful process turns into an expensive one that never terminates. That failure happened
+    here, on a real run, and the rule exists because of it.</p>
+
+    <p>Worth noting on the official side: Anthropic's
+    <a href="https://github.com/anthropics/k12-teacher-skills">k12-teacher-skills</a> (400 stars at
+    re-verification, up from 394) covers lesson planning and differentiation and
+    <strong>does not grade</strong>. Official adjacent interest; unoccupied niche.</p>
+  </div>
+</section>
+
+<section id="searches">
+  <div class="wrap">
+    <p class="eyebrow">Show your work</p>
+    <h2>The searches behind the absence claims</h2>
+
+    <p>Claiming &ldquo;no existing Claude Code skill does audit-style grading&rdquo; requires showing
+    the searches that failed to find one. Run 2026&#8209;08&#8209;24, re-verified 2026&#8209;08&#8209;26:</p>
+
+    <ol class="recipe">
+      <li><b>Four awesome-lists</b> <span class="why">&mdash; hesreallyhim/awesome-claude-code,
+      travisvn/awesome-claude-skills, karanb192/awesome-claude-skills, BehiSecc/awesome-claude-skills
+      &mdash; grepped for grade, grading, grader, rubric, essay, homework, teacher, assess. Zero
+      student-work grading entries.</span></li>
+      <li><b>GitHub API repository searches</b> <span class="why">&mdash; &ldquo;claude skill
+      grading&rdquo;, &ldquo;claude grader&rdquo;, &ldquo;claude-code rubric&rdquo;, &ldquo;claude
+      skill essay grading&rdquo;, by stars. No audit-style grading skill; the only additional grading
+      skill was a 2-star single-purpose IELTS scorer.</span></li>
+      <li><b>Web search for blind or independent per-submission subagent grading</b>
+      <span class="why">&mdash; generic subagent tutorials only.</span></li>
+      <li><b>The SkillsMP marketplace</b> <span class="why">&mdash; query &ldquo;grading&rdquo;. No
+      student-work grading skills.</span></li>
+      <li><b>The official anthropics/skills repository</b> <span class="why">&mdash; 17 skills, none
+      education or grading. Verified via secondary walkthroughs; marked high-confidence rather than
+      file-by-file.</span></li>
+      <li class="key"><b>Re-verified on 2026&#8209;08&#8209;26</b> <span class="why">&mdash; a fresh
+      recency-sorted search surfaced no new grading skill in the intervening period. The one true peer
+      remains dormant. The landscape not moving is itself the finding.</span></li>
+    </ol>
+
+    <div class="nextpage">
+      <a href="index.html">Back to the overview &rarr;</a>
+      <a href="how-it-works.html">How it works &rarr;</a>
+      <a href="limits.html">What it cannot do &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap">
+    <p class="divider-label">A method for high-stakes AI-agent work &middot; share freely</p>
+    <p><a href="https://github.com/henkaku-center/grade-it-like-an-audit">github.com/henkaku-center/grade-it-like-an-audit</a></p>
+    <p>By Joseph Austerweil (@josephausterweil) &middot; originated by Ira Winder (@irawinder) &middot; CC BY 4.0<br>
+    Built at the <a href="https://cml.chibatech.dev/">Computational Mind Lab</a>, Chiba Institute of Technology.</p>
+    <p>Provided &ldquo;as is,&rdquo; without warranty. Not legal advice, and nothing here establishes compliance
+    with FERPA, GDPR, or any institutional policy. See <a href="limits.html#liability">Limits &amp; privacy</a>.</p>
+  </div>
+</footer>
+</body>
+</html>

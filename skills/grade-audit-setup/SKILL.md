@@ -18,8 +18,8 @@ call that is theirs.
    clearly-marked section or write the task file one level down, and show every diff
    before writing. If real submissions/material already exist here, note where, and treat
    them as read-only throughout.
-2. **Interview — seven questions plus three follow-ups (Q5b strictness, Q6a institutional
-   coverage, Q6b coded units), ONE at a time.** Full scripts, plain-language phrasings,
+2. **Interview — seven questions plus four follow-ups (Q5b strictness, Q6a institutional
+   coverage, Q6b coded units, Q6c disclosure to subjects), ONE at a time.** Full scripts, plain-language phrasings,
    and the four-domain example table (grading / code review / compliance audit / contract
    review) are in `references/interview-guide.md`. The seven: the task; the unit of work;
    the output and its audience; the ground-truth sources; the criteria — with the

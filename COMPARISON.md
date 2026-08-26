@@ -1,6 +1,12 @@
 # How this compares — the landscape, honestly surveyed
 
-Surveyed 2026-08-24 (GitHub stats from that day). Per this method's own discipline, the
+Surveyed 2026-08-24 (GitHub stats from that day); **re-verified 2026-08-26** against the
+GitHub API — the landscape had not moved, which is itself the finding. homework-grader was
+still 7★ and still created-and-last-pushed on the same day; teaching-skills unchanged at 23★;
+`k12-teacher-skills` grew 394★ → 400★ and still does not grade. A recency-sorted search
+surfaced no new grading skill in the interval; the only adjacent arrivals were
+`StudentSuite/awesome-skills-plugins-for-students` (student-side helpers) and
+`halfmoon-mind/rubric-evaluator` (which grades *skill directories*, not student work). Per this method's own discipline, the
 absence claims at the bottom list the searches that backed them, and the places
 competitors are *ahead* of us are stated as plainly as the places they are not.
 

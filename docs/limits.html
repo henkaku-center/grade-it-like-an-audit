@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limits & privacy — Grade it like an audit</title>
+<meta name="description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<link rel="canonical" href="https://henkaku-center.github.io/grade-it-like-an-audit/limits.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grade it like an audit">
+<meta property="og:title" content="Limits & privacy — Grade it like an audit">
+<meta property="og:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<meta property="og:url" content="https://henkaku-center.github.io/grade-it-like-an-audit/limits.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Limits & privacy — Grade it like an audit">
+<meta name="twitter:description" content="What this method cannot do, published with the same care as what it can: the defect that survived 45 reviews, the comparative-disclosure limitation, why coded units are pseudonymization and not anonymization, and where responsibility rests.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23e6e4db'/><path d='M3 4h10M3 8h10M3 12h6' stroke='%2397302b' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="sitenav" aria-label="Site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Grade it like an audit</a>
+    <a class="nl" href="index.html">Overview</a>
+    <a class="nl" href="how-it-works.html">How it works</a>
+    <a class="nl" href="limits.html" aria-current="page">Limits &amp; privacy</a>
+    <a class="nl" href="compare.html">How it compares</a>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button">System</button>
+  </div>
+</nav>
+<main id="main">
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Read this before your first real run</p>
+    <h1>Limits &amp; privacy</h1>
+    <p class="lead">A methodology page that only advertises itself is worthless. This one publishes
+    its blind spots and its bill, because they were paid for.</p>
+    <p class="subtle">Nothing on this page is legal advice. Where it describes a safeguard, it also
+    describes what that safeguard does not cover &mdash; which is usually the part you needed to
+    know.</p>
+  </div>
+</header>
+
+<section id="numbers">
+  <div class="wrap">
+    <p class="eyebrow">The record</p>
+    <h2>What the method has actually done, counted</h2>
+
+    <p>Across two hardening runs: <strong>14 audit rounds, 70 independent reviews, 0 outcome
+    changes.</strong> Every finding was a grounding or phrasing defect &mdash; a misquote, a wrong
+    number, an overclaim. The loop is excellent at protecting the prose and the evidence. On this
+    record it has never once changed a grade.</p>
+
+    <p>One run converged in five rounds, and three of its catches were errors inside a previous
+    round's fix. One run <strong>ran nine rounds and never converged</strong>; it was ended by a diff
+    of what actually ships, not by a clean pass, after the loop began finding defects mostly in its
+    own repairs. A third run, more recently, converged in four rounds and fired the write-back step
+    for the first time &mdash; with the caveat that its clean round came from a smaller model on a
+    deliberately narrowed scope, which is the ambiguous case rather than the triumphant one.</p>
+
+    <div class="card warn">
+      <p class="lbl">The defect the whole apparatus missed</p>
+      <p>After all nine rounds of the run that never converged &mdash; <strong>forty-five separate
+      reviews</strong> &mdash; one human reading the finished material cold found a defect every one
+      of them had passed. It was a claim about the world: <em>&ldquo;this will serve you well.&rdquo;</em>
+      Nothing in any source can falsify a claim about the future, so source-checking waves it through
+      every time.</p>
+      <p>This is the structural version of the problem, and it does not go away with more reviewers:
+      <strong>a harness converges on the failure modes it was built to catch, and grows blind to the
+      rest in proportion to how well it works.</strong> The better your loop gets, the more you need
+      someone outside it. More subagents is not the fix. A person is.</p>
+    </div>
+
+    <p>Size your expectations accordingly. If you want the <em>outcomes</em> protected, that
+    protection is your judgment plus the evidence discipline &mdash; not the round count.</p>
+  </div>
+</section>
+
+<section id="crossref">
+  <div class="wrap">
+    <p class="eyebrow">The limitation to read twice</p>
+    <h2>One student appearing in another student's feedback</h2>
+
+    <p>Naming one student inside another's feedback is a <strong>never-event</strong> here: not a
+    finding to be priced, but a condition that stops the run. The harness checks for it mechanically
+    every round rather than only at delivery. But there are four ways one student can surface in
+    another's letter, and only three of them leave something a machine can match.</p>
+
+    <figure>
+      <div class="coverage">
+        <div class="cov mech"><span class="mark">&check;</span><span>
+          <b>A unit code</b>
+          <span class="how">Checked every round. Codes are tokens; a token can be searched for.</span></span></div>
+        <div class="cov mech"><span class="mark">&check;</span><span>
+          <b>A real name</b>
+          <span class="how">Checked at delivery, where the name map is legitimately in hand. The
+          grading session itself is denied that map by design.</span></span></div>
+        <div class="cov mech"><span class="mark">&check;</span><span>
+          <b>A verbatim quote of another unit's work</b>
+          <span class="how">Checked by <code>--verify-quotes</code>, which also catches quotes that
+          are sourced nowhere at all.</span></span></div>
+        <div class="cov open"><span class="mark">&#33;</span><span>
+          <b>An identifying description carrying no name and no quote</b>
+          <span class="how">&ldquo;<em>the only submission that used a permutation test</em>&rdquo; &mdash;
+          <strong>no token to match.</strong> This one rests on the auditors'
+          cross-contamination check and the lead pass, both of which are judgment, not
+          mechanism.</span></span></div>
+      </div>
+      <figcaption><b>Figure 9.</b> Three of four are mechanical. The fourth is not, and no naming
+      scheme fixes it &mdash; the leak is in the <em>meaning</em> of the sentence, not in any string
+      it contains.</figcaption>
+    </figure>
+
+    <div class="card warn">
+      <p class="lbl">Stated plainly, because it matters</p>
+      <p>The method forbids naming or characterizing another student in a student's feedback, and
+      checks for it mechanically wherever a check is possible. But a comparative remark can disclose
+      without naming anyone: <em>&ldquo;yours was the only submission that used X&rdquo;</em> tells
+      the reader something about everyone else's work. We attempt to avoid these.
+      <strong>That is not guaranteed.</strong></p>
+      <p>This matters beyond good taste. Guidance to faculty commonly states that you may not
+      discuss, reveal, or compare one student's performance with another's, and
+      <a href="https://studentprivacy.ed.gov/content/personally-identifiable-information-education-records">indirect
+      identifiers</a> can distinguish a person through linkage even when no direct identifier is
+      present. A remark that discloses nothing by name can still disclose by elimination, and small
+      classes make that easy &mdash; in a seminar of six, &ldquo;the only one who&hellip;&rdquo;
+      identifies somebody.</p>
+      <p>We check what can be checked mechanically. <strong>The last read is yours.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <p class="eyebrow">Privacy</p>
+    <h2>What coding units buys, and what it does not</h2>
+
+    <p><code>code-units.py</code> replaces student names on submission folders with random,
+    per-run codes, copies everything byte-for-byte with hash verification, and keeps the map outside
+    the workspace. It is worth doing. It is not anonymization, and the difference is not a
+    technicality.</p>
+
+    <figure>
+      <div class="flow">
+        <div class="fbox stays">
+          <span class="ftitle">Pseudonymized</span>
+          <span class="fbody"><code>unit-a/</code>, <code>unit-b/</code> &mdash; random codes,
+          reshuffled every run, so a code is never a profile you can follow across
+          assignments.</span>
+        </div>
+        <div class="fbox danger">
+          <span class="ftitle">But the key exists</span>
+          <span class="fbody">You hold the map, because you have to return grades to real people.
+          <strong>GDPR Recital 26:</strong> if a key can re-attribute the data, it is still personal
+          data and the Regulation applies in full. This is a security measure, not an
+          exemption.</span>
+        </div>
+        <div class="fbox danger">
+          <span class="ftitle">And the content is the record</span>
+          <span class="fbody"><strong>FERPA &sect;99.31(b):</strong> de-identification needs indirect
+          identifiers gone <em>and</em> a reasonable determination that identity is not ascertainable.
+          On student prose you cannot make that determination.</span>
+        </div>
+      </div>
+      <figcaption><b>Figure 10.</b> Why the codes are random rather than hashed: hashing a name is
+      reversible against a class roster in microseconds, and the same FERPA provision requires a code
+      <b>not based on</b> the student's own information.</figcaption>
+    </figure>
+
+    <div class="card accent">
+      <p class="lbl">The headline limit</p>
+      <p><strong>It codes the container, not the content.</strong> If a submission says
+      &ldquo;By Jane Doe&rdquo; inside, it still does. On one real cohort, <strong>5 of 5 units
+      carried identity findings inside their file contents</strong> &mdash; and 5,628 of the 5,629
+      individual findings sat in agent session transcripts rather than in the deliverables. The pass
+      <em>reports</em> where identity remains; it deliberately does not rewrite anything, because an
+      earlier version that did rewrite contents broke the method's own attribution check, folding a
+      collaborator into the subject's code and manufacturing precisely the defect the method exists to
+      catch. The real fixes are upstream: anonymous export from your LMS, or an assignment instruction
+      to keep names in the LMS field and out of the files.</p>
+    </div>
+
+    <p>Two more honest edges. The <code>deny</code> rule the script prints for your settings file
+    blocks the Read tool and <code>cat</code> on the key directory; it does not stop
+    <code>grep</code>, <code>less</code>, or a Python one-liner, and the map sits under the same user
+    account as the session. It is a guardrail that makes casual access fail loudly, <strong>not a
+    sandbox.</strong> And auditor blindness is likewise by construction of context rather than by
+    enforcement: there is no per-unit filesystem sandbox, and an agent's &ldquo;files I read&rdquo;
+    line is itself a claim.</p>
+
+    <p>What is verifiable: every script this plugin ships reads and writes local files and contains no
+    network code at all. You can check that yourself with a grep for <code>urllib</code>,
+    <code>requests</code>, <code>socket</code>, and <code>http</code>. What leaves your machine is
+    whatever your Claude session sends under your own plan's terms &mdash; the plugin adds no
+    destination of its own.</p>
+  </div>
+</section>
+
+<section id="blindspots">
+  <div class="wrap">
+    <p class="eyebrow">By design</p>
+    <h2>Eight things it cannot do</h2>
+
+    <div class="ctx-grid">
+      <div class="ctx"><p class="scope">01</p><h3>Claims about the world</h3>
+        <p>Predictions and reception claims &mdash; &ldquo;this will serve you well&rdquo; &mdash;
+        have no source that can falsify them. The harness cannot tick that box, and says so.</p></div>
+      <div class="ctx"><p class="scope">02</p><h3>The criteria themselves</h3>
+        <p>It defends every judgment against your rubric; it never questions the rubric. A criterion
+        whose evidence was never collected is decoration.</p></div>
+      <div class="ctx"><p class="scope">03</p><h3>Shared model blind spots</h3>
+        <p>Independent reviewers drawn from the same model share failure modes. More of them will not
+        help. A human outside the loop will.</p></div>
+      <div class="ctx"><p class="scope">04</p><h3>Fairness across the set</h3>
+        <p>Pricing, not detection, is where a run goes wrong. A run can be evidence-perfect and still
+        unfair, because fairness is a property of the set and no blind auditor can see the set.</p></div>
+      <div class="ctx"><p class="scope">05</p><h3>Comparative disclosure</h3>
+        <p>The fourth column of Figure 9. An identifying description with no name and no quote has no
+        token to match.</p></div>
+      <div class="ctx"><p class="scope">06</p><h3>Settling strictness</h3>
+        <p>The same submissions scored 96&ndash;100 under one rulebook and 63&ndash;84 under another.
+        That axis is yours, and the presets do not decide it.</p></div>
+      <div class="ctx"><p class="scope">07</p><h3>Enforcing an average for free</h3>
+        <p>Forcing an average onto a cohort that really is excellent, or really is weak, misreports
+        them. The residual is always reported, never absorbed.</p></div>
+      <div class="ctx"><p class="scope">08</p><h3>Guaranteeing isolation</h3>
+        <p>Blindness comes from what an auditor's prompt contains. There is no filesystem sandbox
+        behind it.</p></div>
+    </div>
+
+    <p>Two more that are less structural and worth knowing. Criteria that seem obvious can be read
+    incompatibly: independent reviewers handed identical evidence once scored a single criterion
+    across a <strong>twelve-point spread on a twenty-point scale</strong> &mdash; not disagreement
+    about quality, but disagreement about what was even being read. And a self-test that passes
+    proves less than it looks: three separate defects in one session sat behind green suites, because
+    the tests exercised what the code did rather than what the documentation promised.</p>
+  </div>
+</section>
+
+<section id="when-not">
+  <div class="wrap">
+    <p class="eyebrow">Fit</p>
+    <h2>When not to use this</h2>
+
+    <ul class="tight">
+      <li><strong>As an outcome oracle.</strong> The harness proposes; you dispose. If you want a
+      system to decide grades unsupervised, this is not it, on purpose.</li>
+      <li><strong>Before your institution has approved it &mdash; for real student work, full
+      stop.</strong> Until then: the synthetic demo, a de-identified <code>check-mine</code>, or an
+      anonymized pilot.</li>
+      <li><strong>For work with no ground truth to check against.</strong> The whole discipline rests
+      on being able to open a source and see whether a claim holds. Where nothing can be checked,
+      this method has no advantage over careful reading.</li>
+      <li><strong>When one careful pass would do.</strong> A round over N units costs N auditor
+      subagents plus a lead pass, three to five times over. For a handful of short submissions that
+      is not a good trade.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="liability">
+  <div class="wrap">
+    <p class="eyebrow">Responsibility</p>
+    <h2>Whose call this is</h2>
+
+    <div class="card accent">
+      <p>This project &mdash; the methodology, templates, plugin, and documentation &mdash; is
+      provided <strong>&ldquo;as is,&rdquo; without warranty of any kind</strong>, express or implied.
+      It is not legal advice, and nothing in it establishes compliance with FERPA, GDPR, or any other
+      law, regulation, or institutional policy.</p>
+      <p><strong>You are solely responsible for how you use it:</strong> for confirming that your use
+      of any AI service on student work or other personal data complies with applicable law and with
+      your institution's policies and agreements, and for the evaluative decisions you ship. To the
+      maximum extent permitted by law, the authors accept <strong>no liability for inappropriate,
+      unauthorized, or non-compliant use</strong> of this project or of any AI service used with it.</p>
+      <p class="src">The CC BY 4.0 licence carries the governing warranty and liability terms; this
+      restates them in plain words for this project's context.</p>
+    </div>
+
+    <p>We try hard on privacy and we cannot guarantee it. Approved-tool status at your institution is
+    <a href="https://associationdatabase.com/aws/ICAI/pt/sd/news_article/616421/_PARENT/layout_details/false">not
+    the whole compliance story</a> either. If you are unsure, the two questions worth asking your
+    registrar, privacy office, or counsel &mdash; in writing &mdash; are: <em>is this AI service
+    approved for student educational records at our institution, and under which agreement?</em> and
+    <em>what may I put into it: named records, de-identified records, or none?</em></p>
+
+    <p>The setup interview raises all of this whenever the material is student work, records your
+    answer, and never blocks you. It asks because the cost of guessing wrong falls on your students
+    and your institution. It defers to you because your institution's arrangements are yours to know,
+    not this plugin's to police.</p>
+
+    <div class="nextpage">
+      <a href="how-it-works.html">How it works &rarr;</a>
+      <a href="compare.html">How it compares &rarr;</a>
+      <a href="index.html">Back to the overview &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap">
+    <p class="divider-label">A method for high-stakes AI-agent work &middot; share freely</p>
+    <p><a href="https://github.com/henkaku-center/grade-it-like-an-audit">github.com/henkaku-center/grade-it-like-an-audit</a></p>
+    <p>By Joseph Austerweil (@josephausterweil) &middot; originated by Ira Winder (@irawinder) &middot; CC BY 4.0<br>
+    Built at the <a href="https://cml.chibatech.dev/">Computational Mind Lab</a>, Chiba Institute of Technology.</p>
+    <p>Provided &ldquo;as is,&rdquo; without warranty. Not legal advice, and nothing here establishes compliance
+    with FERPA, GDPR, or any institutional policy. See <a href="limits.html#liability">Limits &amp; privacy</a>.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,5 +1,8 @@
 # Interview guide — seven questions, plain language
 
+*(Plus four follow-ups: Q5b strictness, Q6a institutional coverage, Q6b coded units,
+Q6c disclosure to subjects.)*
+
 Ask in order, one per message. Each entry gives: the question (adapt wording to their
 context, keep the substance), why it's asked (say this in one sentence if the user seems
 unsure), and example answers across four domains so the user can answer by analogy.
@@ -174,6 +177,29 @@ this plugin cannot.
   responsibility, are the user's — say that last part in so many words.
 - In all cases, note once: this conversation is not legal advice, and use of the tool on
   student data is at the user's responsibility (see the Disclaimer in the README).
+
+**Q6c — disclosure to the subjects (ASKED whenever the subjects are students or other
+people receiving the feedback; NEVER a blocker).** "Will you tell students that an
+AI-assisted pass was part of how their feedback was produced — and if so, where: the
+syllabus, the assignment, or a line in the feedback itself?"
+
+Ask it because the recurring position across institutional AI guidance is that people
+being evaluated have an interest in knowing an automated system was involved, and because
+the same guidance holds the instructor accountable for explaining the basis of any
+decision. This tool is unusually well placed to satisfy both: every judgment already names
+its issue and cites a source, so an instructor who discloses has something concrete to
+disclose.
+
+- **If yes:** record where and in what words in the task CLAUDE.md. Offer the suggested
+  syllabus paragraph and one-line feedback footer from the data-handling reference as a
+  starting point — theirs to edit, not to adopt verbatim.
+- **If no, or not yet:** record that too, with the date, and move on. Say once that this is
+  the user's call: disclosure norms vary by institution and by course, and some
+  institutions set this centrally rather than leaving it to the instructor.
+- **Do not editorialize either way.** Ask, record, proceed. The one thing worth saying
+  plainly, once: whatever they choose, the claim they can defend is that a human set the
+  criteria, approved every judgment, and decided every grade — because on this workflow
+  that is true.
 
 ## Q7 — What the subject was owed
 

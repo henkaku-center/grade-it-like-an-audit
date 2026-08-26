@@ -50,10 +50,11 @@ These hold without being asked for, and the auditors enforce them:
 
 ## Data handling and institutional coverage
 
-[Recorded at setup from Q6a/Q6b. Delete this section only if the material involves no people.]
+[Recorded at setup from Q6a/Q6b/Q6c. Delete this section only if the material involves no people.]
 
 - **Institutional coverage (Q6a):** [what covers this use, in the user's own words] — recorded [date]
 - **Coded units (Q6b):** [yes / no]; `--keys` directory: [absolute path, outside this workspace]
+- **Disclosure to subjects (Q6c):** [yes — where and in what words / no / not yet] — recorded [date]
 - **Deny rule added to `.claude/settings.json`:** [yes / no]
 - **Names back at delivery:** `code-units.py --decode <keys>/<run>.map.json`, run outside the
   grading session; hand-check one row before sending the batch.

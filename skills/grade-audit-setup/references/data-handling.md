@@ -206,6 +206,40 @@ Disclaimer).
   wrong falls on your students and your institution — but it defers to you, because
   your institution's arrangements are yours to know, not this plugin's to police.
 
+## Telling students — suggested language you should edit
+
+Institutional AI guidance converges on two points that pull in the same direction: people
+being evaluated have an interest in knowing an automated system was involved, and the
+instructor remains accountable for explaining the basis of any decision. Setup asks about
+this at Q6c and records your answer; whether and how to disclose is yours to decide, and
+some institutions decide it centrally.
+
+If you do disclose, the useful thing about this workflow is that you have something
+concrete to say. Two drafts to adapt — **do not paste these unread**, they make factual
+claims about your course that only you can confirm:
+
+**For a syllabus or assignment page:**
+
+> Feedback in this course is written and graded by me. I use an AI-assisted review pass to
+> check my own drafts before I send them: it verifies that quotations are accurate, that
+> numbers match your submitted work, that arithmetic adds up, and that any credit or
+> criticism I give is supported by something in what you actually turned in. It flags
+> problems for me; I decide every point and every grade. If you would like to know more
+> about how your feedback was produced, ask me.
+
+**For a one-line footer on the feedback itself:**
+
+> Written and graded by [name]. An automated pass checked the quotations, figures, and
+> arithmetic in this letter before it was sent.
+
+Three things to keep true if you rewrite them. First, do not describe the tool as grading
+your students -- it drafts and prices, and you approve, so "I decide every point" is the
+claim to keep. Second, do not promise the check is exhaustive; it covers what leaves a
+trace, and [LIMITS.md](../../../LIMITS.md) says which forms those are. Third, if you tell
+students their work is de-identified before it reaches the model, make sure that is
+actually true of your setup (the coded-units pass codes the container, and the scan report
+tells you what identity the contents still carry).
+
 ## The one-line summary for a skeptic
 
 Everything the harness produces is a local file you can read; what leaves your machine is

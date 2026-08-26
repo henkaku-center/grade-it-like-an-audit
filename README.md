@@ -5,7 +5,9 @@ layered markdown, persistent memory, and a self-correcting write-back loop. Now 
 installable Claude Code plugin with a guided setup, a blind-auditor fan-out, and a
 12-to-18-minute demo that hunts planted defects in front of you.**
 
-<!-- demo recording goes here: docs/demo.gif — see RELEASING.md checklist -->
+*No demo recording exists yet — rather than stage one, the site publishes real output from
+recorded test runs instead: [what an auditor actually reports](https://henkaku-center.github.io/grade-it-like-an-audit/how-it-works.html#artifacts),
+from `docs/test-runs/`.*
 
 Most people instruct an AI agent by typing a prompt into a chat. That works for one-off
 tasks and falls apart for anything you do repeatedly and can't afford to get wrong: the
@@ -117,8 +119,17 @@ and why the last reader must be human.
 
 ## Read it
 
-- **[The illustrated guide](https://henkaku-center.github.io/grade-it-like-an-audit/)** —
-  a single-page walkthrough (summary + full detail).
+**The website** — [henkaku-center.github.io/grade-it-like-an-audit](https://henkaku-center.github.io/grade-it-like-an-audit/)
+
+| Page | What it covers |
+|---|---|
+| [Overview](https://henkaku-center.github.io/grade-it-like-an-audit/) | What it is, the honest numbers, and the three rungs before it touches anything real |
+| [How it works](https://henkaku-center.github.io/grade-it-like-an-audit/how-it-works.html) | The workflow end to end, with real recorded output, and every option you can turn |
+| [Limits & privacy](https://henkaku-center.github.io/grade-it-like-an-audit/limits.html) | What it cannot do, the comparative-disclosure limitation, and where responsibility rests |
+| [How it compares](https://henkaku-center.github.io/grade-it-like-an-audit/compare.html) | The landscape, with the places others are ahead stated first |
+
+**The source documents**
+
 - **[`METHODOLOGY.md`](METHODOLOGY.md)** — the full method as an editable document.
 - **[`DESIGN.md`](DESIGN.md)** — why the plugin is engineered the way it is, and the
   record of the harness being run on itself.

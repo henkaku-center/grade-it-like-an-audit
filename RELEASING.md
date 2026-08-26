@@ -22,8 +22,10 @@ a claim nothing can verify does not ship because it flatters the project.)
 3. Dogfood: run one audit round of the harness over the changed docs/skills; write back
    lessons; update the record in `DESIGN.md`.
 4. Update `CHANGELOG.md`; bump `version` in `.claude-plugin/plugin.json` (semver).
-5. Demo recording, if the demo changed: record `/grade-audit demo` (asciinema or GIF) →
-   `docs/demo.gif`, referenced from the README's placeholder comment.
+5. Demo recording — still never produced. If you record `/grade-audit demo` (asciinema or
+   GIF) put it at `docs/demo.gif` and link it from the README. Until then the README says
+   plainly that no recording exists and points at the real test-run artifacts instead; do
+   not reintroduce a placeholder that implies one is coming.
 6. Commit; `claude plugin tag` to create the release tag.
 7. Push canonical (`henkaku-center`); push the mirror: `git push origin main --tags` (the mirror is already configured as
    `origin`; canonical is the separately-named `henkaku-center` remote). Verify the README's Repository home section

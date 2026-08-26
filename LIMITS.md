@@ -135,8 +135,9 @@ Kept honest with counts, updated as runs happen:
   finding was verified and rejected. Record and the written-back lesson:
   `docs/test-runs/2026-08-25-release-dogfood/`.
 - Script self-tests, all in CI, all fixtures with hand-computed answers:
-  `code-units.py` **49/49**, `reconcile-deductions.py` **58/58**, `compare-runs.py` **13/13**
-  (up from 42/51/13 — the added checks are regressions for the dogfood's blockers).
+  `code-units.py` **64/64**, `reconcile-deductions.py` **82/82**, `compare-runs.py` **14/14**
+  (counts re-read from a run on 2026-08-26, not from prose — this line had drifted to
+  49/58/13 while the suites grew, which is the failure mode described below).
   The strictness work added hand-computed cases in both directions — a cohort of known average
   with targets above and below it, the asserted multiplier and the residual left by discrete
   rounding, the count of deductions that round away to notes, and the two degenerate cases
@@ -228,37 +229,9 @@ Kept honest with counts, updated as runs happen:
   against the plugin directory, taking **12 and 18 minutes**. The README previously promised
   "10 minutes" on no measurement; it now states the measured range. This closes, for the demo
   skill only, the gap LIMITS has carried since 0.1.0.
-- **The recursion ran, on real work: three full rounds (2026-08-25/26).** The first observed
-  convergence trajectory, on a live 3-unit workspace of real submissions:
-
-  | round | blockers | minors | notes | findings in prior fixes | matrix cells moved |
-  |---|---|---|---|---|---|
-  | 1 | 6 | 10 | 7 | — | 0 |
-  | 2 | 1 | 10 | 5 | ~5 | 0 |
-  | 3 | 1 | 1 | 7 | 1 family | 0 |
-
-  Blockers fell 6 → 1 → 1; round 2's findings were mostly defects introduced by round 1's own
-  fixes, which is the pattern METHODOLOGY predicts and the bounding rule exists for. The lead
-  scoped round 4 minimally by itself (fix and re-audit one unit whole; verify the others
-  byte-unchanged), which is the discipline working without being asked.
-
-  **The most useful number is the one that never moved.** `matrix cells moved` was 0 in every
-  round and the charges were identical across all three (5.5 / 6 / 4). The grades were stable
-  from round 1; what kept churning was the prose. That is exactly the separation the matrix
-  was added to make visible, and it says the loop was protecting the writing, not the outcome
-  — consistent with this file's headline record of 0 outcome changes in 14 earlier rounds.
-
-  Two defects only a multi-round run could expose, both fixed: the ruling queue **re-asked
-  questions already settled** (the underlying rows still differ, so the generator had no
-  memory of the matrix's Ruling column — by round 3 the queue was noise), and a question the
-  lead raised at round 3 **never reached the queue file at all**, because the merge was an
-  instruction to the orchestrator rather than a mechanism.
-
-  **Confound, recorded rather than hidden:** the operator switched to a smaller model at round
-  4, so round 4's counts are not comparable with rounds 1–3 and are excluded from the table
-  above. Rounds 1–3 ran on one tier throughout.
-- **The loop closed. Four rounds, convergence reached, write-back fired (2026-08-26).** The
-  full method has now run end to end on real work, which it had never done:
+- **The loop closed: four rounds on real work, convergence reached, write-back fired
+  (2026-08-25/26).** The first observed convergence trajectory, on a live 3-unit workspace of
+  real submissions — and the first time the full method has run end to end:
 
   | round | blockers | minors | notes | findings in prior fixes | matrix cells moved |
   |---|---|---|---|---|---|
@@ -267,24 +240,36 @@ Kept honest with counts, updated as runs happen:
   | 3 | 1 | 1 | 7 | 1 family | 0 |
   | 4 | **0** | **0** | 0 | none — CLEAN | 0 |
 
+  Blockers fell 6 → 1 → 1 → 0; round 2's findings were mostly defects introduced by round 1's
+  own fixes, which is the pattern METHODOLOGY predicts and the bounding rule exists for. The
+  lead scoped round 4 minimally by itself (fix and re-audit one unit whole; verify the others
+  byte-unchanged), which is the discipline working without being asked.
+
   Convergence by Rule 1: clean for the whole set on one pass, matrix stable, no open ruling
   requests. **Write-back fired**, appending two dated precedents traced to the human's own
   rulings — family granularity is a human call, and marked ellipses in quoted cites are
   acceptable iff every retained fragment verifies. That is the mechanism the method is named
   for, and until this run it had never executed.
 
-  **The number that never moved is still the most useful one.** `matrix cells moved` was 0 in
-  all four rounds and the charges were identical throughout (5.5 / 6 / 4). The outcome was
-  settled at round 1; four rounds of work went into the prose and the evidence. That matches
-  the headline record of 0 outcome changes across 14 earlier rounds, and it is the clearest
+  **The number that never moved is the most useful one.** `matrix cells moved` was 0 in all
+  four rounds and the charges were identical throughout (5.5 / 6 / 4). The outcome was settled
+  at round 1; four rounds of work went into the prose and the evidence. That matches the
+  headline record of 0 outcome changes across 14 earlier rounds, and it is the clearest
   statement of what this loop is for: it protects the writing and the grounding, not the grade.
 
+  Two defects only a multi-round run could expose, both fixed: the ruling queue **re-asked
+  questions already settled** (the underlying rows still differ, so the generator had no memory
+  of the matrix's Ruling column — by round 3 the queue was noise), and a question the lead
+  raised at round 3 **never reached the queue file at all**, because the merge was an
+  instruction to the orchestrator rather than a mechanism.
+
   **Two caveats on the clean round, because a clean pass is the easiest thing to over-read.**
-  Round 4 ran on a smaller model than rounds 1–3, and it was deliberately scoped to one unit
-  with the other two byte-frozen. A CLEAN verdict from a weaker model on a narrowed scope is
-  the ambiguous case, not the triumphant one. Mitigating it: the lead pass independently
-  re-verified that unit's CLEAN rather than accepting the auditor's checklist, and said so in
-  its report.
+  The operator switched to a smaller model at round 4, and the lead had narrowed the scope to
+  one unit with the other two byte-frozen. So round 4 is a convergence *event*, not a
+  comparable measurement in the same series as rounds 1–3, which ran on one tier throughout: a
+  CLEAN verdict from a weaker model on a narrowed scope is the ambiguous case, not the
+  triumphant one. Mitigating it, the lead pass independently re-verified that unit's CLEAN
+  rather than accepting the auditor's checklist, and said so in its report.
 - **Fresh-environment install test (2026-08-26)** — `RELEASING.md` step 8, never previously
   performed. `/plugin marketplace add henkaku-center/grade-it-like-an-audit` → install → demo,
   in an empty directory, from the published `v0.3.0` rather than a local `--plugin-dir`. The

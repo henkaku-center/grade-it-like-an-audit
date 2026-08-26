@@ -1,3 +1,46 @@
+## 0.4.0 — 2026-08-26
+
+**A public face, and the framing correction behind it.**
+
+- **New: a student-disclosure question at setup (Q6c).** Institutional AI guidance keeps
+  arriving at two points — people being evaluated have an interest in knowing an automated
+  system was involved, and the instructor remains accountable for explaining the basis of a
+  decision. The interview asked about institutional coverage and said nothing about the
+  students themselves. It now asks whether you intend to disclose and in what form, records the
+  answer in the task file, and offers suggested syllabus and footer wording in
+  `data-handling.md` that you are meant to edit rather than paste. Like Q6a, it asks, records,
+  and never blocks. No surveyed competitor prompts for this.
+- **New: a four-page website** at `docs/` — overview, how it works, limits & privacy, how it
+  compares — sharing one stylesheet, with fifteen pure-CSS figures and a working theme toggle.
+  The single page had no doctype, no `<head>`, and no viewport meta; every page now has a
+  complete document shell, Open Graph tags, and a favicon. `.nojekyll` added, because Pages
+  serves this repo with Jekyll on and would silently drop `_`-prefixed paths.
+- **The positioning is corrected, and this is the substantive change.** Draft copy led with
+  "it does not assign grades." That is false: the harness drafts evaluations, prices defect
+  families, and computes average-adjustment multipliers. It proposes grades. The site now says
+  so, and makes the truer claim instead — **a grading tool whose purpose is feedback**, where a
+  proposed grade is the arithmetic left after every deduction names an issue and cites a source.
+  An overclaim a reader can disprove in thirty seconds is exactly the failure this method exists
+  to catch, and it nearly shipped on the front page.
+- **Fixed: self-test counts were stale in two files and disagreed with each other.** `LIMITS.md`
+  said 49/58/13 and `DESIGN.md` said 51→60 for the same suite, while the real numbers were
+  **64/82/14**. Corrected from a run, with the lesson banked: a count in prose goes stale
+  silently every time a test is added, so cite counts from a run and prefer one home for a
+  number over two copies that agree today.
+- **Fixed: `LIMITS.md` recorded one convergence run twice**, as a three-round entry and a
+  four-round entry with identical shared rows, which a reader tallying runs would double-count.
+  Introduced in 0.3.2 by appending the completed record instead of replacing the in-progress
+  one. Now a single entry, keeping the unique material from both.
+- **Fixed: the demo recording was promised and never made.** `README.md` carried a placeholder
+  for a `docs/demo.gif` that does not exist. Rather than stage one, the README now says plainly
+  that no recording exists and points at the real recorded test-run artifacts, which the site
+  publishes verbatim.
+- `COMPARISON.md` re-verified 2026-08-26 against the GitHub API. The landscape had not moved,
+  which is itself the finding: the one true peer is still dormant, and `k12-teacher-skills` grew
+  394★ → 400★ and still does not grade.
+- Launch drafts in `docs/launch/` (LinkedIn, Bluesky, and a promotion checklist). Drafts only —
+  nothing has been posted.
+
 # Changelog
 
 ## 0.3.2 — 2026-08-26

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works — Grade it like an audit</title>
+<meta name="description" content="The full workflow: seven entry points, an eleven-step audit round, blind auditor fan-out, the deduction matrix, strictness presets, expected-average handling, convergence rules, and model costs — shown with real recorded output.">
+<link rel="canonical" href="https://henkaku-center.github.io/grade-it-like-an-audit/how-it-works.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grade it like an audit">
+<meta property="og:title" content="How it works — Grade it like an audit">
+<meta property="og:description" content="The full workflow: seven entry points, an eleven-step audit round, blind auditor fan-out, the deduction matrix, strictness presets, expected-average handling, convergence rules, and model costs — shown with real recorded output.">
+<meta property="og:url" content="https://henkaku-center.github.io/grade-it-like-an-audit/how-it-works.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How it works — Grade it like an audit">
+<meta name="twitter:description" content="The full workflow: seven entry points, an eleven-step audit round, blind auditor fan-out, the deduction matrix, strictness presets, expected-average handling, convergence rules, and model costs — shown with real recorded output.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23e6e4db'/><path d='M3 4h10M3 8h10M3 12h6' stroke='%2397302b' stroke-width='1.6'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="sitenav" aria-label="Site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Grade it like an audit</a>
+    <a class="nl" href="index.html">Overview</a>
+    <a class="nl" href="how-it-works.html" aria-current="page">How it works</a>
+    <a class="nl" href="limits.html">Limits &amp; privacy</a>
+    <a class="nl" href="compare.html">How it compares</a>
+    <span class="spacer"></span>
+    <button class="theme-toggle" type="button">System</button>
+  </div>
+</nav>
+<main id="main">
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">The workflow, end to end</p>
+    <h1>How it works</h1>
+    <p class="lead">Seven entry points, one audit round in eleven steps, and every option you can
+    turn. Everything below is shown with real output &mdash; the artifacts are from recorded test
+    runs kept in the repository, so you can open the originals and check that this page is not
+    flattering itself.</p>
+  </div>
+</header>
+
+<section id="entry">
+  <div class="wrap">
+    <p class="eyebrow">Where you can come in</p>
+    <h2>Seven entry points</h2>
+    <p>Typing <code>/grade-audit</code> with no argument reads your workspace off disk and tells you
+    which of these you want. You do not have to remember them.</p>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>What it does</th><th>Real data?</th></tr></thead>
+      <tbody>
+        <tr><td><code>demo</code></td><td>Grades three fictional students carrying seven planted
+          defects, unseals the answer key, and scores its own catch rate. Twelve to eighteen minutes,
+          measured twice.</td><td>No &mdash; synthetic</td></tr>
+        <tr><td><code>check-mine</code></td><td>The reverse audit. You wrote the evaluations; the
+          harness fact-checks your quotes, numbers, arithmetic, attributions, and praise. Nothing is
+          applied. The AI grades nothing at all.</td><td>Your writing</td></tr>
+        <tr><td><code>calibrate</code></td><td>You grade 3&ndash;5 units, the harness grades the same
+          ones blind, and <code>agreement.py</code> reports &kappa;, &rho;, and mean absolute
+          difference. Deterministic Python, so the agreement figures are computed rather than
+          asserted by a model.</td><td>A small pilot</td></tr>
+        <tr><td><code>setup</code></td><td>A plain-language interview &mdash; seven questions and
+          four follow-ups &mdash; that writes your whole workspace: the rulebook, the task file, the
+          output template, the directory tree. No template-filling by hand.</td><td>Sets up for real</td></tr>
+        <tr><td><code>run</code></td><td>One audit round. The eleven steps below.</td><td>Yes</td></tr>
+        <tr><td><code>status</code></td><td>Reads the files and reports where you are: units found,
+          their state, the round metrics table, what was written back, and the single next
+          step.</td><td>Read-only</td></tr>
+        <tr><td><code>bank &lt;lesson&gt;</code></td><td>Write-back between rounds. Drafts a dated
+          one-line precedent, decides whether it belongs to this task or to your standing rules, shows
+          you the diff, and appends only on approval.</td><td>Read-only until you approve</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="pillar" id="round">
+  <div class="wrap">
+    <p class="pillar-index">The round &mdash; 1 of 3</p>
+    <h2>One audit round, in eleven steps</h2>
+
+    <figure>
+      <div class="cycle">
+        <div class="cstep"><span class="cn">01</span><span><b>Preflight</b>
+          <span class="d">&mdash; confirm the rubric was fixed before grading, the sources of truth exist, and the units are all present.</span></span></div>
+        <div class="cstep"><span class="cn">02</span><span><b>Lead normalizes</b>
+          <span class="d">&mdash; one pass to make the drafts comparable in shape, so auditors are not flagging formatting differences as substance.</span></span></div>
+        <div class="cstep"><span class="cn">03</span><span><b>Fan out</b>
+          <span class="d">&mdash; one auditor subagent per unit, each with a fresh context containing only its own unit. Figure 4.</span></span></div>
+        <div class="cstep"><span class="cn">04</span><span><b>Build the deduction matrix</b>
+          <span class="d">&mdash; cluster findings into defect families and price them across every unit at once. Figure 5.</span></span></div>
+        <div class="cstep"><span class="cn">05</span><span><b>Lead consistency pass</b>
+          <span class="d">&mdash; the only reader that sees all units. Arbitrates the matrix and catches what blindness structurally hides.</span></span></div>
+        <div class="cstep"><span class="cn">5b</span><span><b>Expected-average check</b>
+          <span class="d">&mdash; if you set a target, report the gap and the honest ways to close it. Applies nothing.</span></span></div>
+        <div class="cstep emph"><span class="cn">06</span><span><b>Two things go to you, together</b>
+          <span class="d">&mdash; the findings table <em>and</em> the questions the harness cannot answer. Rulings are requested, never assumed.</span></span></div>
+        <div class="cstep"><span class="cn">07</span><span><b>Apply what you approved</b>
+          <span class="d">&mdash; then re-audit each touched unit <em>whole</em>, because a fix is new text and new text is where findings come from.</span></span></div>
+        <div class="cstep"><span class="cn">08</span><span><b>Rebuild the matrix and diff it</b>
+          <span class="d">&mdash; how many cells moved is the number that tells you whether outcomes are still in motion.</span></span></div>
+        <div class="cstep"><span class="cn">09</span><span><b>Convergence check</b>
+          <span class="d">&mdash; may you stop, and separately, should you keep trying? Two different questions. Figure 7.</span></span></div>
+        <div class="cstep emph"><span class="cn">10</span><span><b>Write-back</b>
+          <span class="d">&mdash; every lesson becomes a durable rule. <strong>The round is not closed without it.</strong></span></span></div>
+        <div class="cstep"><span class="cn">11</span><span><b>Round report</b>
+          <span class="d">&mdash; append one row of metrics, so the trajectory across rounds is visible rather than remembered.</span></span></div>
+      </div>
+      <figcaption><b>Figure 3.</b> Step 10 is the step that makes the rest worth repeating. A caught
+      failure that is not written back will be caught again next term, at full price.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="pillar" id="blind">
+  <div class="wrap">
+    <p class="pillar-index">The round &mdash; 2 of 3</p>
+    <h2>Blind auditors, and the one reader who sees everything</h2>
+
+    <figure>
+      <div class="fanout">
+        <div class="node lead">Lead consistency pass<span class="role">sees all units &middot; arbitrates &middot; once per round</span></div>
+        <div class="fan-stem"></div>
+        <div class="fan-row">
+          <div class="node">Auditor<span class="role">unit A only</span></div>
+          <div class="node">Auditor<span class="role">unit B only</span></div>
+          <div class="node">Auditor<span class="role">unit C only</span></div>
+          <div class="node">Auditor<span class="role">unit D only</span></div>
+          <div class="node">&hellip;<span class="role">one per unit</span></div>
+        </div>
+        <p class="fan-caption">read-only tools &middot; fresh context each &middot; no unit can see another</p>
+      </div>
+      <figcaption><b>Figure 4.</b> Isolation is <b>by construction of context</b>, not by enforcement:
+      an auditor is blind because of what its prompt contains, and there is no per-unit filesystem
+      sandbox behind that. We say so on <a href="limits.html">Limits</a> rather than implying a
+      guarantee we do not provide.</figcaption>
+    </figure>
+
+    <p>Blindness buys fairness in one direction and costs it in another. An auditor that cannot see
+    unit B cannot be contaminated by it &mdash; and also cannot notice that unit B was charged one
+    point for the very thing it just charged three for. Asking a blind reader to be consistent asks
+    for exactly what its isolation forbids. So consistency is not requested from the auditors at all.
+    It is <em>constructed</em>, in a document.</p>
+  </div>
+</section>
+
+<section class="pillar" id="matrix">
+  <div class="wrap">
+    <p class="pillar-index">The round &mdash; 3 of 3</p>
+    <h2>The deduction matrix</h2>
+
+    <p>Every finding is clustered into a defect <em>family</em> and priced across all units at once.
+    One binding rule governs it: <strong>one charge per (family, unit) &mdash; never per
+    instance.</strong> Charging every instance instead of one charge per family moved the mean
+    absolute error from 3.6 to 11.4 points on a /90 basis in testing, more than every other cause
+    combined. That one rule is worth more accuracy than everything else in the method.</p>
+
+    <figure>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Defect family</th><th>unit&#8209;a</th><th>unit&#8209;b</th><th>unit&#8209;c</th><th>Ruling</th></tr></thead>
+        <tbody>
+          <tr class="flagged"><td>Test statistic reported without degrees of freedom</td>
+            <td class="num">&mdash;</td><td class="num">n/a</td><td class="num">&minus;1</td>
+            <td><b>Flagged.</b> unit&#8209;a reports <code>F = 594.8, p &lt; 0.001</code>, equally without
+            df, and lost nothing. unit&#8209;b used a permutation test, so it is not comparable.</td></tr>
+          <tr><td>Included figure never discussed in the text</td>
+            <td class="num">&minus;1</td><td class="num">&mdash;</td><td class="num">&mdash;</td>
+            <td>Singleton. Consistent.</td></tr>
+          <tr><td>Quotation marks around a paraphrase</td>
+            <td class="num">&minus;0</td><td class="num">&mdash;</td><td class="num">&mdash;</td>
+            <td>Defect in the <em>evaluation</em>, not the submission. Fix the letter; charge nothing.</td></tr>
+        </tbody>
+      </table></div>
+      <figcaption><b>Figure 5.</b> A row reading <code>&mdash; | n/a | &minus;1</code> is
+      self-evidently a question, which is the entire point of building the grid. No blind auditor
+      could have raised it; the lead pass did, and it reached the human as a ruling request rather
+      than a silent decision.</figcaption>
+    </figure>
+
+    <div class="card accent">
+      <p class="lbl">Verbatim, from a recorded run</p>
+      <p><em>&ldquo;Test statistic without degrees of freedom deducted in one unit and waived in
+      another on identical evidence&hellip; The rubric is constant across students; a waiver applies
+      to all comparable units or none.&rdquo;</em></p>
+      <p class="src">&mdash; <a href="https://github.com/henkaku-center/grade-it-like-an-audit/blob/main/docs/test-runs/2026-08-24-demo-fixture/lead-consistency-report.md">docs/test-runs/2026-08-24-demo-fixture/lead-consistency-report.md</a></p>
+    </div>
+
+    <p>The same structure catches something else worth having. When three units make the identical
+    mistake, that is usually not three students being careless &mdash; it is a bug in the assignment.
+    In one real run the cross-unit view found that three submissions had inherited the same two errors
+    from the course's own scaffold code. None was charged, under the standing rule that you never
+    deduct for following an instruction you gave them. A blind per-unit reader would have charged all
+    three or none, and been confidently wrong either way.</p>
+  </div>
+</section>
+
+<section id="artifacts">
+  <div class="wrap">
+    <p class="eyebrow">Real output</p>
+    <h2>What an auditor actually reports</h2>
+
+    <p>Below is a genuine auditor report from the synthetic demo fixture, unedited. Note the last two
+    lines: a tally of what was checked and found <em>clean</em>, and a declaration of every file read.
+    A finding you can check is only half of it &mdash; the other half is knowing what was looked at.</p>
+
+    <div class="code">
+<span class="muted"># Auditor report &mdash; student-a &mdash; round 1</span>
+4 findings (2 blockers, 1 minor, 1 note)
+
+<span class="del">1. [BLOCKER]</span> &mdash; &ldquo;We removed rows with missing values since they were under three
+   percent of the data.&rdquo; is presented in quotation marks but is a paraphrase &mdash;
+   report.md reads &ldquo;We removed the rows with missing values because they were fewer
+   than three percent of the data.&rdquo; <span class="hint">fix: replace with the verbatim sentence.</span>
+
+<span class="del">2. [BLOCKER]</span> &mdash; &ldquo;Every figure is labeled and captioned.&rdquo; is a falsified praise
+   universal &mdash; Figure 3 has alt text but no caption line, unlike Figures 1 and 2.
+   <span class="hint">fix: &ldquo;Figures 1 and 2 are labeled and captioned; Figure 3 carries a label but
+   no caption.&rdquo;</span>
+
+<span class="muted">Verified clean:</span> quotes 0/1 verbatim (the one quoted string failed); numbers 8/8;
+universals 3 found, 1 falsified, 1 unprovable, 1 verified; attribution 3 checked,
+credit correct; behavior claims 2/2; world-claims 0; consistency OK (19/20
+arithmetic checks); policy OK.
+
+<span class="muted">FILES READ:</span> agents/unit-auditor.md; demo-workspace CLAUDE.md, assignment.md,
+rubric.md; student-a draft-evaluation.md, ledger.md, report.md, session-log.md
+    </div>
+
+    <p class="src">Source, unedited: <a href="https://github.com/henkaku-center/grade-it-like-an-audit/blob/main/docs/test-runs/2026-08-24-demo-fixture/student-a-report.md">docs/test-runs/2026-08-24-demo-fixture/student-a-report.md</a>.
+    Two further recorded runs live alongside it, including the release audit that produced 63 findings
+    and 18 blockers and <em>stopped</em> a release &mdash; along with the one finding that was checked
+    and rejected as wrong.</p>
+  </div>
+</section>
+
+<section id="strictness">
+  <div class="wrap">
+    <p class="eyebrow">Options &mdash; 1 of 4</p>
+    <h2>Strictness, and why it never becomes a way to stop looking</h2>
+
+    <p>Three presets seed a price schedule. The obvious way to implement a strictness dial is to make
+    the auditors less sensitive at lower settings, and it is wrong: that hides defects rather than
+    pricing them, and it takes the feedback away from the student precisely where you had decided not
+    to charge for it.</p>
+
+    <figure>
+      <div class="presets">
+        <div class="preset">
+          <p class="pname">lenient</p>
+          <span class="price free">&minus;0</span>
+          <p class="verdict">The missing degrees of freedom cost nothing. Only blockers carry a price.</p>
+          <span class="always">Still written in the letter, in full.</span>
+        </div>
+        <div class="preset">
+          <p class="pname">standard &middot; default</p>
+          <span class="price">&minus;1</span>
+          <p class="verdict">Blockers and minors are charged; notes are feedback only.</p>
+          <span class="always">Still written in the letter, in full.</span>
+        </div>
+        <div class="preset">
+          <p class="pname">strict</p>
+          <span class="price">&minus;2</span>
+          <p class="verdict">Everything named costs something, down to notes.</p>
+          <span class="always">Still written in the letter, in full.</span>
+        </div>
+      </div>
+      <figcaption><b>Figure 6.</b> The same finding at all three settings. <b>The reporting threshold
+      never moves.</b> A lower preset demotes a finding from charged to noted; it never removes it.
+      Strictness governs what a defect costs, not whether anyone looked &mdash; and an unnamed issue
+      is awarded full credit at every preset, which is the attribution guarantee.</figcaption>
+    </figure>
+
+    <p>Strictness is a real axis and the presets do not settle it for you. The same harness on the
+    same submissions produced <strong>96&ndash;100 under one rulebook and 63&ndash;84 under a
+    stripped-back one.</strong> That spread is a fact about your criteria, not about the tool, and it
+    is why <code>setup</code> runs a criteria audit before any grading happens.</p>
+  </div>
+</section>
+
+<section id="average">
+  <div class="wrap">
+    <p class="eyebrow">Options &mdash; 2 of 4</p>
+    <h2>Expected grade, and the cost of enforcing one</h2>
+
+    <p>You may record an expected average. The harness will then report the gap &mdash; and
+    <strong>apply nothing.</strong> Closing it is a policy decision with a real cost, so it is raised
+    as a question rather than absorbed silently.</p>
+
+    <figure>
+      <div class="flow">
+        <div class="fbox stays">
+          <span class="ftitle">The honest route</span>
+          <span class="fbody">Re-price every defect family by one uniform multiplier and re-derive
+          every grade. Attribution survives: each point still names its issue. The residual left by
+          discrete rounding is reported, never hidden.</span>
+        </div>
+        <div class="fbox danger">
+          <span class="ftitle">The exact route</span>
+          <span class="fbody">Move individual grades until the average lands. Hits the target exactly
+          and <strong>breaks the rule that every point removed names an issue</strong> &mdash; the
+          student can no longer be told what a point was for.</span>
+        </div>
+        <div class="fbox">
+          <span class="ftitle">Advisory only</span>
+          <span class="fbody">Report the gap and change nothing. Often correct: a cohort can genuinely
+          be excellent or genuinely weak, and forcing an average onto one that is
+          <em>misreports them</em>.</span>
+        </div>
+      </div>
+      <figcaption><b>Figure 7.</b> The three routes are presented together, with their costs, as a
+      ruling request. The harness never picks one.</figcaption>
+    </figure>
+
+    <div class="card warn">
+      <p class="lbl">A note on small rubrics</p>
+      <p>On a /6 or /8 scale the arithmetic gets sharp: rounding to whole points can waive most
+      findings, banker's rounding can silently zero them, and a fixed tolerance of one point is
+      seventeen percent of the whole scale. All three were real bugs, found and fixed. The
+      reconciliation script now infers the granularity your schedule is actually written in and
+      rounds ties away from zero.</p>
+    </div>
+  </div>
+</section>
+
+<section id="convergence">
+  <div class="wrap">
+    <p class="eyebrow">Options &mdash; 3 of 4</p>
+    <h2>When the loop stops &mdash; two different questions</h2>
+
+    <p>A stopping rule tells you when you <em>may</em> stop. It does not tell you when to stop
+    trying. Those need separate rules, because a loop that keeps finding things can be finding them
+    in its own repairs.</p>
+
+    <div class="ctx-grid">
+      <div class="ctx">
+        <p class="scope">Rule 1 &mdash; convergence</p>
+        <h3>When you may stop</h3>
+        <p>One pass comes back clean for the <em>entire</em> set at the same time, and the matrix is
+        stable: no unarbitrated flag, no open ruling request, no cell moved this round.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">Rule 2 &mdash; bounding</p>
+        <h3>When to stop trying</h3>
+        <p>Blockers have been zero for two consecutive rounds <em>and</em> most of this round's
+        findings sit in text the previous round's own fixes introduced. That is a loop measuring its
+        own edit rate.</p>
+      </div>
+      <div class="ctx">
+        <p class="scope">Neither rule</p>
+        <h3>The human closes the loop</h3>
+        <p>Not the counter. One recorded run ended on the grader's judgement that the remaining
+        changes were minor; round ten was never run, and that was correct.</p>
+      </div>
+    </div>
+
+    <figure>
+      <div class="bars">
+        <div class="brow"><span class="blabel">round 1</span>
+          <span class="btrack"><span class="bseg block" style="width:26%"></span><span class="bseg minor" style="width:43%"></span><span class="bseg note" style="width:30%"></span></span>
+          <span class="bval">6 / 10 / 7</span></div>
+        <div class="brow"><span class="blabel">round 2</span>
+          <span class="btrack"><span class="bseg block" style="width:4%"></span><span class="bseg minor" style="width:43%"></span><span class="bseg note" style="width:22%"></span></span>
+          <span class="bval">1 / 10 / 5</span></div>
+        <div class="brow"><span class="blabel">round 3</span>
+          <span class="btrack"><span class="bseg block" style="width:4%"></span><span class="bseg minor" style="width:4%"></span><span class="bseg note" style="width:30%"></span></span>
+          <span class="bval">1 / 1 / 7</span></div>
+        <div class="brow"><span class="blabel">round 4</span>
+          <span class="btrack"><span class="bseg clean"></span></span>
+          <span class="bval">clean</span></div>
+      </div>
+      <p class="barkey"><span><i class="block"></i>blockers</span><span><i class="minor"></i>minors</span><span><i class="note"></i>notes</span></p>
+      <figcaption><b>Figure 8.</b> A real four-round trajectory on live work, ending in convergence
+      and the first write-back this method has ever fired. <b>Deduction-matrix cells moved: 0 in every
+      round.</b> The grades were settled after round one; the four rounds of work went into the prose
+      and the evidence. Round 2's findings were largely defects that round 1's own fixes introduced
+      &mdash; the pattern Rule 2 exists to catch. Round 4 ran on a smaller model and a narrowed scope,
+      so it is a convergence event rather than a comparable measurement.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="cost">
+  <div class="wrap">
+    <p class="eyebrow">Options &mdash; 4 of 4</p>
+    <h2>Models, cost, and coded units</h2>
+
+    <p>One round over N units spawns N auditor subagents plus one consistency pass. Budget three to
+    five rounds. Each role's model is set independently in your task file, and all three default to
+    the mid-tier model because the cost driver is the auditors, not the reasoning.</p>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Role</th><th>Calls per round</th><th>Default</th><th>Worth raising?</th></tr></thead>
+      <tbody>
+        <tr><td>Unit auditors</td><td class="num">N</td><td><code>sonnet</code></td>
+          <td>Last. This is where the money goes &mdash; N of them every round.</td></tr>
+        <tr><td>Lead consistency pass</td><td class="num">1</td><td><code>sonnet</code></td>
+          <td><b>First.</b> Hardest reasoning in the method, and only one call.</td></tr>
+        <tr><td>Fresh reader</td><td class="num">1</td><td><code>sonnet</code></td>
+          <td>A weak proxy for the human outside reader, and labelled as one.</td></tr>
+      </tbody>
+    </table></div>
+
+    <p>Separately, <code>code-units.py</code> replaces names on submission folders with random codes
+    before grading. It copies byte-for-byte with hash verification and <strong>never rewrites file
+    contents</strong> &mdash; an earlier version that did broke the method's own attribution check by
+    folding a collaborator into the subject's code. The primary reason to use it is blind grading,
+    which is a pedagogical argument you can make without a lawyer. Its privacy limits, which are real,
+    are set out on <a href="limits.html#privacy">Limits &amp; privacy</a>.</p>
+
+    <div class="nextpage">
+      <a href="limits.html">What it cannot do &rarr;</a>
+      <a href="compare.html">How it compares &rarr;</a>
+      <a href="index.html">Back to the overview &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap">
+    <p class="divider-label">A method for high-stakes AI-agent work &middot; share freely</p>
+    <p><a href="https://github.com/henkaku-center/grade-it-like-an-audit">github.com/henkaku-center/grade-it-like-an-audit</a></p>
+    <p>By Joseph Austerweil (@josephausterweil) &middot; originated by Ira Winder (@irawinder) &middot; CC BY 4.0<br>
+    Built at the <a href="https://cml.chibatech.dev/">Computational Mind Lab</a>, Chiba Institute of Technology.</p>
+    <p>Provided &ldquo;as is,&rdquo; without warranty. Not legal advice, and nothing here establishes compliance
+    with FERPA, GDPR, or any institutional policy. See <a href="limits.html#liability">Limits &amp; privacy</a>.</p>
+  </div>
+</footer>
+</body>
+</html>
